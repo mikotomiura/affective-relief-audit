@@ -17,6 +17,7 @@ Yuusuke Harada さんの論文 Affective Tactility（JMUI 向けの原稿を JMA
 | `experiments/run_all.py` | 命題 3・5・6・7 の数値と図を出し直す |
 | `experiments/legacy/` | 最初に検算に使ったスクリプト（そのまま保存） |
 | `results/` | `run_all.py` の出力（`results.json`・`p7_table.md`・`figs/`） |
+| `handoff/` | セッションの引き継ぎ。最新は `20261024-original-code-prep.md`（元のコードが届く前の準備） |
 
 関連: GSE 側のアイディアのメモ `~/GSE-prototype/.idea/20261023-affective-tactility-and-keystroke-relief.md`。
 
