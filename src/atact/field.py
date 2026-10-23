@@ -22,11 +22,32 @@ class RenderConfig:
     warp: float = 0.0       # 表 2 は 0.25、本文は "optional"。既定は無し（A3）
     normalize: str = "maxabs"  # A2: |F| の最大で割って [-1, 1] に入れる
     eps: float = 0.0        # 0 なら T_gamma、正なら T_{gamma,eps}
+    # A1 の変種（既定は A1 そのもの。図 3 に近づける版を試すために足した）
+    freq_unit: str = "cycles"   # "cycles": f は領域あたりの周期数 / "half": 半周期の数（sin(pi f x)）
+    octave_form: str = "product"  # "product" / "sum": 縦横の和 / "oriented": 向きが乱数の平面波
+    noise: float = 0.0      # 正なら、正規化の前に F へ振幅 noise の一様な白色雑音を足す
 
 
-def _octave(x, y, fo, px, py):
+_UNIT = {"cycles": 2 * np.pi, "half": np.pi}
+
+
+def _octave(x, y, fo, px, py, cfg: RenderConfig = RenderConfig(), theta: float = 0.0):
     # A1: 各オクターブは sin(2 pi fo x + px) sin(2 pi fo y + py)、位相は一様乱数
-    return np.sin(2 * np.pi * fo * x + px) * np.sin(2 * np.pi * fo * y + py)
+    w = _UNIT[cfg.freq_unit] * fo
+    if cfg.octave_form == "product":
+        return np.sin(w * x + px) * np.sin(w * y + py)
+    if cfg.octave_form == "sum":
+        return 0.5 * (np.sin(w * x + px) + np.sin(w * y + py))
+    if cfg.octave_form == "oriented":
+        return np.sin(w * (x * np.cos(theta) + y * np.sin(theta)) + px)
+    raise ValueError(cfg.octave_form)
+
+
+def _draw(rng, cfg: RenderConfig):
+    """1 段ぶんの乱数。既定の形では位相 2 つだけを引き、元の乱数の並びを変えない。"""
+    ph = rng.uniform(0, 2 * np.pi, 2)
+    theta = rng.uniform(0, np.pi) if cfg.octave_form == "oriented" else 0.0
+    return ph, theta
 
 
 def procedural_field(f: float, cfg: RenderConfig = RenderConfig(), seed: int = 42) -> np.ndarray:
@@ -35,14 +56,19 @@ def procedural_field(f: float, cfg: RenderConfig = RenderConfig(), seed: int = 4
     y, x = np.mgrid[0 : cfg.n, 0 : cfg.n] / cfg.n
     if cfg.warp:
         # A3: 基本周波数の 1 段の場で座標をずらす。ずれの大きさは warp / f（基本周期の割合）
-        wx = _octave(x, y, f, *rng.uniform(0, 2 * np.pi, 2))
-        wy = _octave(x, y, f, *rng.uniform(0, 2 * np.pi, 2))
+        (ph, th) = _draw(rng, cfg)
+        wx = _octave(x, y, f, *ph, cfg, th)
+        (ph, th) = _draw(rng, cfg)
+        wy = _octave(x, y, f, *ph, cfg, th)
         x = x + cfg.warp / f * wx
         y = y + cfg.warp / f * wy
     F = np.zeros((cfg.n, cfg.n))
     for o in range(cfg.octaves):
         fo, a = f * 2**o, 0.5**o
-        F += a * _octave(x, y, fo, *rng.uniform(0, 2 * np.pi, 2))
+        ph, th = _draw(rng, cfg)
+        F += a * _octave(x, y, fo, *ph, cfg, th)
+    if cfg.noise:
+        F = F + cfg.noise * rng.uniform(-1, 1, F.shape)
     if cfg.normalize == "maxabs":
         F = F / np.abs(F).max()
     elif cfg.normalize != "none":

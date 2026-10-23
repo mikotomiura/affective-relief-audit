@@ -31,17 +31,28 @@ class DatasetConfig:
     render: RenderConfig = RenderConfig()
 
 
-def make_dataset(cfg: DatasetConfig, rng_seed: int = 0):
-    """特徴 X = (Rq, C) とラベル y と、使った (V, A) を返す。"""
+def default_features(H):
+    return rq(H), centroid(H)
+
+
+def make_dataset(cfg: DatasetConfig, rng_seed: int = 0, backend=None, features=None):
+    """特徴 X = (Rq, C) とラベル y と、使った (V, A) を返す。
+
+    backend は height(V, A, seed) を持つもの（atact.backends）。None なら cfg.render の組み直し。
+    features は H から 2 つの数を返す関数。None なら式 (5)(6) の組み直し。
+    生成器と記述子を別々に差し替えられるので、元のコードとの食い違いを切り分けられる。
+    """
     rng = np.random.default_rng(rng_seed)
+    gen = (lambda V, A, sd: height(V, A, cfg.render, seed=sd)) if backend is None else backend.height
+    feat = default_features if features is None else features
     X, y, va = [], [], []
     i = 0
     for label, (V0, A0) in REGIMES.items():
         for _ in range(cfg.per_class):
             V = float(np.clip(V0 + rng.uniform(-cfg.jitter, cfg.jitter), -1, 1))
             A = float(np.clip(A0 + rng.uniform(-cfg.jitter, cfg.jitter), -1, 1))
-            H = height(V, A, cfg.render, seed=cfg.base_seed + i)
-            X.append((rq(H), centroid(H)))
+            H = gen(V, A, cfg.base_seed + i)
+            X.append(tuple(feat(H)))
             y.append(label)
             va.append((V, A))
             i += 1
