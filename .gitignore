@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# 他人の未公開の原稿（著者 Yuusuke Harada）。手元だけに置き、履歴にも入れない
+source/
+.DS_Store
