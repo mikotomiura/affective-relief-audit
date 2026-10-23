@@ -9,3 +9,7 @@ source/
 external/
 # 元のコードを包むアダプタ（元のコードの関数名などを含む）。ひな形 adapters/original_template.py は履歴に入れる
 adapters/original.py
+# 事務の記録（著者への助言・プレ査読・セッションの引き継ぎ）。手元だけに置き、履歴にも入れない
+advice/
+handoff/
+review/

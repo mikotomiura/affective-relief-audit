@@ -2,7 +2,7 @@
 
 Yuusuke Harada さんの論文 Affective Tactility（JMUI 向けの原稿を JMA 向けに組み直した改訂稿）に、Mikoto Miura が助言の立場で関わるための作業場所。
 
-- 他人の未公開の原稿を含むので、**リモートには push しない**。原稿そのもの（`source/`）は `.gitignore` で履歴から外している。
+- 他人の未公開の原稿を含むので、**リモートには push しない**。原稿そのもの（`source/`）は `.gitignore` で履歴から外している。助言・プレ査読・引き継ぎ（`advice/`・`review/`・`handoff/`）も事務の記録なので、同じく履歴に入れない。
 - 公開されているのはプレプリントだけ（Harada 2026, Research Square, doi:10.21203/rs.3.rs-8696852/v1）。
 
 ## 中身
@@ -10,8 +10,8 @@ Yuusuke Harada さんの論文 Affective Tactility（JMUI 向けの原稿を JMA
 | 場所 | 中身 |
 |---|---|
 | `source/`（git の外） | 元の docx（照合コメント 20 件つき）、抜き出した md（コメントつき・なし）、図 3 枚 |
-| `advice/` | 著者に送った助言の docx と元の md、issue の一覧、案 A の数学（命題 1〜7）、検証のアイディア |
-| `review/attack-me-round-1/` | プレ査読の記録（依頼文・査読 3 本・監査・Codex・判定）。接地に使った論文の本文は移していない |
+| `advice/`（git の外） | 著者に送った助言の docx と元の md、issue の一覧、案 A の数学（命題 1〜7）、検証のアイディア |
+| `review/attack-me-round-1/`（git の外） | プレ査読の記録（依頼文・査読 3 本・監査・Codex・判定）。接地に使った論文の本文は移していない |
 | `src/atact/` | 写像・生成器・記述子・分類の組み直し（元のコードではない） |
 | `tests/` | 命題 1〜4・6 と原稿の表 1 の確かめ（`test_math.py`）、生成器の差し替え口と変種（`test_backends.py`）、図 3 の指紋（`test_fig3.py`） |
 | `src/atact/backends.py`・`adapters/` | 生成器の差し替え口と、元のコードを包むアダプタのひな形 |
@@ -24,7 +24,7 @@ Yuusuke Harada さんの論文 Affective Tactility（JMUI 向けの原稿を JMA
 | `experiments/arrival_check.py` | 元のコードが届いたときに流す 1 本 |
 | `experiments/legacy/` | 最初に検算に使ったスクリプト（そのまま保存） |
 | `results/` | `run_all.py` の出力（`results.json`・`p7_table.md`・`figs/`） |
-| `handoff/` | セッションの引き継ぎ。最新は `20261024-original-code-prep.md`（元のコードが届く前の準備） |
+| `handoff/`（git の外） | セッションの引き継ぎ。最新は `20261024-original-code-prep.md`（元のコードが届く前の準備） |
 
 関連: GSE 側のアイディアのメモ `~/GSE-prototype/.idea/20261023-affective-tactility-and-keystroke-relief.md`。
 
