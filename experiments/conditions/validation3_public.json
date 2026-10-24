@@ -1,0 +1,898 @@
+{
+ "purpose": "Validation 3: whether the change of descriptor values and of orderings under a change of grid, observed on synthetic surfaces, also occurs on publicly available measured surfaces. Only the grid is changed; the physical domain of each measurement is fixed. No claim is made about the conclusions of other studies.",
+ "fixed_before_running": "Written on 2026-10-25, before any computation in this file. The measurements were selected from metadata only (meta.yml and array shapes) and file SHA-256 digests; no height values were read. The public dataset of Gao et al. (2026) (Hugging Face alex4727/text2tactilegraphics_data, revision 99777a1eb0301b880d732e87fc7bc9aa44fe62c3) was not used: it contains only RGB training images and prompts, not the normal maps evaluated in that paper, and states no licence. Any change after seeing results is listed under 'deviations' with its reason, and the version number is increased.",
+ "version": 1,
+ "spec": "experiments/spec/generator-and-descriptors.md (S5 describes how measured data are read)",
+ "datasets": [
+  {
+   "name": "challenge",
+   "source": "Surface-Topography Challenge, Zenodo 10.5281/zenodo.15341939 (Pradhan et al., Tribology Letters 73, 110, 2025)",
+   "license": "CC0 at the record level (Zenodo metadata: license = cc-zero). The deposit's _README.md states that each container includes a licence file; among the containers used, only t21_fang contains one (LICENSE-cc0-1.0.txt, CC0 1.0 Universal). The record-level CC0 is relied on for the others.",
+   "bundles": {
+    "allData_wafer_b.zip": "md5 384342af7eb6cadea8cfd0ec661705a9 (smoother surface)",
+    "allData_wafer_t.zip": "md5 294a0bc65ba4ca1b0334a497fd03d833 (rougher surface)"
+   },
+   "bundle_choice": "The two smallest of the nine bundles (b: 87 MB; t: 465 MB), chosen by size alone. The surface type was read from the description fields of meta.yml.",
+   "inclusion": "Two-dimensional arrays with has_undefined_data = false and shorter side >= 512: 38 measurements (33 rougher, 5 smoother).",
+   "measurements": [
+    {
+     "container": "b15_scaraggi",
+     "file": "0-new_b15_profilometertxt-squeezed.nc",
+     "sha256": "6e1fd6383f1ed9d89103a9d657ed30914c7e819277c52412de903860a1497a67",
+     "shape": [
+      900,
+      901
+     ],
+     "P": 512,
+     "size": [
+      0.000899,
+      0.0009
+     ],
+     "unit": "m",
+     "instrument": "Bruker DektakXT",
+     "surface": "smooth"
+    },
+    {
+     "container": "b15_scaraggi",
+     "file": "1-new_b15_afm_20umtxt-squeezed.nc",
+     "sha256": "a6eccd4c4c6ef084a72234ada597110f761e3377e79bcc3556336b636b1e2ade",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      2e-05,
+      2e-05
+     ],
+     "unit": "m",
+     "instrument": "AFM NanoObserver",
+     "surface": "smooth"
+    },
+    {
+     "container": "b15_scaraggi",
+     "file": "2-new_b15_afm_5umtxt-squeezed.nc",
+     "sha256": "0850e8d9963d0a14e22f17837af838d425a4497b26a22c6c8752f838632e7bfc",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      5e-06,
+      5e-06
+     ],
+     "unit": "m",
+     "instrument": "AFM NanoObserver",
+     "surface": "smooth"
+    },
+    {
+     "container": "b55_persson",
+     "file": "0-b-persson-b55-20x-scan-1vk4-squeezed.nc",
+     "sha256": "d2f6cdd1aa1fb7c5cf885147a556a1b49af95120a771a0b36a2f06684f4eca5b",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      698470641.0,
+      523682289.0
+     ],
+     "unit": "pm",
+     "instrument": "Keyence VK150",
+     "surface": "smooth"
+    },
+    {
+     "container": "b55_persson",
+     "file": "1-b-persson-b55-100x-scan-1vk4-squeezed.nc",
+     "sha256": "444da5d352acc8c191d82a9f405467ae4a5819bee98374c9387ecd17ed68dd9b",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      141477831.0,
+      106073799.0
+     ],
+     "unit": "pm",
+     "instrument": "Keyence VK150",
+     "surface": "smooth"
+    },
+    {
+     "container": "t21_fang",
+     "file": "00-t21_10-min-sonication-ipa_5xgwy-squeezed.nc",
+     "sha256": "fc6c39bc63deb8891395d3f5e6313d400bbc021a2a3af3a34b67079b7aa6754d",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      0.0027485964,
+      0.0020607755999999997
+     ],
+     "unit": "m",
+     "instrument": "Keyence VK-X3000",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "01-t21_10-min-sonication-ipa_5x_location2gwy-squeezed.nc",
+     "sha256": "02ea25a621ad2b586e76c72c8b8e19b840ff4ca004b7fb8c0e37a6f186f1322f",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      0.0027485964,
+      0.0020607755999999997
+     ],
+     "unit": "m",
+     "instrument": "Keyence VK-X3000",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "02-t21_10-min-sonication-ipa_10xgwy-squeezed.nc",
+     "sha256": "1e607f2b421fe9c04417a79749175119498e625582681afd171c85f016389a42",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      0.00140643063,
+      0.00105447927
+     ],
+     "unit": "m",
+     "instrument": "Keyence VK-X3000",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "03-t21_10-min-sonication-ipa_10x_location2gwy-squeezed.nc",
+     "sha256": "d22a3c658f0220860917ccd15d4237a8e981694573b420690183f0cfaaeacc83",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      0.00140643063,
+      0.00105447927
+     ],
+     "unit": "m",
+     "instrument": "",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "04-t21_10-min-sonication-ipa_20xgwy-squeezed.nc",
+     "sha256": "0545a74bc61131febc39f486dca30ddafaecbd2f20ea4574086ef3f9c6468602",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      0.000703180533,
+      0.0005272135570000001
+     ],
+     "unit": "m",
+     "instrument": "Keyence VK-X3000",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "05-t21_10-min-sonication-ipa_20x_location2gwy-squeezed.nc",
+     "sha256": "4f10597c720ed63d7c62ad2da94762213be90aed181b940c5e087c549b7a567f",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      0.000703180533,
+      0.0005272135570000001
+     ],
+     "unit": "m",
+     "instrument": "Keyence VK-X3000",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "06-t21_10-min-sonication-ipa_50xgwy-squeezed.nc",
+     "sha256": "1b0d87c2c3c10e306119038126c9f322fc0ff6fcc7a3e8ed35d93c70f18dc5b8",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      0.000276237621,
+      0.000207110709
+     ],
+     "unit": "m",
+     "instrument": "Keyence VK-X3000",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "07-t21_10-min-sonication-ipa_50x_location2gwy-squeezed.nc",
+     "sha256": "c7057ef191f55c0fc5d91a6eba5f79cd729acace88cbf77dd2e5798d1cf0604d",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      0.000276237621,
+      0.000207110709
+     ],
+     "unit": "m",
+     "instrument": "",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "08-t21_10-min-sonication-ipa_150xgwy-squeezed.nc",
+     "sha256": "847ad23f23770e25fde2fdb7ba65cb4fa7e6edef5dec5f2bf0e5a5e5ee0f4711",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      9.7121574e-05,
+      7.2817446e-05
+     ],
+     "unit": "m",
+     "instrument": "Keyence VK-X3000",
+     "surface": "rough"
+    },
+    {
+     "container": "t21_fang",
+     "file": "09-t21_10-min-sonication-ipa_150x_location2gwy-squeezed.nc",
+     "sha256": "bd05bff2ad98ed96b41019df9ad1eaec2b2fa3084dd0e907faa62a2c6fe3a8b0",
+     "shape": [
+      1024,
+      768
+     ],
+     "P": 512,
+     "size": [
+      9.7121574e-05,
+      7.2817446e-05
+     ],
+     "unit": "m",
+     "instrument": "Keyence VK-X3000",
+     "surface": "rough"
+    },
+    {
+     "container": "t22_skumar",
+     "file": "00-t-22_-100-nm0_00102spm-squeezed.nc",
+     "sha256": "33b63fd10376165fa373c5d2a52e59656637137ba5f930b09bad8179cb209222",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      100.0,
+      100.0
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t22_skumar",
+     "file": "01-t-22_-250-nm0_00103spm-squeezed.nc",
+     "sha256": "cd15e99f0100780b9f76ce0fdd0270712d75db2384cbe3b31a7a042f210c24c6",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      250.0,
+      250.0
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t22_skumar",
+     "file": "02-t-22_-500-nm0_00104spm-squeezed.nc",
+     "sha256": "43a7cc68c6bea91913ce93dde208df02e60ea0e4d34d85d72480749acc3fab9f",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      500.0,
+      500.0
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t22_skumar",
+     "file": "03-t-22_-1um0_00105spm-squeezed.nc",
+     "sha256": "2960b481f5b5d07ee8ae111a8e5722027f2dbfb4d21956effb15da00d0785d95",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      999.9999999999999,
+      999.9999999999999
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t22_skumar",
+     "file": "04-t-22_-5um0_00106spm-squeezed.nc",
+     "sha256": "af447359403bb3739450d9b716dc0e705f4d534a4140badaf52ca75c4c46ce2b",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      4999.999999999999,
+      4999.999999999999
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t22_skumar",
+     "file": "05-t-22_-10um0_00107spm-squeezed.nc",
+     "sha256": "1729550f8f8b4b1606475ffcdbe8d3b5d57fe00b7193fbe0a06c92ec893ee21d",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      9999.999999999998,
+      9999.999999999998
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t22_skumar",
+     "file": "06-t-22_-25um0_00108spm-squeezed.nc",
+     "sha256": "be1e25e1a9b617ddfe2c41a06da0673c3ba3c62ef93d8482787997c64b92e4b7",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      24999.999999999996,
+      24999.999999999996
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t22_skumar",
+     "file": "07-t-22_-50um0_00110spm-squeezed.nc",
+     "sha256": "2ff146f5d58d677f7fd98e2fa715c33b3162e3c852a88f2ee8327c9d8f812f03",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      49999.99999999999,
+      49999.99999999999
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t23_skumar",
+     "file": "00-t-23_50000-nm0_00087spm-squeezed.nc",
+     "sha256": "3265128c29e36b067f767aef68a1b93761156472f28c1c9ed303ea5f5694e795",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      500.0,
+      500.0
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t23_skumar",
+     "file": "01-t-23_10000-nm0_00085spm-squeezed.nc",
+     "sha256": "9e3f0b43b42fdc74195d82d891dd7e41c31c0ed5965166e74e60e4e29b764ab0",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      100.0,
+      100.0
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t23_skumar",
+     "file": "02-t-23_25000-nm0_00086spm-squeezed.nc",
+     "sha256": "8bc084bde3524edae92c5403512b00251cda98cfcb8e6457ca1bd6a7bdaee3ac",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      250.0,
+      250.0
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t23_skumar",
+     "file": "03-t-23_1um0_00088spm-squeezed.nc",
+     "sha256": "aec890242af85edefdd83edaf0651dfab10d174ba6d6b1faea6ef534e1cc60fb",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      999.9999999999999,
+      999.9999999999999
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t23_skumar",
+     "file": "04-t-23_100-um0_00090spm-squeezed.nc",
+     "sha256": "9a3dda709b8752ec458875cef465d818cf7f8f7e34c57bf9833a2c356cb87b88",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      9999.999999999998,
+      9999.999999999998
+     ],
+     "unit": "nm",
+     "instrument": "afm",
+     "surface": "rough"
+    },
+    {
+     "container": "t23_skumar",
+     "file": "05-t-23_250-um0_00092spm-squeezed.nc",
+     "sha256": "6fd6d8a2c2abea826ee8f2470c88cd94b0efb3a5298b47859e5aca31697f5791",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      24999.999999999996,
+      24999.999999999996
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t23_skumar",
+     "file": "06-t-23_500-um0_00093spm-squeezed.nc",
+     "sha256": "99aa97d487b7f3eb6e45cf3ac8f87f696891124c33459139465537f603ed9d02",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      49999.99999999999,
+      49999.99999999999
+     ],
+     "unit": "nm",
+     "instrument": "AFM",
+     "surface": "rough"
+    },
+    {
+     "container": "t25_ckumar",
+     "file": "0-t25-50x_2al3d-squeezed.nc",
+     "sha256": "a06f23485335693a55caa93f981ad4e77343f34279c5ec9a799f6efeac373d5e",
+     "shape": [
+      1624,
+      1232
+     ],
+     "P": 1024,
+     "size": [
+      0.000285768784,
+      0.000216790112
+     ],
+     "unit": "m",
+     "instrument": "Alicona InfiniteFocus G4",
+     "surface": "rough"
+    },
+    {
+     "container": "t25_ckumar",
+     "file": "1-t25-50x_1al3d-squeezed.nc",
+     "sha256": "e94e204f52622779665ab5730e49dee90eef55fb88f8da5198a10ded6cf7ff11",
+     "shape": [
+      1624,
+      1232
+     ],
+     "P": 1024,
+     "size": [
+      0.000285768784,
+      0.000216790112
+     ],
+     "unit": "m",
+     "instrument": "Alicona InfiniteFocus G4",
+     "surface": "rough"
+    },
+    {
+     "container": "t25_ckumar",
+     "file": "2-t25-50x_3al3d-squeezed.nc",
+     "sha256": "65887e7f2a557afb714000121d5e94efe7934bdb6fc3728e9ba3f9b71f9161c1",
+     "shape": [
+      1624,
+      1232
+     ],
+     "P": 1024,
+     "size": [
+      0.000285768784,
+      0.000216790112
+     ],
+     "unit": "m",
+     "instrument": "Alicona InfiniteFocus G4",
+     "surface": "rough"
+    },
+    {
+     "container": "t26_ckumar",
+     "file": "0-t26-50x_2al3d-squeezed.nc",
+     "sha256": "26e1ee57e00270bfc90f25700ba6862c6b88634fd878fcea12676ea812fe71e6",
+     "shape": [
+      1624,
+      1232
+     ],
+     "P": 1024,
+     "size": [
+      0.000285768784,
+      0.000216790112
+     ],
+     "unit": "m",
+     "instrument": "Alicona InfiniteFocus G4",
+     "surface": "rough"
+    },
+    {
+     "container": "t26_ckumar",
+     "file": "1-t26-50x_1al3d-squeezed.nc",
+     "sha256": "7a1eb07728509d31717853b16f65567f3174702c5e93b9ed38d7806c0042bd23",
+     "shape": [
+      1624,
+      1232
+     ],
+     "P": 1024,
+     "size": [
+      0.000285768784,
+      0.000216790112
+     ],
+     "unit": "m",
+     "instrument": "Alicona InfiniteFocus G4",
+     "surface": "rough"
+    },
+    {
+     "container": "t26_ckumar",
+     "file": "2-t26-50x_3al3d-squeezed.nc",
+     "sha256": "b9aca9d8c5d3819957d022980d278d101cb6d3e00666d79812c137737a212876",
+     "shape": [
+      1624,
+      1232
+     ],
+     "P": 1024,
+     "size": [
+      0.000285768784,
+      0.000216790112
+     ],
+     "unit": "m",
+     "instrument": "Alicona InfiniteFocus G4",
+     "surface": "rough"
+    },
+    {
+     "container": "t27_esawi",
+     "file": "0-t27-scan-size-50um-squeezed.nc",
+     "sha256": "950964c22af109f499d7da129720205b4c0060efbe30bf74720aebb3a4c50c06",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      49999.99999999999,
+      49999.99999999999
+     ],
+     "unit": "nm",
+     "instrument": "AFM - Veeco/Bruker - Model: Dimension 3100",
+     "surface": "rough"
+    },
+    {
+     "container": "t28_esawi",
+     "file": "0-t28-scan-size-50um-squeezed.nc",
+     "sha256": "430e63f7cd056b7552886a7855c9aafa519668557a56d8a534a499d8b9d7426c",
+     "shape": [
+      512,
+      512
+     ],
+     "P": 512,
+     "size": [
+      49999.99999999999,
+      49999.99999999999
+     ],
+     "unit": "nm",
+     "instrument": "AFM - Veeco/Bruker - Model: Dimension 3100",
+     "surface": "rough"
+    }
+   ]
+  },
+  {
+   "name": "tdf",
+   "source": "TactileDreamFusion (Gao et al., NeurIPS 2024), Hugging Face Ruihan28/TactileDreamFusion, revision 87c8b764bcb2ec1139de0c6435f45ac1d9f283d1; tactile_textures.zip SHA-256 e391a32d51d7eec1066e4e1e3639ccd55311b210b0526de001f1a6f5de8f4c3a",
+   "license": "MIT (dataset card and the LICENSE file of the code repository).",
+   "caveats": "Normal maps derived from GelSight Mini measurements. The patches were high-pass filtered (FFT) and bilateral filtered by the dataset authors; the tiled maps were synthesised by image quilting. The physical pixel size is not stated. No height arrays are provided.",
+   "inputs": [
+    {
+     "name": "patch",
+     "rule": "normal_patch.png (240 x 240; alpha channel dropped). Grids 240, 120, 60."
+    },
+    {
+     "name": "tiled",
+     "rule": "Central 1024 x 1024 block of tiled_normal_map.png. Grids 1024, 512, 256."
+    }
+   ],
+   "files": [
+    {
+     "file": "ClothBag/normal_patch.png",
+     "sha256": "45fa2d6d029263191bbfc181e0c6237e1a7e1d3bd2d64b411b17b613db1039a6"
+    },
+    {
+     "file": "CorkMat/normal_patch.png",
+     "sha256": "88e293b6146a76e0ab3b124f91fba8bf5249ba0af4d42a3b27abb1595a914af4"
+    },
+    {
+     "file": "Corn/normal_patch.png",
+     "sha256": "b5d799d7a2e37aa508ebafa2fdb5b40740c01652ab5a3fe75a23321c285d15da"
+    },
+    {
+     "file": "CuttingBoard/normal_patch.png",
+     "sha256": "e1ad6a639f7f709b63df13e50fbf55f49b0c55b2227225ed2e0913ae42da9bd2"
+    },
+    {
+     "file": "Football/normal_patch.png",
+     "sha256": "649b3d0469d29c210f153ed598087bc17c3c79a5fb297669bd3ca6a8380df934"
+    },
+    {
+     "file": "GoldGoat/normal_patch.png",
+     "sha256": "072020ac53b6498970a834daa7aba54c2945b797cb271c84ee8ae1daab9fa80a"
+    },
+    {
+     "file": "GreenSweater/normal_patch.png",
+     "sha256": "f8c59d7bf7637c596a5e5ac8c87783a15b9b0aa5b908372488f4ca6bd0466435"
+    },
+    {
+     "file": "MetalFrame/normal_patch.png",
+     "sha256": "86a7d746aeaa0c4cc8a9b02a991591072f0aaa1533c05f8cae622b90d5e54dbd"
+    },
+    {
+     "file": "Orange/normal_patch.png",
+     "sha256": "03b6f0bdb80f84dc8cd270ca5588e5c36326f626236e43dd0f84d4eb7d89ddc3"
+    },
+    {
+     "file": "OrangeGlove/normal_patch.png",
+     "sha256": "0ffa31e752b0cbbff5ec3621d546a977354e57ca17005e254dbc5b4432fb6971"
+    },
+    {
+     "file": "PinkCloth/normal_patch.png",
+     "sha256": "9823b9f0b510d2615a3a2002a8932a1ea16092b36db41ab6044d57077183782c"
+    },
+    {
+     "file": "Potato/normal_patch.png",
+     "sha256": "2a066e640ff48ecd412fc918cdfe611bad7799b4cd58d52cc3402a80e1046ee2"
+    },
+    {
+     "file": "PurpleGlove/normal_patch.png",
+     "sha256": "eec913999c82eeee2308d9c39a1ea84d0b522502de18512c0ada899fb93962f8"
+    },
+    {
+     "file": "RedCloth1/normal_patch.png",
+     "sha256": "f18089b781405cdae8446178de758432fcb1fb82f71df843cc03a8b1fe514116"
+    },
+    {
+     "file": "Strawberry/normal_patch.png",
+     "sha256": "8ede05f65d2466e0edec5083d410a5da4ba39363359be9231b7e6fca993feadf"
+    },
+    {
+     "file": "TableTennisHandle/normal_patch.png",
+     "sha256": "ce87c9cf3e25dadf403022ca4c272317056603de0259613665ffdcd5466c9a4b"
+    },
+    {
+     "file": "avocado/normal_patch.png",
+     "sha256": "1b8a2763bdc3ecaafdef2ffe367720e5f28f12a6d58f4844aeac1280ed65bff7"
+    },
+    {
+     "file": "cantaloupe/normal_patch.png",
+     "sha256": "6381f490e1a2e39e9af66cff42abb592354363dccb32cc9234c469815d3b2e58"
+    },
+    {
+     "file": "ClothBag/tiled_normal_map.png",
+     "sha256": "7e2ddfcb78c1a21ea6043db9fee26c31b43cca0301ad41620cf1f1c1913b0510"
+    },
+    {
+     "file": "CorkMat/tiled_normal_map.png",
+     "sha256": "30f5fcf7493cbd69cc6ee1c2187594f09e43682223b83f29ad566e1a78625ace"
+    },
+    {
+     "file": "Corn/tiled_normal_map.png",
+     "sha256": "41b36d709d4ae8f0984c4f264d080711591b7214062732e6acc3e64cdca2bfba"
+    },
+    {
+     "file": "CuttingBoard/tiled_normal_map.png",
+     "sha256": "78d1e57d3486fd2a888f42b3feea227511e30ccb84b90c9097952a8a6d861c2f"
+    },
+    {
+     "file": "Football/tiled_normal_map.png",
+     "sha256": "3d733c00c40eab0a3fccb85b61b1b38439bc7d2d344b8b91a1f852eba3111662"
+    },
+    {
+     "file": "GoldGoat/tiled_normal_map.png",
+     "sha256": "637b1ed6eca701136c119d96ff6cdc71d13f2a675f95172d7dbc111f8c93ee46"
+    },
+    {
+     "file": "GreenSweater/tiled_normal_map.png",
+     "sha256": "1bd01e1e4f5c699a560ab4c4ff144e10597053b544069e4fe8a38b991473c0cb"
+    },
+    {
+     "file": "MetalFrame/tiled_normal_map.png",
+     "sha256": "f1df909c7cf1df8c20276352d01f3c96fa5eb659b36f988e239655a40daac6d8"
+    },
+    {
+     "file": "Orange/tiled_normal_map.png",
+     "sha256": "8e169ed1cc6a3662798080c8ff53c90547b712aed61b2891098cb607e91dd502"
+    },
+    {
+     "file": "OrangeGlove/tiled_normal_map.png",
+     "sha256": "c6025d61485737a3389bb96bda04b82c631430bed52924b031373a655fbcb40d"
+    },
+    {
+     "file": "PinkCloth/tiled_normal_map.png",
+     "sha256": "c89f6cb3d4310e36d29c26b2b18ce81f3a8029ef0f6042aa4072f75bcd55c7f3"
+    },
+    {
+     "file": "Potato/tiled_normal_map.png",
+     "sha256": "e794f3d15180b398a971a6ad33f8d0ed838d007de4ca892a211b70887a7e29ad"
+    },
+    {
+     "file": "PurpleGlove/tiled_normal_map.png",
+     "sha256": "106fac5d1000501f07814bbb861eaaf0fdd9adf5c7f0c65407d586ab0d7ad3fb"
+    },
+    {
+     "file": "RedCloth1/tiled_normal_map.png",
+     "sha256": "8545decea2b3eab071b89fd19d463d8e9f9a105213a9a043a4c035ccb8d43db6"
+    },
+    {
+     "file": "Strawberry/tiled_normal_map.png",
+     "sha256": "b44a2d8274904b86fb17a7a4803839a5b049762710ae5397b27be3308aff967f"
+    },
+    {
+     "file": "TableTennisHandle/tiled_normal_map.png",
+     "sha256": "e36e845fe742299c88760a137f2fb0efb08a94639d84387d813d0e1a4217615f"
+    },
+    {
+     "file": "avocado/tiled_normal_map.png",
+     "sha256": "dd8702afc92928301f56e8d8cac719a0b39fe5da6c30f4000600bc98f6d30573"
+    },
+    {
+     "file": "cantaloupe/tiled_normal_map.png",
+     "sha256": "d3478052fd206262bb184496f741291eeff77a6482579accac049353351a6a88"
+    }
+   ]
+  }
+ ],
+ "grid_levels": {
+  "challenge": "After the P x P crop and plane removal of S5.2 (P = 512 or 1024): sides P, P/2 and P/4, made with decimate_fourier (primary) and with subsample (control that keeps aliasing).",
+  "tdf": "S5.4 (decimate_fourier per component, renormalised and re-encoded as uint8)."
+ },
+ "descriptors_challenge": [
+  {
+   "name": "hf_ratio_px",
+   "rule": "z in metres converted to a normal map by S2.8 (pixel spacing equal to the physical spacing); freq_threshold = 120 (fixed in pixels)."
+  },
+  {
+   "name": "hf_ratio_phys",
+   "rule": "Same normal map; freq_threshold = 120 n / P (fixed relative to the physical domain of the crop; n is the side of the grid)."
+  },
+  {
+   "name": "centroid_amp",
+   "rule": "S2.3 (raw)."
+  },
+  {
+   "name": "centroid_amp_hann",
+   "rule": "S3.1, then S2.3."
+  },
+  {
+   "name": "centroid_band_power",
+   "rule": "S2.4 with K = P/8 (K <= n/2 at every grid) and power weighting."
+  },
+  {
+   "name": "sq",
+   "rule": "S2.5."
+  },
+  {
+   "name": "hf_ratio_px_float",
+   "rule": "As hf_ratio_px without uint8 rounding (S2.9, float variant)."
+  }
+ ],
+ "descriptors_tdf": [
+  {
+   "name": "hf_ratio_px",
+   "rule": "freq_threshold = 120."
+  },
+  {
+   "name": "hf_ratio_phys",
+   "rule": "freq_threshold = 120 n / n0, where n0 is the finest grid of the input (patch 240, tiled 1024)."
+  }
+ ],
+ "comparisons": [
+  "V1 (change of value): per measurement, the difference between the finest grid and one quarter of it.",
+  "V2 (ordering): for every pair of measurements within a dataset and every pair of grids, flips. Measured data have no seeds, so a flip is a change of sign with relative difference |D_a - D_b| / ((D_a + D_b)/2) above 0.05 at both grids (all descriptors here are positive; threshold fixed before computing). Pairs of measurements from the same container (same specimen and group) are reported separately and not counted as independent; the main count uses pairs from different containers. Kendall's tau is also reported.",
+  "V3 (rougher versus smoother): V2 restricted to pairs of one rougher and one smoother measurement (challenge).",
+  "V4 (aliasing): difference between the decimate_fourier and subsample versions (challenge)."
+ ],
+ "predictions": [
+  "P-V1 (Proposition 8, part 3): hf_ratio_px increases when the grid is coarsened, for every measurement. The change of hf_ratio_phys is smaller than that of hf_ratio_px.",
+  "P-V2: hf_ratio_px shows at least one flip (definition of V2). hf_ratio_phys shows fewer flips than hf_ratio_px.",
+  "P-V3: centroid_band_power is grid-independent for the decimate_fourier version up to rounding (the retained bins are the same). This is a check of the tools, not a finding.",
+  "P-V4: centroid_amp (raw) decreases when the grid is coarsened. Whether flips occur is not predicted.",
+  "P-V5 (tdf): hf_ratio_px increases when the grid is coarsened. Whether flips occur is not predicted (the inputs were already high-pass filtered)."
+ ],
+ "readouts": [
+  "All values in long format: measurement, grid, decimation method, descriptor.",
+  "Tables V1-V4.",
+  "Reading rule: if flips are found on measured data, the effect is reported as not specific to synthetic surfaces; if none are found, this is reported together with the reference scale."
+ ],
+ "not_done": "Comparisons across instruments or scan sizes on the same specimen are excluded from the main analysis, because grid, bandwidth and probe are confounded (descriptive only, in the supplement). Line profiles (one-dimensional) are not used. A check on the generated outputs of Gao et al. (2026) will be added if their evaluated normal maps become available.",
+ "deviations": [],
+ "interpretation": "This is a test of robustness to resampling of one measurement on a fixed physical domain, not of re-measurement with different instruments.",
+ "hf_ratio_order_of_operations": "challenge: z is decimated first and the normal map is computed at each grid with the pixel spacing of that grid; tdf: the normal map is decimated (no height is available). The float variant of S2.9 is computed beside the uint8 one.",
+ "deviations_before_running": [
+  "2026-10-25, before any computation: revised after a second opinion (Codex). Same-container pairs separated, interpretation stated, order of operations and float variant added."
+ ]
+}

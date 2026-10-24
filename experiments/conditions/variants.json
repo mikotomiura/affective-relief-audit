@@ -1,0 +1,23 @@
+{
+  "purpose": "Supplement: difference Delta between the accuracies reported in Harada (2026) (Sq only 91.6%, centroid only 74.2%; Sq is written Rq there) and the accuracies of the reconstructed generator, for a fixed list of variants of the parts of the procedure that the preprint does not specify. Also the check that warping does not change the K5 results.",
+  "fixed_before_running": "Written on 2026-10-25, before any computation in this file. Earlier exploratory computations over overlapping variant grids have been run and their results seen (experiments/a1_variants.py, experiments/centroid_variants.py; results/a1_variants.md, results/centroid_variants.md). This list is therefore not blind to those results; it fixes the variants and the reading rule before the final computation. Any change after seeing results is listed under 'deviations'.",
+  "version": 1,
+  "spec": "experiments/spec/generator-and-descriptors.md",
+  "reported": {"sq_only": 0.916, "centroid_only": 0.742, "both": 0.921, "permuted": 0.500, "source": "Table 3 of Harada (2026)"},
+  "design_from_preprint": "Two regimes at the corners (V, A) = (1, -1) and (-1, 1), 60 surfaces each, linear SVM on standardised (Sq, centroid), cross-validation. The cross-validation of this file (repeated stratified 5-fold, 20 repeats) is used for every variant because the original procedure is not described.",
+  "variants": {
+    "noise": [0.0, 0.1, 0.3],
+    "centroid_definition": "The 32 definitions of atact.descriptors.centroid_variant (weight amp/power x centring yes/no x rescale none/minmax x half-plane no/yes x integer radius no/yes).",
+    "jitter_w": [1.0, 1.25, 1.5],
+    "window": ["raw", "hann (S3.1, applied before the descriptors)"],
+    "warp": [0.0, 0.25],
+    "grids_N": [128, 256]
+  },
+  "variants_note": "Full factorial: 3 x 32 x 3 x 2 x 2 x 2 = 2304 variants. N = 128 is the grid stated in Table 2 of Harada (2026); N = 256 is the grid at which Fig. 3 of the preprint was rendered (measured from the figure).",
+  "replicates": "Each variant is computed for dataset seeds 0-19 (rng_seed of the jitter draws; surface seeds base_seed 42 + index as in assumption A5).",
+  "delta": "Delta = mean reconstructed accuracy - reported accuracy, for sq_only and centroid_only. Its 95% interval is the percentile interval of the 20 dataset replicates. The interval reflects uncertainty of the reconstruction only; the sampling error of the reported value is unknown, and a binomial width for n = 120 is shown beside it for reference.",
+  "reading_rule": "A variant is said to be able to explain a reported value if the interval of Delta contains 0 for that column. The direction check: the preprint reports Sq-only accuracy above centroid-only accuracy; for each variant, whether the reconstruction reproduces this order (mean Sq-only > mean centroid-only) is reported.",
+  "warp_check": "For K5: the conditions of k5_classification.json with warp = 0.25 (assumption A3) are computed for N = 128, raw, representation H, and the accuracies are compared with warp = 0. Reported in the supplement only.",
+  "readouts": ["Delta and its interval for every variant and column.", "The list of variants whose interval contains 0, per column.", "The direction check per variant."],
+  "deviations": []
+}

@@ -1,0 +1,158 @@
+{
+ "purpose": "K5: what the accuracy of classifying generated surfaces establishes. Accuracies are reported next to the direction and ordering predicted from K1-K4 and the level computed beforehand from large-sample simulation. Table 1 calibrates the procedure; it is not a comparison with external data.",
+ "fixed_before_running": "Written on 2026-10-25, before any computation in this file. The predictions (direction, ordering, level) are entered into table1_frame after this file and before the experiment, and committed separately. If the treatment of conditions (ii) and of the negative control changes after consultation with the author of the rule, the version number is increased, the change and its reason are recorded under 'deviations', and the SHA-256 of the previous version is kept.",
+ "version": 1,
+ "spec": "experiments/spec/generator-and-descriptors.md",
+ "grids_N": [
+  128,
+  512
+ ],
+ "processing": [
+  {
+   "name": "raw",
+   "rule": "No window."
+  },
+  {
+   "name": "hann",
+   "rule": "S3.1."
+  }
+ ],
+ "representations": [
+  {
+   "name": "H",
+   "rule": "H = s T_gamma(F) with F normalised by maxabs (S1.4; canonical generator)."
+  },
+  {
+   "name": "minmax",
+   "rule": "Min-max export (H - min H) / (max H - min H)."
+  }
+ ],
+ "descriptors": [
+  {
+   "name": "sq",
+   "rule": "S2.5."
+  },
+  {
+   "name": "centroid_amp",
+   "rule": "S2.3."
+  },
+  {
+   "name": "centroid_band_power",
+   "rule": "S2.4 with K = 32 and power weighting (band-fixed version; used with condition i_A)."
+  }
+ ],
+ "descriptor_sets": [
+  [
+   "sq"
+  ],
+  [
+   "centroid_amp"
+  ],
+  [
+   "centroid_band_power"
+  ],
+  [
+   "sq",
+   "centroid_amp"
+  ]
+ ],
+ "conditions": [
+  {
+   "name": "i_V",
+   "group": "i",
+   "rule": "Comparison within the image of the rule, varying V only: centres (V, A) = (-0.5, 0) and (0.5, 0); f = 5 (integer)."
+  },
+  {
+   "name": "i_A",
+   "group": "i",
+   "rule": "Comparison within the image of the rule, varying A only: centres (V, A) = (0, -0.5) and (0, 0.5); f and gamma vary and f is almost never an integer."
+  },
+  {
+   "name": "ii_s",
+   "group": "ii",
+   "rule": "Intervention outside the rule: centres at the two corners (1, -1) and (-1, 1) used in Harada (2026); f and gamma from the map, s fixed at 0.18."
+  },
+  {
+   "name": "ii_s_gamma",
+   "group": "ii",
+   "rule": "Same corners with s = 0.18 and gamma = 1; f from the map. Lies outside the image of the rule (K1). The design of fixing parameters step by step follows the rule author's own re-examination of the classification."
+  },
+  {
+   "name": "corners",
+   "group": "reference",
+   "rule": "The two corners (1, -1) and (-1, 1) mapped as in the rule (the design of the original experiment)."
+  },
+  {
+   "name": "iii_null",
+   "group": "iii",
+   "rule": "Negative control: both groups use the (f, s, gamma) of corner (1, -1), no jitter, and the two surfaces of a pair have different seeds."
+  },
+  {
+   "name": "check_same_seed",
+   "group": "check",
+   "rule": "Implementation check: as iii_null, but the two surfaces of a pair share the seed (identical images; expected accuracy 0.5)."
+  }
+ ],
+ "jitter_w": [
+  0.1,
+  0.3,
+  0.5
+ ],
+ "jitter_rule": "i_V: only V is jittered (A fixed at 0, so f = 5 stays an integer). i_A: only A is jittered (V fixed at 0). ii_s, ii_s_gamma and corners: both coordinates jittered with independent U(-w, w) and clipped to [-1, 1]; at the corners clipping puts probability mass on the boundary, as in the original design, and this is reported. iii_null and check_same_seed have no jitter.",
+ "pairs": {
+  "rule": "Pair i (i = 0, 1, ...) consists of the i-th surface of each group. For (i), (ii) and corners both surfaces of pair i use seed 1000 + i. For iii_null, group 0 uses 1000 + i and group 1 uses 50000 + i.",
+  "per_class_n": "Determined by the TOST power procedure below; candidates 60, 120, 240, 480."
+ },
+ "classifiers": [
+  {
+   "name": "svm",
+   "rule": "Standardisation followed by a linear SVM (C = 1); standardisation fitted within the training folds."
+  },
+  {
+   "name": "threshold",
+   "rule": "A single threshold on one descriptor (threshold and direction maximising training accuracy); single-descriptor sets only."
+  }
+ ],
+ "cv": "Five-fold cross-validation grouped by pair (GroupKFold, group = pair index). Pair indices are permuted with default_rng(0) before forming the folds.",
+ "bootstrap": "Resampling of pairs with replacement, 2000 replicates, 95% percentile interval.",
+ "permutation": "999 permutations swapping labels within pairs; the whole pipeline (fold assignment, standardisation, classifier fit, threshold choice) is re-run for every permutation. p = (1 + number of permuted accuracies >= observed) / 1000.",
+ "tost": {
+  "delta": 0.05,
+  "rule": "'At chance' (equivalence) if the 90% pair-bootstrap percentile interval of accuracy - 0.5 lies within (-0.05, 0.05). This is the interval form of two one-sided tests at alpha = 0.05 each; its error rate is checked on the negative control (below).",
+  "power": "per_class_n is the smallest candidate satisfying both: (a) on iii_null run 200 times, equivalence is declared in at least 80% of runs (its complement is reported as the observed false non-equivalence rate); (b) precision: on the corners condition with w = 0.5 at N = 128, raw, H, svm on {Sq, C}, run 50 times, the mean half-width of the 95% bootstrap interval is at most 0.05. Only these two configurations are used to choose n; their accuracy values are not used for any other decision."
+ },
+ "large_sample_level": "Predicted level: for each condition, descriptor set, representation, N and processing, the Bayes accuracy implied by the overlap of the descriptor distributions is estimated from 5000 surfaces per group (one descriptor: best threshold; two descriptors: linear SVM trained on 5000 and evaluated on another 5000). Entered into table1_frame before the experiment. This simulation is run after this file is committed and before the experiment; its outputs are committed with table1_frame and are not used to change conditions.",
+ "table1_frame": {
+  "columns": [
+   "condition",
+   "w",
+   "N",
+   "processing",
+   "representation",
+   "descriptor_set",
+   "predicted_direction",
+   "predicted_order",
+   "predicted_level_large_sample",
+   "estimate_finite_svm",
+   "ci95_svm",
+   "estimate_finite_threshold",
+   "ci95_threshold",
+   "tost_chance",
+   "perm_p"
+  ],
+  "fill_order": "predicted_direction and predicted_order are written from K1-K4, predicted_level_large_sample from the simulation; these three columns are committed before the remaining columns are computed.",
+  "rows": "conditions x jitter_w (no w for iii_null and check_same_seed) x grids_N x processing x representations x descriptor_sets"
+ },
+ "predictions_now": [
+  "P-K5-1 (K1): for ii_s, ii_s_gamma and corners, the distributions of sq on the min-max export move closer between groups (the export removes s). Direction: accuracy of sq on minmax <= accuracy of sq on H.",
+  "P-K5-2 (K4): for i_A, the accuracy of raw centroid_amp at N = 512 is at least that at N = 128 (the edge discontinuity depends on the fractional part of f). The difference between N values is smaller for centroid_band_power and for hann.",
+  "P-K5-3 (negative control): iii_null is 'at chance' by the TOST in every column (by construction of per_class_n). check_same_seed has accuracy exactly 0.5."
+ ],
+ "predictions_note": "Only the directions that can be stated at this stage are listed here. The full predictions for every row of Table 1 are entered at the K5 stage, before the experiment.",
+ "not_done": "Warped fields and the comparison with the values reported in Harada (2026) (both in variants.json, for the supplement).",
+ "deviations": [],
+ "mechanism_check": "Separate from classification: for i_V and i_A, the descriptors at the jitter-free centres (seeds 1000-1099) are reported, to show the mechanism without the spread induced by jitter.",
+ "deviations_before_running": [
+  "2026-10-25, before any computation: revised after a second opinion (Codex). Jitter restricted to the varied coordinate for i_V and i_A; clipping noted; whole pipeline re-run under permutation; precision requirement added to the choice of n; disclosure of the large-sample simulation; jitter-free mechanism check."
+ ]
+}

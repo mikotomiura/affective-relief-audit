@@ -1,0 +1,62 @@
+{
+ "purpose": "Index of the conditions fixed before the main computations of the paper (K4 in two dimensions, the paired edge-and-grid comparison, validation 3 on public data, K5, and the variants for the supplement). Each computation reads its condition file and records the SHA-256 of that file and of the specification in its results.",
+ "fixed_before_running": "Committed on 2026-10-25 before any of the listed computations. Changes after this commit increase the version of the affected file, list the change under 'deviations' with its reason, and add a new entry to 'history' below without removing the old one.",
+ "spec": {
+  "en (authoritative)": {
+   "path": "experiments/spec/generator-and-descriptors.md",
+   "sha256": "0ab265408e73e8a7b75e58f60df990ebd718db0f2b8b3b3c27d501bcdad096dc"
+  },
+  "ja (for checking)": {
+   "path": "experiments/spec/generator-and-descriptors.ja.md",
+   "sha256": "b7e560b48b43752e01530ac96ec3701fdbe26144ee4b2f1886cf75d5a309eae3"
+  },
+  "committed_in": "fdb9b71"
+ },
+ "conditions": {
+  "k4_centroid_2d.json": {
+   "path": "experiments/conditions/k4_centroid_2d.json",
+   "sha256": "376a638cf326d0d0a4eaf2991b6905610e925d598f3349a57e1d389edf5c00f8",
+   "version": 1
+  },
+  "edge_grid_paired.json": {
+   "path": "experiments/conditions/edge_grid_paired.json",
+   "sha256": "5b7b9a0c9f6d182d0e7dcd03a44497f2678795f6a0453c2adb76a4b20fd84cdf",
+   "version": 1
+  },
+  "validation3_public.json": {
+   "path": "experiments/conditions/validation3_public.json",
+   "sha256": "17d233cbb87c8d9aaef9392de9304c6aa09a4c9d4b4258e1fcb1d15fd46800db",
+   "version": 1
+  },
+  "k5_classification.json": {
+   "path": "experiments/conditions/k5_classification.json",
+   "sha256": "09a914161be116f44ab83f32277e5c48db3f304370f0f2bad59e5009b152d5e6",
+   "version": 1
+  },
+  "variants.json": {
+   "path": "experiments/conditions/variants.json",
+   "sha256": "24516ef8480230701fd7525eb826f99ef2de28b120032582e5bb650a6bfb8de3",
+   "version": 1
+  }
+ },
+ "earlier_conditions": {
+  "note": "Committed earlier with their results; Japanese originals are authoritative and unchanged; *.en.json are translations added afterwards.",
+  "files": {
+   "observable_dof.json": {
+    "sha256": "63cd7758110e81131b023c53b39ccc2d7f8fd6b21add6775aca0862d60d1804b"
+   },
+   "hf_ratio_edge.json": {
+    "sha256": "77b836c060850e3f2b6a44621b5585a0a9b958f8b7596f0a386161bdab4356b1"
+   },
+   "glcm_native_grid.json": {
+    "sha256": "f234d00d132b165d5edd922df8adf74b15eec4ae2d5c378fb383e1d24c1fa552"
+   },
+   "tile_seam_grid.json": {
+    "sha256": "179033d26c33490dcb24bcd687e32fc9f40eba07d763a32eb556daa8d237f833"
+   }
+  },
+  "observable_dof": "Its settings (four octaves, no warp, maxabs, N = 128, product octaves) agree with the specification, so its results (commit 0f320bc) are used without recomputation."
+ },
+ "second_opinion": "Before this commit the plan was sent to an external model (Codex) for missing conditions and ambiguous criteria; the resulting revisions are listed under 'deviations_before_running' in each file.",
+ "history": []
+}

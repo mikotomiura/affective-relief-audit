@@ -1,0 +1,171 @@
+{
+ "purpose": "Paired comparison of edge and grid effects (step 6 of the research plan). For the same surface (same seed, same height scale, same physical domain), only the crop position and the grid are varied; the changes are measured in descriptor values, in the ranking of surfaces, and in the ranking of descriptors by how well they separate two regions of the affective plane. Window, periodic-plus-smooth decomposition and band fixing are compared; values after these treatments are not regarded as true values. For the HF ratio of Gao et al. (2026), a cutoff fixed in pixels and a cutoff fixed in physical wavelength are separate conditions.",
+ "fixed_before_running": "Written on 2026-10-25, before any computation in this file. Any condition added or removed after seeing results is listed under 'deviations' with its reason, and the version number is increased. This design extends an earlier, smaller computation whose results had been seen (condition file hf_ratio_edge.json, commits c2ee719 and 82efec2); it is therefore not blind to those results.",
+ "version": 1,
+ "spec": "experiments/spec/generator-and-descriptors.md",
+ "surfaces_rule": {
+  "points_VA": "25 points with V and A each in {-1, -0.5, 0, 0.5, 1}; (f, s, gamma) from S2.1. The five points with A = 0 have f = 5 (integer) and no edge discontinuity.",
+  "height": "H = s T_gamma(F) with F normalised by 'ampsum' (S1.4), so that the height scale does not depend on the crop or the grid."
+ },
+ "surfaces_control": [
+  {
+   "name": "sine_periodic",
+   "rule": "Single-octave product field, f = 5, gamma = 1, s = 0.18, ampsum. Negative control: periodic sine without edge discontinuity."
+  },
+  {
+   "name": "sine_jump",
+   "rule": "Single-octave product field, f = 5.5, gamma = 1, s = 0.18, ampsum. Adds only the edge discontinuity."
+  },
+  {
+   "name": "flip_positive",
+   "rule": "Positive control for the flip detector: two periodic band-limited height fields (gamma = 1, single tones in x, amplitude chosen so that the RMS slope is 0.01): surface a = tones at 6 and 96 cycles per domain with amplitudes in ratio 1 : 0.15, surface b = a tone at 40 cycles per domain. Their normalised power distributions are not stochastically ordered, so by Proposition 8, part 3, the order of a linear high-pass energy ratio with a pixel-fixed cutoff can change with N. Used with hf_ratio px and with the linear ratio below."
+  }
+ ],
+ "physical_domain": "Side L = 1 for every grid; all grids sample the same domain.",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10
+ ],
+ "crop_offsets": [
+  [
+   0.0,
+   0.0
+  ],
+  [
+   0.13,
+   0.29
+  ],
+  [
+   0.29,
+   0.71
+  ],
+  [
+   0.41,
+   0.07
+  ],
+  [
+   0.77,
+   0.53
+  ]
+ ],
+ "crop_note": "(x0, y0) of S1.1: different windows on the same infinite field for a given seed (the same five offsets as hf_ratio_edge.json).",
+ "grids_N": [
+  128,
+  256,
+  512,
+  1024,
+  2048
+ ],
+ "processing_height": [
+  {
+   "name": "raw",
+   "rule": "No treatment."
+  },
+  {
+   "name": "hann",
+   "rule": "S3.1."
+  },
+  {
+   "name": "pplus",
+   "rule": "Periodic component p of S3.2."
+  }
+ ],
+ "descriptors_height": [
+  {
+   "name": "centroid_amp",
+   "rule": "S2.3."
+  },
+  {
+   "name": "centroid_power",
+   "rule": "S2.4, full band."
+  },
+  {
+   "name": "centroid_band_power",
+   "rule": "S2.4 with K = 32 and power weighting (S3.3); on raw only."
+  },
+  {
+   "name": "sq",
+   "rule": "S2.5."
+  }
+ ],
+ "hf_ratio": {
+  "height_to_normals": "z = H / 30 in units of L (amplitude 0.01 at s = 0.30, as in hf_ratio_edge.json), converted to a normal map by S2.8.",
+  "cutoffs": [
+   {
+    "name": "px",
+    "rule": "freq_threshold = 120 for every N (fixed in pixels; default of Gao et al.)."
+   },
+   {
+    "name": "phys",
+    "rule": "freq_threshold = 120 N / 1024 (N_ref = 1024; fixed in physical wavelength)."
+   }
+  ],
+  "processing": [
+   {
+    "name": "raw",
+    "rule": "As in the procedure of Gao et al."
+   },
+   {
+    "name": "hann",
+    "rule": "Window of S3.1 applied to the normal map (windowed_normals)."
+   },
+   {
+    "name": "pplus",
+    "rule": "S3.2 applied to z before computing the normal map."
+   }
+  ],
+  "variants": [
+   {
+    "name": "uint8",
+    "rule": "As in Gao et al.: normal map rounded to uint8 before and after filtering (S2.9)."
+   },
+   {
+    "name": "float",
+    "rule": "Control: the same computation on floating-point normals without uint8 rounding (S2.9, float variant)."
+   },
+   {
+    "name": "linear_height",
+    "rule": "Control: linear high-pass energy ratio of the height z itself with the same Gaussian high-pass weights (the setting of Proposition 8, part 3)."
+   }
+  ],
+  "order_of_operations": "The height is generated at each N and the normal map is computed from it (normals are never resampled in this file)."
+ },
+ "aliasing": {
+  "rule": "S4: generate with r = 4 and decimate with decimate_fourier; compare with direct sampling.",
+  "subset": "Restricted for computational cost to N in {128, 256, 512}, processing raw, and the descriptors centroid_amp and HF ratio."
+ },
+ "comparisons": [
+  "C1 (crop range): for a given surface, seed and N, the difference between the maximum and the minimum over the five crops.",
+  "C2 (grid change): for a given surface, seed and crop, the values at every N and the difference between N = 128 and N = 2048.",
+  "C3 (relative to the rule): for a given N and crop, the range over the 25 rule points of the seed means (maximum minus minimum). The ratio reported is (mean over seeds of C1) / C3 and (mean over seeds of |C2|) / C3, per surface.",
+  "C4 (ranking of surfaces): Kendall's tau between the rankings of the 25 points (seed means) for each pair of grids and each pair of crops; number of order flips as defined in S6.2 (standard errors over seeds).",
+  "C5 (ranking of descriptors): descriptors ranked by the standardised difference between the two corners (V, A) = (1, -1) and (-1, 1) (difference of seed means divided by the pooled standard deviation); whether the ranking changes with N, crop and processing."
+ ],
+ "predictions": [
+  "P-E1 (negative control): for sine_periodic, the crop range (C1) of raw centroid_amp, centroid_power and sq is below 1e-9 in relative terms (circular shift of a periodic band-limited field), and so is the change with N (C2). The px HF ratio decreases monotonically with N (Proposition 8, part 3); its change with N is larger than that of phys.",
+  "P-E2: for sine_jump and the 20 points with A != 0 (non-integer f), the crop range (C1) of raw centroid_amp is larger than for the five points with A = 0 (integer f).",
+  "P-E3: for raw centroid_amp at N = 2048, the crop range (C1) exceeds the range over the rule (C3) for at least one point with non-integer f. Which points do so is not predicted.",
+  "P-E4: for hann, pplus and centroid_band_power, the crop range (C1) of the points with non-integer f is smaller than for raw.",
+  "P-E5: the px HF ratio decreases with N for every surface (as in the earlier computation; Proposition 8, part 3). The change with N is smaller for phys than for px. With px there is at least one flip in the ranking of surfaces (C4); with phys there are fewer flips than with px.",
+  "P-E6 (aliasing): for points with gamma > 1, the difference in centroid_amp between the decimate_fourier version and direct sampling is larger than for points with gamma <= 1.",
+  "P-E7 (positive control): for flip_positive, the linear_height ratio with the px cutoff changes order between at least one pair of grids; with the phys cutoff it does not. For hf_ratio px on the same pair, the presence of a flip is predicted but not its location."
+ ],
+ "readouts": [
+  "All values in long format: surface, seed, crop, N, processing, descriptor.",
+  "Tables C1-C5 (seed means and standard errors).",
+  "Reference scale: differences in HF ratio between the models compared in Table 1 of Gao et al. (2026), 0.009-0.103."
+ ],
+ "not_done": "Classifier accuracy itself (treated in K5). Warped fields.",
+ "deviations": [],
+ "deviations_before_running": [
+  "2026-10-25, before any computation: revised after a second opinion (Codex). Added the flip_positive control, the float and linear-height variants of the HF ratio, the order of operations for normals, and an explicit aggregation for C3."
+ ]
+}
