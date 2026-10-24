@@ -52,3 +52,25 @@ def test_dropped_octaves_keep_remaining_phases():
     a, _, _ = field_and_grad(4, 3, 64, 5)
     b, _, _ = field_and_grad(4, 6, 64, 5, max_freq=16)
     assert np.allclose(a, b)
+
+
+def _hf_energy_ratio(z, cutoff):
+    """線形の高域通過のエネルギー比。cutoff は領域あたりの周期数（物理）で与える。"""
+    n = z.shape[0]
+    P = np.abs(np.fft.fft2(z - z.mean())) ** 2
+    k = np.fft.fftfreq(n, 1 / n)
+    r = np.hypot(*np.meshgrid(k, k, indexing="ij"))
+    w = 1 - np.exp(-(r**2) / (2 * cutoff**2))
+    return float((w * P).sum() / P.sum())
+
+
+def test_prop8_physical_cutoff_is_grid_invariant():
+    # 命題 8 の 1: 周期的で帯域が限られた場、物理の周波数で定めた重み
+    vals = [_hf_energy_ratio(field_and_grad(4, 4, n, 1)[0], 20.0) for n in (128, 256, 512)]
+    assert max(vals) - min(vals) < 1e-10
+
+
+def test_prop8_pixel_cutoff_decreases_with_grid():
+    # 命題 8 の 3: 境界を画素で固定すると（周期数 = n / 16）、N とともに狭義に減る
+    vals = [_hf_energy_ratio(field_and_grad(4, 4, n, 1)[0], n / 16) for n in (128, 256, 512)]
+    assert vals[0] > vals[1] > vals[2]
