@@ -13,3 +13,5 @@ adapters/original.py
 advice/
 handoff/
 review/
+# 作業記録（タスクごとの要件・設計・タスクリスト・判断）。手元だけに置き、履歴にも入れない
+.steering/
