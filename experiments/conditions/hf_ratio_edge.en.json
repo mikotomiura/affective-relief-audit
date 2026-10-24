@@ -1,0 +1,34 @@
+{
+  "translation_of": "hf_ratio_edge.json (Japanese, authoritative; its SHA-256 is recorded in the results). This file is an English translation made on 2026-10-25, after the computation, and has no effect on it.",
+  "purpose": "Measure, on synthetic surfaces, how much the HF ratio of Gao et al. (2026) (a copy of the authors' public code) changes with the crop position of the same surface (edge discontinuity) and with the grid. No claim is made about the conclusions of the comparison in Gao et al.",
+  "fixed_before_running": "This list was written before the computation. Conditions added or removed after seeing results are explained in this section.",
+  "surfaces": [
+    {"name": "sine_f5", "octaves": 1, "f": 5.0, "gamma": 1.0, "role": "Negative control (no edge discontinuity)."},
+    {"name": "sine_f5.5", "octaves": 1, "f": 5.5, "gamma": 1.0, "role": "Control that adds only the edge discontinuity."},
+    {"name": "oct4_f5_g1", "octaves": 4, "f": 5.0, "gamma": 1.0},
+    {"name": "oct4_f5.5_g1", "octaves": 4, "f": 5.5, "gamma": 1.0},
+    {"name": "oct4_f5_g1.75", "octaves": 4, "f": 5.0, "gamma": 1.75},
+    {"name": "oct4_f5.5_g1.75", "octaves": 4, "f": 5.5, "gamma": 1.75}
+  ],
+  "field": "Field of the rule's type: each octave sin(2 pi f_o x + phi) sin(2 pi f_o y + psi), f_o = f 2^o, amplitude 0.5^o, phases uniform from the seed (drawn as in atact.field). Normalisation is the constant division by the sum of amplitudes (1 for one octave, 1.875 for four), so that the surface does not depend on the crop (different from the reconstruction's default A2, maxabs). Height z = 0.01 T_gamma(F) (length unit: domain side = 1).",
+  "seeds": [1, 2, 3, 4, 5],
+  "grids_N": [256, 512, 1024, 2048],
+  "crop_offsets": [[0.0, 0.0], [0.13, 0.29], [0.29, 0.71], [0.41, 0.07], [0.77, 0.53]],
+  "cutoffs": [
+    {"name": "px120", "rule": "Default of Gao et al.: freq_threshold = 120 pixels (fixed in pixels for every grid)."},
+    {"name": "phys", "rule": "Fixed in physical wavelength: freq_threshold = 120 N / 1024 (equal to the default at N = 1024)."}
+  ],
+  "processing": [
+    {"name": "raw", "rule": "The procedure of Gao et al. (no window)."},
+    {"name": "hann", "rule": "Comparison only: a 2-D Hann window is applied to the deviation of each normal component from its mean, the vector is renormalised, and the same procedure follows. The window also changes the interior, so the result is not regarded as the true value."}
+  ],
+  "normals": "Slopes by central differences (one-sided at the edge); OpenGL-convention normals rounded to uint8 RGB.",
+  "readouts": [
+    "HF ratio per surface, grid and crop.",
+    "Range over crops (maximum minus minimum for the same surface, seed and grid), compared between f = 5 and f = 5.5.",
+    "Comparison of the f = 5 versus f = 5.5 difference (edge discontinuity) with the gamma = 1 versus gamma = 1.75 difference (a knob of the rule).",
+    "Change with the grid (N = 256 to 2048), compared between px120 and phys.",
+    "Reference scale: differences between the models compared in Table 1 of Gao et al. (2026), 0.009-0.103."
+  ],
+  "not_done": "Separation of aliasing after the power transform (generate at high resolution and decimate) is outside this computation."
+}

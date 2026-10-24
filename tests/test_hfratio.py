@@ -1,4 +1,4 @@
-"""HF ratio の写し（atact.hfratio）と、切り出しの場（experiments/hf_ratio_edge.py）の確かめ。"""
+"""Tests of the HF ratio copy (atact.hfratio) and of the cropped-window field (experiments/hf_ratio_edge.py)."""
 
 import importlib.util
 from pathlib import Path
@@ -20,7 +20,7 @@ def test_flat_normal_map_has_zero_ratio():
 
 
 def test_cutoff_is_fixed_in_pixels():
-    # cutoff = cutoff_ratio * 半対角 = N / (120 * FWHM)。画素あたりの周期にすると N によらない
+    # cutoff = cutoff_ratio * half-diagonal = N / (120 * FWHM); expressed in cycles per pixel it is independent of N
     for n in (256, 1024):
         c = cutoff_ratio(n, n, 120) * np.hypot(n // 2, n // 2)
         assert abs(c / n - 1 / (120 * np.sqrt(2 * np.log(2)))) < 1e-9
@@ -33,7 +33,7 @@ def test_field_at_zero_offset_matches_generator():
 
 
 def test_integer_f_is_shift_invariant_under_periodic_crop():
-    # f が整数なら窓をずらしても表面は巡回シフトになり、DFT のエネルギー比は変わらない（量子化の誤差を除く）
+    # For integer f, shifting the window yields a cyclic shift of the surface, so the DFT energy ratio is unchanged (up to quantisation error)
     a = exp.field(5.0, 4, 128, 1, 0.0, 0.0)
     b = exp.field(5.0, 4, 128, 1, 0.5, 0.25)
     assert np.allclose(np.roll(a, (-32, -64), axis=(0, 1)), b, atol=1e-9)

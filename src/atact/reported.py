@@ -1,9 +1,9 @@
-"""原稿が報告している値（改訂稿 4.3 節・表 1〜3）。比べる相手として置く。
+"""Values reported in Harada (2026) (revised manuscript, Section 4.3 and Tables 1-3), kept as the reference for comparison.
 
-ここにあるのは報告された数で、私たちが再現した数ではない。
+These are the reported numbers, not numbers reproduced here.
 """
 
-# 表 3: 20 回繰り返した層化 5 分割の交差検証（平均, 標準偏差）。割合で持つ
+# Table 3: stratified 5-fold cross-validation repeated 20 times (mean, standard deviation). Stored as proportions
 TABLE3 = {
     "rq": (0.916, 0.049),
     "centroid": (0.742, 0.085),
@@ -11,10 +11,10 @@ TABLE3 = {
     "permuted": (0.500, 0.095),
 }
 
-# 75/25 の 1 回の分割: 30 枚中 29 枚が正解（4.3 節）
+# One 75/25 split: 29 of 30 correct (Section 4.3)
 HOLDOUT = {"accuracy": 0.967, "n_test": 30, "n_correct": 29}
 
-# 表 2
+# Table 2
 TABLE2 = {
     "n": 128,
     "octaves": 4,
@@ -26,5 +26,5 @@ TABLE2 = {
     "gamma_range": (0.9, 2.6),
 }
 
-# 図 3 の 3 枚（座標は本文に書かれていない）
+# The three panels of Fig. 3 (coordinates are not given in the text)
 FIG3_PANELS = ("calm", "anger", "complex")

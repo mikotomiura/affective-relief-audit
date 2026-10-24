@@ -1,7 +1,7 @@
-"""命題 3・5・6・7 の数値を出し直し、results/ に JSON・表・図を書く。
+"""Recompute the numbers for Propositions 3, 5, 6 and 7 and write JSON, tables and figures to results/.
 
-使い方: uv run python experiments/run_all.py
-組み直しの生成器での値で、元のコード（ESM_1.zip）の値ではない。
+Usage: uv run python experiments/run_all.py
+Values come from the reconstructed generator, not from the original code (ESM_1.zip).
 """
 
 from __future__ import annotations

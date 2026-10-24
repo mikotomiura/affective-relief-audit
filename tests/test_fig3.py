@@ -1,9 +1,9 @@
-"""図 3 の指紋（atact.fig3）の確かめ。
+"""Tests of the Fig. 3 fingerprint (atact.fig3).
 
-1. 検算: 同じ描き方（gist_earth + soft-light の陰影 + 最近傍の拡大）で描いた既知の模様から、
-   高さと指紋が戻ること。
-2. 実物: source/media/image3.png があれば、256 x 256 の格子・色の誤差・3 枚の指紋を固定する。
-   原稿は git の外なので、無ければ skip する。
+1. Check by recomputation: from a known pattern rendered in the same way (gist_earth + soft-light shading + nearest-neighbour enlargement),
+   the height and the fingerprint are recovered.
+2. Actual figure: if source/media/image3.png exists, pin the 256 x 256 grid, the colour error and the three fingerprints.
+   The preprint is outside git, so the tests are skipped if it is absent.
 """
 
 import numpy as np
@@ -39,14 +39,14 @@ def _noisy(f, a=0.2):
     return _tone(f) + a * np.random.default_rng(0).uniform(-1, 1, (N, N))
 
 
-# ---------------------------------------------------------------- 1. 検算
+# ---------------------------------------------------------------- 1. Check by recomputation
 
 
 @pytest.mark.parametrize("Z", [_tone(1.5), _tone(6), _noisy(6)], ids=["tone1.5", "tone6", "noisy6"])
 def test_soft_light_inverse_recovers_height(Z):
     c, I, err = soft_light_inverse(_shade(Z))
     assert err.max() < 1e-6
-    assert np.abs(c / 255 - _mm(Z)).max() < 1 / 255 + 1e-9  # 256 段の量子化の範囲
+    assert np.abs(c / 255 - _mm(Z)).max() < 1 / 255 + 1e-9  # within the 256-level quantisation
 
 
 def test_block_grid_roundtrip():
@@ -74,8 +74,8 @@ def test_harmonic3_sine_vs_square():
 
 
 def test_speckle_separates_noise_from_edges():
-    assert speckle(_mm(_tone(6))) < 0.02    # 6 周期の滑らかな曲がりで 0.008
-    assert speckle(_mm(_square(6))) < 0.004   # 縁だけでは上がらない
+    assert speckle(_mm(_tone(6))) < 0.02    # a smooth bend of 6 cycles gives 0.008
+    assert speckle(_mm(_square(6))) < 0.004   # edges alone do not raise it
     assert speckle(_mm(_noisy(6))) > 0.05
 
 
@@ -85,7 +85,7 @@ def test_fingerprint_distance_zero_to_self():
     assert fig3.distance(fingerprint(_tone(1.5)), fp) > 1.0
 
 
-# ---------------------------------------------------------------- 2. 実物
+# ---------------------------------------------------------------- 2. Actual figure
 
 needs_fig = pytest.mark.skipif(not fig3.FIG3.exists(), reason="原稿の図 3 が無い（git の外）")
 
@@ -99,10 +99,10 @@ def real():
 def test_real_grid_is_256_and_fits_soft_light(real):
     for name, d in real.items():
         assert d["height"].shape == (256, 256), name
-        assert 255 * d["err"].max() < 2.0, name  # 色の誤差が 2/255 未満
+        assert 255 * d["err"].max() < 2.0, name  # colour error below 2/255
 
 
-# 2026-10-24 に測った値（図 3 から取り戻した高さでの値）
+# Values measured on 2026-10-24 (on the height recovered from Fig. 3)
 REAL_FP = {
     "calm": {"cycles_x": 1.6, "cycles_y": 1.6, "harmonic3": (0.0, 0.03), "speckle": (0.0, 0.006)},
     "anger": {"cycles_x": 6.4, "cycles_y": 6.4, "harmonic3": (0.15, 0.25), "speckle": (0.1, 0.16)},

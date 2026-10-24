@@ -1,9 +1,9 @@
-"""Gao ら（2026）の評価の記述子「HF ratio」の写しと、高さの場から法線の図を作る手順。
+"""Copy of the "HF ratio" descriptor of the evaluation of Gao et al. (2026), and the procedure for building a normal map from a height field.
 
-写しの出典は著者の公開コード（github.com/alex4727/Text2TactileGraphics、main を 2026-10-24 に取得）の
-`src/experiments/text2texture/05_evaluate_hf_ratio.py` と
-`src/text2tactilegraphics/geometry/filtering.py`。取得したコードは実行せず、読んで書き写した。
-違いは入出力（PIL の代わりに uint8 の配列）だけで、計算の手順と定数は同じにしてある。
+The copy is from the authors' public code (github.com/alex4727/Text2TactileGraphics, main, retrieved 2026-10-24):
+`src/experiments/text2texture/05_evaluate_hf_ratio.py` and
+`src/text2tactilegraphics/geometry/filtering.py`. The retrieved code was read and transcribed, not run.
+The only difference is in input and output (uint8 arrays instead of PIL); the computational steps and constants are the same.
 """
 
 from __future__ import annotations
@@ -14,7 +14,7 @@ DEFAULT_FREQ_THRESHOLD = 120  # text2texture/config.py
 _GAUSSIAN_FWHM = float(np.sqrt(2 * np.log(2)))
 
 
-# --- filtering.py の写し --------------------------------------------------------
+# --- copy of filtering.py --------------------------------------------------------
 
 
 def _highpass_filter_fft(data: np.ndarray, cutoff_ratio: float) -> np.ndarray:
@@ -37,7 +37,7 @@ def cutoff_ratio(h: int, w: int, freq_threshold: float) -> float:
 
 
 def high_pass_normal_rgb(rgb: np.ndarray, freq_threshold: float) -> np.ndarray:
-    """apply_high_pass_to_normal_map(method="per_channel")。入出力は uint8 の H x W x 3。"""
+    """apply_high_pass_to_normal_map(method="per_channel"). Input and output are uint8 H x W x 3."""
     normal_rgb = rgb.astype(np.float32) / 255.0
     h, w = normal_rgb.shape[:2]
     normal = normal_rgb * 2.0 - 1.0
@@ -48,7 +48,7 @@ def high_pass_normal_rgb(rgb: np.ndarray, freq_threshold: float) -> np.ndarray:
     return (np.clip(out, 0, 1) * 255).astype(np.uint8)
 
 
-# --- 05_evaluate_hf_ratio.py の写し ---------------------------------------------
+# --- copy of 05_evaluate_hf_ratio.py ---------------------------------------------
 
 
 def _signal_energy(img01: np.ndarray) -> float:
@@ -65,7 +65,7 @@ def _signal_energy(img01: np.ndarray) -> float:
 
 
 def hf_ratio(rgb: np.ndarray, freq_threshold: float = DEFAULT_FREQ_THRESHOLD) -> float:
-    """compute_hf_ratio。rgb は uint8 の H x W x 3 の法線の図。"""
+    """compute_hf_ratio. rgb is a uint8 H x W x 3 normal map."""
     before = _signal_energy(rgb.astype(np.float32) / 255.0)
     if before <= 0:
         return 0.0
@@ -74,14 +74,14 @@ def hf_ratio(rgb: np.ndarray, freq_threshold: float = DEFAULT_FREQ_THRESHOLD) ->
     return float(np.clip(after / before, 0.0, 1.0))
 
 
-# --- 高さの場から法線の図へ（ここからは本研究の手順） --------------------------------
+# --- From height field to normal map (from here on, the procedure of this work) --------------------------------
 
 
 def normal_rgb_from_height(z: np.ndarray, side: float = 1.0) -> np.ndarray:
-    """高さ z（領域と同じ長さの単位）から OpenGL 規約の法線の図（uint8）を作る。
+    """Build an OpenGL-convention normal map (uint8) from a height z (in the same length unit as the domain).
 
-    傾きは中心差分（端は片側差分。周期を仮定しない）。画素の間隔は side / N で、
-    同じ表面なら格子を変えても法線はほぼ同じになる。
+    Slopes are central differences (one-sided at the edge; no periodicity assumed). The pixel spacing is side / N, so
+    for the same surface the normals are nearly the same on different grids.
     """
     n = z.shape[0]
     dzdy, dzdx = np.gradient(z, side / n)
@@ -93,3 +93,22 @@ def normal_rgb_from_height(z: np.ndarray, side: float = 1.0) -> np.ndarray:
 def hann2d(n: int) -> np.ndarray:
     w = np.hanning(n)
     return np.outer(w, w)
+
+
+def hf_ratio_float(normal: np.ndarray, freq_threshold: float = DEFAULT_FREQ_THRESHOLD) -> float:
+    """Float variant of hf_ratio (S2.9): a control without uint8 rounding.
+
+    `normal` is an H x W x 3 array of unit normals in [-1, 1]. The steps follow hf_ratio and
+    high_pass_normal_rgb exactly, with the encoding (n + 1) / 2 kept in floating point, so only
+    the rounding to uint8 of the input and of the filtered map is omitted.
+    """
+    rgb01 = ((normal.astype(np.float32) + 1.0) / 2.0).astype(np.float32)
+    before = _signal_energy(rgb01)
+    if before <= 0:
+        return 0.0
+    h, w = rgb01.shape[:2]
+    hp = _highpass_filter_fft(rgb01 * 2.0 - 1.0, cutoff_ratio(h, w, freq_threshold))
+    hp[..., 2] += 1.0
+    hp = hp / (np.linalg.norm(hp, axis=-1, keepdims=True) + 1e-8)
+    after = _signal_energy(np.clip((hp + 1.0) / 2.0, 0, 1))
+    return float(np.clip(after / before, 0.0, 1.0))

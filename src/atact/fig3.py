@@ -1,18 +1,18 @@
-"""原稿の図 3（source/media/image3.png）から 3 枚の高さを取り戻し、形の指紋を測る。
+"""Recover the heights of the three panels of Fig. 3 of Harada (2026) (source/media/image3.png) and measure shape fingerprints.
 
-図 3 の作り（2026-10-24 に画像から確かめた）:
-  - 6000 x 2160 の画像に 3 枚が並ぶ。各枚は太さ約 7 px の黒い枠の内側の 1872 x 1872。
-  - 各枚は 1 辺 256 個のブロックを最近傍で拡大したもの。描いた格子は 256 x 256（表 2 の 128 ではない）。
-  - 色は gist_earth（256 色）に soft-light の陰影をかけたもの（matplotlib の LightSource.shade の
-    blend_mode="soft" と同じ式）。soft-light は明るさ I について線形なので、各点で
-    「色地図の番号 c と明るさ I」を最小二乗で当てると、色の誤差は 1/255 未満に収まる。
-  - c / 255 が min-max した高さ（256 段に量子化）になる。
+Structure of Fig. 3 (checked on the image, 2026-10-24):
+  - Three panels in a 6000 x 2160 image. Each panel is 1872 x 1872 inside a black frame about 7 px thick.
+  - Each panel is a nearest-neighbour enlargement of blocks, 256 per side. The grid drawn is 256 x 256 (not the 128 of Table 2).
+  - The colour is gist_earth (256 colours) with soft-light shading (the same formula as blend_mode="soft" of
+    matplotlib LightSource.shade). Soft-light is linear in the intensity I, so fitting, at each point, the
+    colour-map index c and the intensity I by least squares gives a colour error below 1/255.
+  - c / 255 is the min-max height (quantised to 256 levels).
 
-指紋（generator の出力にも同じ関数をかけて比べる）:
-  cycles_x, cycles_y  各軸の主な周期数（領域あたり）。行（列）ごとに正弦を最小二乗で当てた説明率の和が
-                      最大になる周波数。整数でない周期数（Calm の約 1.5）も測れる
-  harmonic3           3 次と 1 次の振幅の比。正弦なら 0、矩形波なら 1/3
-  speckle             4 近傍のラプラシアンの絶対値の中央値（面の中のざらつき。縁には引きずられない）
+Fingerprints (the same functions are applied to the output of the generator for comparison):
+  cycles_x, cycles_y  dominant number of cycles along each axis (per domain): the frequency maximising the summed variance explained by a least-squares sinusoid per row (column). Non-integer numbers
+                      of cycles (about 1.5 for Calm) can also be measured
+  harmonic3           ratio of the amplitudes of the 3rd and 1st harmonics: 0 for a sine, 1/3 for a square wave
+  speckle             median of the absolute 4-neighbour Laplacian (roughness inside faces; not dominated by edges)
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 FIG3 = ROOT / "source" / "media" / "image3.png"
 
-# 各枚の内側の左上 (x0, y0) と 1 辺の長さ。枠は列 (87, 1974)・(2057, 3944)・(4027, 5914)、行 (137, 2024)
+# Top-left corner (x0, y0) and side length of the inside of each panel. Frames at columns (87, 1974), (2057, 3944), (4027, 5914), rows (137, 2024)
 PANELS = {"calm": (95, 145), "anger": (2065, 145), "complex": (4035, 145)}
 SIDE = 1872
 
@@ -42,11 +42,11 @@ def load_image(path: Path = FIG3) -> np.ndarray:
 
 
 def block_grid(P: np.ndarray, n: int = 256) -> np.ndarray:
-    """最近傍で拡大した枚から、ブロックの中心の色を拾って元の格子に戻す。
+    """From a panel enlarged by nearest neighbour, take the colour at each block centre and return to the original grid.
 
-    隣と色が変わる列（行）を境目とみなす。図 3 では内側に 255 本の境目があり、最初と最後の
-    ブロックは枠に半分ほど隠れている。色が平らに続く模様では境目を数えられないので、
-    数が n と合わなければ止める。
+    A column (row) where the colour differs from its neighbour is taken as a block boundary. In Fig. 3 there are 255 boundaries inside;
+    the first and last blocks are about half hidden by the frame. For a pattern with flat runs of colour the boundaries cannot be counted,
+    so the function stops if their number does not match n.
     """
     def centers(axis):
         changed = (np.abs(np.diff(P, axis=axis)).sum(-1) > 0).mean(1 - axis)
@@ -59,9 +59,9 @@ def block_grid(P: np.ndarray, n: int = 256) -> np.ndarray:
 
 
 def soft_light_inverse(G: np.ndarray, lut: np.ndarray | None = None):
-    """色 G (h, w, 3) を、soft-light 合成 out = L^2 + I (2L - 2L^2) の (c, I) に戻す。
+    """Invert the soft-light composite out = L^2 + I (2L - 2L^2) to (c, I) from the colour G (h, w, 3).
 
-    返り値は (c: 色地図の番号, I: 明るさ, err: 色の誤差 (0-1 の RGB の距離))。
+    Returns (c: colour-map index, I: intensity, err: colour error (RGB distance in 0-1)).
     """
     L = _lut() if lut is None else lut
     a, b = L**2, 2 * L - 2 * L**2
@@ -82,7 +82,7 @@ def soft_light_inverse(G: np.ndarray, lut: np.ndarray | None = None):
 
 
 def panels(path: Path = FIG3) -> dict:
-    """3 枚の {name: {"height": [0,1] の 256 x 256, "shade": I, "err": 色の誤差}}。"""
+    """For the three panels, {name: {"height": [0,1] array of 256 x 256, "shade": I, "err": colour error}}."""
     im = load_image(path)
     out = {}
     for name, (x0, y0) in PANELS.items():
@@ -92,11 +92,11 @@ def panels(path: Path = FIG3) -> dict:
     return out
 
 
-# ---------------------------------------------------------------- 指紋
+# ---------------------------------------------------------------- fingerprints
 
 
 def _sine_power(rows: np.ndarray, freqs: np.ndarray) -> np.ndarray:
-    """各周波数で、行ごとに a sin + b cos + c を当てたときの説明された分散の合計。"""
+    """Total explained variance when a sin + b cos + c is fitted row by row at each frequency."""
     n = rows.shape[1]
     x = np.arange(n) / n
     R = rows - rows.mean(1, keepdims=True)
@@ -109,14 +109,14 @@ def _sine_power(rows: np.ndarray, freqs: np.ndarray) -> np.ndarray:
 
 
 def dominant_cycles(H: np.ndarray, axis: int = 1, fmax: float = 20.0, step: float = 0.05) -> float:
-    """axis=1 は横（x）方向、axis=0 は縦（y）方向の、領域あたりの主な周期数。"""
+    """Dominant number of cycles per domain along axis=1 (horizontal, x) or axis=0 (vertical, y)."""
     rows = H if axis == 1 else H.T
     freqs = np.arange(0.5, fmax + step / 2, step)
     return float(freqs[_sine_power(rows, freqs).argmax()])
 
 
 def harmonic3(H: np.ndarray, f: float, axis: int = 1) -> float:
-    """周期数 f の 3 次と 1 次の振幅の比（行ごとに当て、振幅を足し合わせる）。"""
+    """Ratio of the 3rd to the 1st harmonic amplitude at f cycles (fitted row by row, amplitudes summed)."""
     rows = H if axis == 1 else H.T
     n = rows.shape[1]
     x = np.arange(n) / n
@@ -130,17 +130,17 @@ def harmonic3(H: np.ndarray, f: float, axis: int = 1) -> float:
 
 
 def speckle(H: np.ndarray) -> float:
-    """細かい斑点の強さ: 4 近傍のラプラシアンの絶対値の中央値（min-max した高さで）。
+    """Strength of fine speckle: median of the absolute 4-neighbour Laplacian (on the min-max height).
 
-    中央値をとるので、矩形波の縁（面積が小さい）には引きずられず、面の中のざらつきを見る。
-    純音や滑らかな場では 256 段の量子化の大きさ（約 0.004）に近くなる。
+    Because it is a median, it is not dominated by the edges of a square wave (small area) and measures roughness inside faces.
+    For a pure tone or a smooth field it is close to the 256-level quantisation size (about 0.004).
     """
     lap = 4 * H - np.roll(H, 1, 0) - np.roll(H, -1, 0) - np.roll(H, 1, 1) - np.roll(H, -1, 1)
     return float(np.median(np.abs(lap[1:-1, 1:-1])))
 
 
 def fingerprint(H: np.ndarray) -> dict:
-    """min-max した高さの指紋。H は正方形（図 3 は 256 x 256）。"""
+    """Fingerprint of the min-max height. H is square (256 x 256 for Fig. 3)."""
     H = (H - H.min()) / (H.max() - H.min())
     cx = dominant_cycles(H, 1)
     cy = dominant_cycles(H, 0)
@@ -153,9 +153,9 @@ def fingerprint(H: np.ndarray) -> dict:
 
 
 def distance(fp: dict, ref: dict) -> float:
-    """指紋どうしの距離。周期数と斑点は対数の差、高調波の比はそのままの差（3 倍して重みをそろえる）。"""
+    """Distance between fingerprints: log difference for cycles and speckle, plain difference for the harmonic ratio (times 3 to equalise weights)."""
     d = abs(np.log(fp["cycles_x"] / ref["cycles_x"])) + abs(np.log(fp["cycles_y"] / ref["cycles_y"]))
     d += 3 * abs(fp["harmonic3"] - ref["harmonic3"])
-    # 斑点は 256 段の量子化の大きさ（約 0.004）より下を区別しない
+    # Speckle below the 256-level quantisation size (about 0.004) is not distinguished
     d += abs(np.log(max(fp["speckle"], 0.004) / max(ref["speckle"], 0.004)))
     return float(d)

@@ -1,17 +1,17 @@
-"""元のコード（ESM_1.zip）が届いたときに流す 1 本。
+"""Single script to run once the original code (ESM_1.zip) is available.
 
-使い方（README の「元のコードが届いたら」の節の手順 1〜3 を済ませてから）:
+Usage (after steps 1-3 of the section on the arrival of the original code in the README):
   uv run python experiments/arrival_check.py --zip ~/Downloads/ESM_1.zip
-出力: results/original/ に manifest.json・conformance.txt・compare.md・fig3.md・fig3.png・decompose.md・README.md
+Output: results/original/ with manifest.json, conformance.txt, compare.md, fig3.md, fig3.png, decompose.md, README.md
 
-順番:
-  1. zip と展開した各ファイルの SHA-256 を manifest.json に書く（何を動かしたかを残す）
-  2. 適合テスト（tests/test_backends.py の test_conf_*）を元のコードにかける
-  3. 報告値との比較（compare_reported）
-  4. 図 3 の再生成と指紋（アダプタに fig3_heights があるとき）
-  5. 切り分け（decompose）
+Order:
+  1. Write the SHA-256 of the zip and of each extracted file to manifest.json (a record of what was run)
+  2. Run the conformance tests (test_conf_* in tests/test_backends.py) against the original code
+  3. Compare with the reported values (compare_reported)
+  4. Regenerate Fig. 3 and compute fingerprints (when the adapter provides fig3_heights)
+  5. Decomposition (decompose)
 
-アダプタを読み込むと元のコードが import されて動く。動かす前に元のコードの中身を読むこと。
+Loading the adapter imports and executes the original code. Read the original code before running it.
 """
 
 from __future__ import annotations
@@ -98,7 +98,7 @@ def fig3_section(orig, out: Path) -> str:
             cells = f"{lab} | {md:.4f} | {corr:.4f}"
         else:
             D, cells = Hm, "- | - | -"
-        fpo, fpr = fig3.fingerprint(D), fig3.fingerprint(R)  # 向きをそろえた後で測る（x と y を入れ替えない）
+        fpo, fpr = fig3.fingerprint(D), fig3.fingerprint(R)  # measured after aligning the orientation (x and y are not swapped)
         L.append(f"| {name} | {Hm.shape[0]} x {Hm.shape[1]} | {cells} | {fig3.distance(fpo, fpr):.2f} | "
                  f"{fpo['cycles_x']:.2f} / {fpo['cycles_y']:.2f} | {fpr['cycles_x']:.2f} / {fpr['cycles_y']:.2f} |")
         axes[0, j].imshow(R, cmap="gist_earth")

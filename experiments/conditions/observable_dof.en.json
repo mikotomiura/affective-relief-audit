@@ -1,0 +1,25 @@
+{
+  "translation_of": "observable_dof.json (Japanese, authoritative; its SHA-256 is recorded in the results). This file is an English translation made on 2026-10-25, after the computation, and has no effect on it.",
+  "purpose": "Compute numerically the rank of the map from the inputs (two: V, A; hypothetically three: V, A, D) to the height map before normalisation, to the exported (min-max) height map, and to the pair of descriptors, and compare the observable degrees of freedom. The third input D is the minimal one that moves gamma alone; it is not designed as an improvement of the rule.",
+  "fixed_before_running": "This list was written before the computation. Conditions added or removed after seeing results are explained in this section.",
+  "maps": [
+    {"name": "two_inputs", "rule": "Eqs. (1)-(3) of Harada (2026) (atact.mapping.params)."},
+    {"name": "three_inputs", "rule": "Eqs. (1)-(3) plus gamma <- gamma + 0.3 D (D in [-1, 1]); f and s unchanged. The coefficient 0.3 does not affect the rank."}
+  ],
+  "generator": "Default of atact.field (four octaves, no warp, maxabs, N = 128). H = s T_gamma(F) (as atact.field.height).",
+  "outputs": [
+    {"name": "H", "rule": "All pixels of the height map before normalisation."},
+    {"name": "minmax", "rule": "All pixels of the exported height map (H - min) / (max - min)."},
+    {"name": "desc_H", "rule": "(Rq, centroid) on H (eqs. (5) and (6) of Harada (2026); atact.descriptors.rq and centroid)."},
+    {"name": "desc_minmax", "rule": "(Rq, centroid) on the exported height map."}
+  ],
+  "points": [[0.0, 0.0, 0.0], [0.5, -0.5, 0.0], [-0.5, 0.5, 0.0], [0.3, 0.2, 0.5]],
+  "points_note": "(V, A, D). The two-input map does not use D. Includes a point where f is an integer (A = 0, f = 5) and points where it is not.",
+  "seeds": [1, 2, 3],
+  "jacobian": "Central differences with step 1e-4 (input units). Singular values divided by the largest; the number above 1e-6 is the rank.",
+  "predictions": [
+    "Two inputs: H 2, minmax 2, desc_H 2, desc_minmax 2 (Proposition 1; V survives the export through gamma).",
+    "Three inputs: H 3, minmax 2, desc_H 2, desc_minmax 2 (Proposition 4: the export removes s, leaving (f, gamma); with two descriptors the rank is at most 2).",
+    "The null direction of minmax for three inputs is the input direction that changes s alone without changing (f, gamma) (moving V and cancelling the change of gamma with D)."
+  ]
+}

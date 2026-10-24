@@ -1,14 +1,14 @@
-"""解像度をまたぐ比較の 2 つの記述子の写しと、その比較を合成した表面で再現する部品。
+"""Copies of two descriptors used in comparisons across resolutions, and components to reproduce that comparison on synthetic surfaces.
 
-- GLCM Score: Diffusion-4K（Zhang ら, CVPR 2025）の公開コード
-  （github.com/zhang0jhon/diffusion-4k、main を 2026-10-24 に取得）の `eval.py` の `gray_proc` と `glcm`。
-  HiMat（Wang ら, Eurographics 2026）がこの指標で 256・512・4K の生成物を比べている。
-  論文の式は s = −(1/P)ΣH(g_p) と負号つきだが、コードは正のエントロピー
-  （skimage の shannon_entropy を GLCM の配列にかけたもの）を返す。ここではコードに従う。
-- 継ぎ目の指標: Gao ら 2026 の公開コード（github.com/alex4727/Text2TactileGraphics）の
-  `src/experiments/tiling/02_evaluate_tileability.py` と、`01_generate_tiled.py` の縮小（PIL の LANCZOS）と中央の切り出し。
+- GLCM Score: `gray_proc` and `glcm` of `eval.py` in the public code of Diffusion-4K (Zhang et al., CVPR 2025)
+  (github.com/zhang0jhon/diffusion-4k, main, retrieved 2026-10-24).
+  HiMat (Wang et al., Eurographics 2026) compares outputs at 256, 512 and 4K with this measure.
+  The paper's formula carries a minus sign, s = -(1/P) sum H(g_p), but the code returns a positive entropy
+  (skimage shannon_entropy applied to the GLCM array). The code is followed here.
+- Seam measure: the public code of Gao et al. 2026 (github.com/alex4727/Text2TactileGraphics),
+  `src/experiments/tiling/02_evaluate_tileability.py`, and the downscaling (PIL LANCZOS) and centre crop of `01_generate_tiled.py`.
 
-取得したコードは実行せず、読んで書き写した。違いは入出力（ファイルの代わりに配列）だけである。
+The retrieved code was read and transcribed, not run. The only differences are in input and output (arrays instead of files).
 """
 
 from __future__ import annotations
@@ -18,14 +18,14 @@ from PIL import Image
 from skimage.feature import graycomatrix
 from skimage.measure import shannon_entropy
 
-# --- Diffusion-4K の GLCM Score ------------------------------------------------
+# --- GLCM Score of Diffusion-4K ------------------------------------------------
 
 GLCM_DIST = [1, 2, 3, 4]
 GLCM_ANGLES = [0, np.pi / 4, np.pi / 2, np.pi * 3 / 4]
 
 
 def gray64(gray_u8: np.ndarray) -> np.ndarray:
-    """gray_proc の後半（256 階調を 4 で割って 64 階調に落とす）。入力は既に灰色の uint8。"""
+    """Second half of gray_proc (reduce 256 grey levels to 64 by dividing by 4). The input is already grey uint8."""
     return (gray_u8.astype(np.uint8) // 4).astype(np.uint8)
 
 
@@ -35,7 +35,7 @@ def glcm_entropy(patch64: np.ndarray) -> float:
 
 
 def glcm_score(gray_u8: np.ndarray, patch: int = 64) -> float:
-    """main のループ。画像を patch 画素の小片に割り、小片ごとの値を平均する。"""
+    """Loop of main: split the image into patches of patch pixels and average the per-patch values."""
     g = gray64(gray_u8)
     n = g.shape[0] // patch
     s = [glcm_entropy(g[i * patch:(i + 1) * patch, j * patch:(j + 1) * patch])
@@ -43,7 +43,7 @@ def glcm_score(gray_u8: np.ndarray, patch: int = 64) -> float:
     return float(np.mean(s))
 
 
-# --- Gao ら 2026 の継ぎ目の指標 --------------------------------------------------
+# --- Seam measure of Gao et al. 2026 --------------------------------------------------
 
 
 def border_discontinuity(img: np.ndarray, direction: str) -> float:
@@ -82,16 +82,16 @@ def center_crop(rgb_u8: np.ndarray, size: int) -> np.ndarray:
     return rgb_u8[t:t + size, l:l + size]
 
 
-# --- 解析的な場（ここからは本研究の手順） ------------------------------------------
+# --- Analytic field (from here on, the procedure of this work) ------------------------------------------
 
 
 def field_and_grad(f: float, octaves: int, n: int, seed: int, x0: float = 0.0, y0: float = 0.0,
                    max_freq: float | None = None):
-    """窓 [x0, x0+1) x [y0, y0+1) の上の場 F と、その解析的な勾配（領域の 1 辺を 1 とする単位）。
+    """Field F on the window [x0, x0+1) x [y0, y0+1) and its analytic gradient (unit: domain side = 1).
 
-    各段 sin(2π f_o x + φ) sin(2π f_o y + ψ)、f_o = f 2^o、振幅 0.5^o。位相の引き方は atact.field と同じ。
-    max_freq を与えると、f_o がそれを超える段を落とす（その格子の生成器が作れない細部を持たせない）。
-    乱数は落とした段の分も引くので、残る段の位相は max_freq によらず同じになる。
+    Each layer is sin(2π f_o x + φ) sin(2π f_o y + ψ), f_o = f 2^o, amplitude 0.5^o. Phases are drawn as in atact.field.
+    If max_freq is given, layers with f_o above it are dropped (so that no detail is present that the generator for that grid could not produce).
+    The random draws include the dropped layers, so the phases of the remaining layers do not depend on max_freq.
     """
     rng = np.random.default_rng(seed)
     y, x = np.mgrid[0:n, 0:n] / n
@@ -111,16 +111,16 @@ def field_and_grad(f: float, octaves: int, n: int, seed: int, x0: float = 0.0, y
 
 
 def height_scale(f: float, octaves: int, rms_slope: float) -> float:
-    """整数の f の周期的な場で、傾きの大きさの RMS が rms_slope になる高さの倍率 H0（すべての段を含む）。
+    """Scale H0 of the height at which the RMS slope magnitude equals rms_slope, for a periodic field with integer f (all layers included).
 
-    各段の勾配の各成分の二乗平均は a^2 w^2 / 4、段どうしの交差項は平均 0。
+    The mean square of each gradient component of a layer is a^2 w^2 / 4; cross terms between layers have mean 0.
     """
     s2 = sum((0.5**o) ** 2 * (2 * np.pi * f * 2**o) ** 2 / 2 for o in range(octaves))
     return rms_slope / np.sqrt(s2)
 
 
 def normals_from_grad(zx: np.ndarray, zy: np.ndarray) -> np.ndarray:
-    """OpenGL 規約の単位法線（H x W x 3、浮動小数）。atact.hfratio.normal_rgb_from_height と同じ向き。"""
+    """Unit normals in the OpenGL convention (H x W x 3, floating point). Same orientation as atact.hfratio.normal_rgb_from_height."""
     v = np.stack([-zx, zy, np.ones_like(zx)], axis=-1)
     return v / np.linalg.norm(v, axis=-1, keepdims=True)
 
@@ -130,10 +130,10 @@ def to_rgb_u8(nrm: np.ndarray) -> np.ndarray:
 
 
 def upsample(img: np.ndarray, size: int, method: str) -> np.ndarray:
-    """H x W x C の浮動小数の図を、成分ごとに size へ拡大する。
+    """Enlarge a floating-point H x W x C image to size, component by component.
 
-    method: "fourier"（周期的な場に対する帯域制限の補間。DFT の零詰め）、
-    PIL の "nearest" / "bilinear" / "bicubic" / "lanczos"（浮動小数の画像で行う）。
+    method: "fourier" (band-limited interpolation for periodic fields; DFT zero padding),
+    or PIL "nearest" / "bilinear" / "bicubic" / "lanczos" (applied to floating-point images).
     """
     n = img.shape[0]
     if n == size:
@@ -158,5 +158,5 @@ LIGHT = np.array([1.0, 1.0, 2.0]) / np.sqrt(6.0)
 
 
 def shade_gray(nrm: np.ndarray) -> np.ndarray:
-    """平行光 1 つのランバートの陰影を、灰色の uint8 にする。"""
+    """Lambertian shading under a single parallel light, as grey uint8."""
     return np.round(np.clip(nrm @ LIGHT, 0, 1) * 255).astype(np.uint8)

@@ -1,10 +1,10 @@
-"""Gao ら（2026）の HF ratio が、同じ表面の切り出し位置（端の跳び）と格子でどれだけ動くか。
+"""How much the HF ratio of Gao et al. (2026) varies with the crop position (edge discontinuity) and the grid for the same surface.
 
-使い方: uv run python experiments/hf_ratio_edge.py
-条件: experiments/conditions/hf_ratio_edge.json（計算の前に固定してコミットした）
-出力: results/hf_ratio_edge.json と results/hf_ratio_edge.md
+Usage: uv run python experiments/hf_ratio_edge.py
+Conditions: experiments/conditions/hf_ratio_edge.json (fixed and committed before the computation)
+Output: results/hf_ratio_edge.json and results/hf_ratio_edge.md
 
-合成した表面での感度の確認であり、Gao らの比較（表 1）の結論への影響は主張しない。
+This is a sensitivity check on synthetic surfaces; no claim is made about its bearing on the conclusions of the comparison of Gao et al. (Table 1).
 """
 
 from __future__ import annotations
@@ -27,7 +27,7 @@ H0 = 0.01
 
 
 def field(f: float, octaves: int, n: int, seed: int, x0: float, y0: float) -> np.ndarray:
-    """窓 [x0, x0+1) x [y0, y0+1) の上の場。位相の引き方は atact.field.procedural_field と同じ。"""
+    """The field on the window [x0, x0+1) x [y0, y0+1). The phases are drawn as in atact.field.procedural_field."""
     rng = np.random.default_rng(seed)
     y, x = np.mgrid[0:n, 0:n] / n
     x, y = x + x0, y + y0

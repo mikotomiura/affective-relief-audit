@@ -1,4 +1,4 @@
-"""表面の記述子。原稿の式 (5) Rq と式 (6) スペクトルの重心。"""
+"""Surface descriptors: Rq, eq. (5), and the spectral centroid, eq. (6), of Harada (2026)."""
 
 from __future__ import annotations
 
@@ -6,19 +6,19 @@ import numpy as np
 
 
 def rq(H: np.ndarray) -> float:
-    """式 (5): 中心化した場の二乗平均平方根。"""
+    """Eq. (5): root mean square of the centred field."""
     return float(np.sqrt(np.mean((H - H.mean()) ** 2)))
 
 
 def radial_frequency(n: int) -> np.ndarray:
-    """2 次元 DFT の各係数の半径方向の周波数（領域あたりの周期数）。"""
+    """Radial frequency of each coefficient of the 2-D DFT (cycles per domain)."""
     k = np.fft.fftfreq(n) * n
     kx, ky = np.meshgrid(k, k)
     return np.hypot(kx, ky)
 
 
 def centroid(H: np.ndarray) -> float:
-    """式 (6): 振幅で重みを付けた半径方向の周波数の重心（DC は中心化で 0）。"""
+    """Eq. (6): amplitude-weighted centroid of the radial frequency (DC is 0 after centring)."""
     Hc = H - H.mean()
     mag = np.abs(np.fft.fft2(Hc))
     rho = radial_frequency(H.shape[0])
@@ -26,7 +26,7 @@ def centroid(H: np.ndarray) -> float:
 
 
 def centroid_power(H: np.ndarray, cutoff: float | None = None) -> float:
-    """代わりの指標: パワーで重み付けし、必要なら半径 cutoff で打ち切る。"""
+    """Alternative measure: power-weighted, optionally truncated at radius cutoff."""
     Hc = H - H.mean()
     pw = np.abs(np.fft.fft2(Hc)) ** 2
     rho = radial_frequency(H.shape[0])
@@ -43,13 +43,13 @@ def centroid_variant(
     half: bool = False,
     rho_round: bool = False,
 ) -> float:
-    """式 (6) の読み方の違いを切り替えて測る。既定は centroid() と同じ値になる。
+    """Measure under alternative readings of eq. (6). The default gives the same value as centroid().
 
-    weight   "amp": |H^| で重み（式 (6)） / "power": |H^|^2 で重み
-    center   False なら平均を引かない（DC の係数が重みに入る。DC の rho は 0）
-    rescale  "minmax" なら [0, 1] に伸ばした後の場で測る（3.4 節の「正規化しない」に反する読み）
-    half     True なら rfft2 の半平面だけで測る（共役の重なりを数えない実装）
-    rho_round True なら半径を整数に丸める（同心の輪で集計する実装）
+    weight   "amp": weight by |H^| (eq. (6)) / "power": weight by |H^|^2
+    center   if False the mean is not subtracted (the DC coefficient enters the weights; its rho is 0)
+    rescale  "minmax" measures on the field stretched to [0, 1] (a reading contrary to "no normalisation" in Section 3.4)
+    half     if True use only the half-plane of rfft2 (an implementation that does not count the conjugate overlap)
+    rho_round if True round the radius to an integer (an implementation that aggregates over concentric rings)
     """
     X = H.astype(float)
     if rescale == "minmax":
@@ -77,14 +77,14 @@ def centroid_variant(
 
 
 def max_gradient(H: np.ndarray) -> float:
-    """格子の間隔を 1/n とした最大の勾配の大きさ。"""
+    """Maximum gradient magnitude, with grid spacing 1/n."""
     n = H.shape[0]
     gy, gx = np.gradient(H, 1.0 / n)
     return float(np.hypot(gx, gy).max())
 
 
 def centroid_1d(z: np.ndarray) -> float:
-    """式 (6) の 1 次元版（付録 A 式 (1)）: 振幅で重みを付けた周波数の重心。"""
+    """One-dimensional version of eq. (6) (eq. (1) of Appendix A): amplitude-weighted frequency centroid."""
     zc = z - z.mean()
     mag = np.abs(np.fft.fft(zc))
     k = np.abs(np.fft.fftfreq(len(z)) * len(z))

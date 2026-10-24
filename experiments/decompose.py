@@ -1,12 +1,12 @@
-"""報告値との食い違いが、生成器・記述子・分類の手順のどこから来るかを切り分ける。
+"""Decompose where the discrepancy with the reported values comes from: the generator, the descriptors, or the classification procedure.
 
-使い方: uv run python experiments/decompose.py [--jitter 1.25] [--out results/decompose.md]
+Usage: uv run python experiments/decompose.py [--jitter 1.25] [--out results/decompose.md]
 
-組:
-  生成器   組み直し / 元のコード（アダプタの height）
-  記述子   組み直し（式 (5)(6)） / 元のコード（アダプタの features）
-  手順     組み直し（make_dataset のジッタと種 + 標準化 + 線形 SVM） / 元のコードの dataset()（元の 120 枚の特徴）
-元のコードが無い組・アダプタに関数が無い組は「無し」と書く。今は組み直しの行だけが埋まる。
+Combinations:
+  generator   reconstruction / original code (height of the adapter)
+  descriptors reconstruction (eqs. (5), (6) of Harada 2026) / original code (features of the adapter)
+  procedure   reconstruction (jitter and seed of make_dataset + standardisation + linear SVM) / dataset() of the original code (features of the original 120 surfaces)
+Combinations without the original code, or whose function is missing from the adapter, are marked "none" in the report. Without the original code, only the reconstruction rows are filled.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ def _orig_features(orig):
 
 
 def cells(jitter: float, seed: int = 0):
-    """(生成器, 記述子, 手順, 結果 or 無しの理由) の並び。"""
+    """Sequence of (generator, descriptors, procedure, result or reason for none)."""
     recon = backends.ReconBackend()
     orig = backends.original()
     ofeat = _orig_features(orig)

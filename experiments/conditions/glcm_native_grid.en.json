@@ -1,0 +1,38 @@
+{
+  "translation_of": "glcm_native_grid.json (Japanese, authoritative; its SHA-256 is recorded in the results). This file is an English translation made on 2026-10-25, after the computation, and has no effect on it.",
+  "purpose": "Reproduce on synthetic surfaces the comparison design of HiMat (Wang et al., Eurographics 2026): outputs generated on different native grids are rendered at a common size (4096) and compared with the GLCM Score defined by pixel distances (a copy of the public code of Diffusion-4K; atact.gridcompare). The part of the difference caused only by the grid and the interpolation method is separated from the part caused by fine detail that a coarse grid cannot represent. No claim is made about the conclusions of HiMat (its upsampling method is not described in the paper).",
+  "fixed_before_running": "This list was written before the computation. Conditions added or removed after seeing results are explained in this section.",
+  "field": "Each octave sin(2 pi f_o x + phi) sin(2 pi f_o y + psi), f_o = f 2^o, amplitude 0.5^o, phases uniform from the seed (drawn as in atact.field). f is an integer and the field is periodic on the domain. The height scale is chosen so that the RMS of the slope magnitude over all octaves is 0.3 (atact.gridcompare.height_scale).",
+  "surfaces": [
+    {"name": "coarse", "f": 4, "octaves": 3, "role": "Finest octave 32 cycles; representable on every grid."},
+    {"name": "fine", "f": 4, "octaves": 5, "role": "Finest octave 64 cycles; representable even at N = 256 (at most N/4). More detail than coarse."},
+    {"name": "ultrafine", "f": 4, "octaves": 8, "role": "Finest octave 512 cycles; coarse grids drop the finest octaves (legitimate loss of detail)."}
+  ],
+  "native_N": [256, 512, 1024, 2048, 4096],
+  "generator_limit": "A generator with native grid N omits octaves with f_o above N/4 (at least 4 pixels per period). Gradients are computed analytically, and the gradient map (floating point) on that grid is taken as the output.",
+  "render_N": 4096,
+  "upsampling": [
+    {"name": "fourier", "rule": "Zero padding of the DFT (for a periodic band-limited field this coincides with the field generated at 4096). Negative control."},
+    {"name": "nearest"},
+    {"name": "bilinear"},
+    {"name": "bicubic"},
+    {"name": "lanczos"}
+  ],
+  "upsampling_note": "The gradient map (two components) is upsampled per component, and normals are computed at 4096 (the same information as upsampling the height map). The normal map itself is a nonlinear function of the gradient and is not band-limited, so DFT upsampling would not be exact; this form was fixed before the computation. PIL upsampling is done on floating-point images.",
+  "render": "Lambertian shading with one directional light (direction (1, 1, 2), normalised), as grey uint8.",
+  "descriptor": "GLCM Score: 64 grey levels, distances 1-4 pixels, angles 0, 45, 90 and 135 degrees; skimage shannon_entropy applied to the normalised GLCM array, computed per 64-pixel patch and averaged (as in eval.py of Diffusion-4K).",
+  "seeds": [1, 2, 3, 4, 5],
+  "predictions": [
+    "P1 (negative control): with fourier, the values of coarse and fine do not depend on the native grid (absolute difference from N = 4096 below 0.02).",
+    "P2: with interpolation kernels (nearest, bilinear, bicubic, lanczos), the difference of coarse and fine from N = 4096 grows as the native grid becomes smaller. The direction is not predicted.",
+    "P3: ordering. With bilinear, report which is larger: fine generated at N = 256 or coarse generated at N = 4096. The direction is not predicted. With fourier, the order of fine and coarse does not depend on the grid (from P1).",
+    "P4: report side by side the grid-induced change of ultrafine with fourier (legitimate loss of detail) and the change of fine with interpolation kernels (grid and interpolation only)."
+  ],
+  "readouts": [
+    "GLCM Score per surface, native grid and upsampling method (mean and standard deviation over 5 seeds).",
+    "Difference from N = 4096 (mean and standard error of paired differences with the same seed).",
+    "Difference between fine@256 and coarse@4096 (paired by seed) for each upsampling method.",
+    "Reference scale: GLCM Scores in Table 1 of HiMat are MatFuse 0.63, ReflectanceFusion 0.31, HiMat 0.96 (different scale; used only as context for the discussion of ordering)."
+  ],
+  "not_done": "Other SVBRDF layers (colour, roughness) and environment lighting are not treated. HiMat's rendering procedure is not described in the paper and cannot be copied."
+}

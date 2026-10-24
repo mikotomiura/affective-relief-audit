@@ -1,13 +1,13 @@
-"""A1（オクターブの形・周波数の単位）と雑音・ワープを振り、図 3 との近さと命題 7 の表を出す。
+"""Vary assumption A1 (octave form, frequency unit), noise and warp; report closeness to Fig. 3 and the Proposition 7 table.
 
-使い方: uv run python experiments/a1_variants.py [--quick]
-出力: results/a1_variants.json と results/a1_variants.md
+Usage: uv run python experiments/a1_variants.py [--quick]
+Output: results/a1_variants.json and results/a1_variants.md
 
-- 図 3 との近さ: 隅 (1,-1) を Calm、(-1,1) を Anger とみなし、256 x 256（図 3 の格子）で描いた高さの
-  指紋（atact.fig3.fingerprint）と、図 3 から取り戻した高さの指紋との距離を足す。種は 42。
-  図 3 の座標は本文に書かれていないので、隅とみなすこと自体が仮定である。Complex は座標の手がかりが無いので使わない。
-- 命題 7: 128 x 128（表 2）で 120 枚を作り、表 3 と同じ 4 列を出す。
-すべて組み直しの生成器での値で、元のコード（ESM_1.zip）の値ではない。
+- Closeness to Fig. 3 of Harada (2026): corner (1,-1) is taken as Calm and (-1,1) as Anger. The distance between the fingerprint of the height rendered on 256 x 256 (the grid of Fig. 3)
+  (atact.fig3.fingerprint) and that of the height recovered from Fig. 3 is summed over the two panels. Seed 42.
+  The coordinates of Fig. 3 are not given in the text, so taking them to be the corners is itself an assumption. Complex is not used because it gives no coordinate cue.
+- Proposition 7: 120 surfaces on 128 x 128 (Table 2 of Harada 2026); the same four columns as Table 3 of Harada (2026) are reported.
+All values come from the reconstructed generator, not from the original code (ESM_1.zip).
 """
 
 from __future__ import annotations

@@ -1,7 +1,7 @@
-"""報告値（atact.reported）と、こちらで出した値を並べる。
+"""Place the reported values (atact.reported) beside the values computed here.
 
-compare_reported・decompose・arrival_check の 3 本が使う。ここで扱う「こちらの値」は、
-組み直しの生成器での値か、元のコードを通した値のどちらかで、表の見出しにどちらかを必ず書く。
+Used by compare_reported, decompose and arrival_check. The "computed" values are either those of the
+reconstructed generator or those obtained through the original code; the table heading must state which.
 """
 
 from __future__ import annotations
@@ -13,13 +13,13 @@ COLUMNS = (("rq", "Rq だけ"), ("centroid", "重心だけ"), ("both", "両方")
 
 
 def run(backend=None, features=None, jitter: float = 1.25, seed: int = 0) -> dict:
-    """生成器と記述子を選んで 120 枚を作り、表 3 と同じ評価をする。"""
+    """Build 120 surfaces with the chosen generator and descriptors and evaluate as in Table 3."""
     X, y, _ = make_dataset(DatasetConfig(jitter=jitter), backend=backend, features=features)
     return evaluate(X, y, seed=seed)
 
 
 def compare(res: dict) -> list[dict]:
-    """表 3 の 4 列と 75/25 について、差と「報告の標準偏差で割った大きさ」を返す。"""
+    """For the four columns of Table 3 and for 75/25, return the difference and its size in units of the reported standard deviation."""
     rows = []
     for key, label in COLUMNS:
         m, sd = res[key]

@@ -1,10 +1,10 @@
-"""HiMat（Wang ら, Eurographics 2026）の比較の型: 本来の格子が違う生成物を 4096 に拡大して GLCM Score で比べる。
+"""Comparison design of HiMat (Wang et al., Eurographics 2026): outputs whose native grids differ are upsampled to 4096 and compared by GLCM Score.
 
-使い方: uv run python experiments/glcm_native_grid.py
-条件: experiments/conditions/glcm_native_grid.json（計算の前に固定してコミットした）
-出力: results/glcm_native_grid.json（集計は experiments/grid_compare_report.py）
+Usage: uv run python experiments/glcm_native_grid.py
+Conditions: experiments/conditions/glcm_native_grid.json (fixed and committed before the computation)
+Output: results/glcm_native_grid.json (aggregated by experiments/grid_compare_report.py)
 
-合成した表面での再現であり、HiMat の結論への影響は主張しない。
+This is a reproduction on synthetic surfaces; no claim is made about its bearing on the conclusions of HiMat.
 """
 
 from __future__ import annotations

@@ -1,10 +1,10 @@
-"""Gao ら 2026 の継ぎ目の評価の型: 1024 の法線の図の縮小（Resize）と中央の切り出し（Crop）を比べる。
+"""Seam evaluation design of Gao et al. (2026): downscaling a 1024 normal map (Resize) versus a central crop (Crop).
 
-使い方: uv run python experiments/tile_seam_grid.py
-条件: experiments/conditions/tile_seam_grid.json（計算の前に固定してコミットした）
-出力: results/tile_seam_grid.json（集計は experiments/grid_compare_report.py）
+Usage: uv run python experiments/tile_seam_grid.py
+Conditions: experiments/conditions/tile_seam_grid.json (fixed and committed before the computation)
+Output: results/tile_seam_grid.json (aggregated by experiments/grid_compare_report.py)
 
-合成した表面での再現であり、Gao らの結論への影響は主張しない。
+This is a reproduction on synthetic surfaces; no claim is made about its bearing on the conclusions of Gao et al.
 """
 
 from __future__ import annotations

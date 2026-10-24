@@ -1,19 +1,19 @@
-"""生成器の差し替え口。組み直しの生成器と、元のコード（ESM_1.zip）を同じ形で呼ぶ。
+"""Interchangeable generator backends: the reconstructed generator and the original code (ESM_1.zip) are called through the same interface.
 
-元のコードの API は分からないので、元のコードを包む薄いアダプタ（adapters/original.py）を
-届いてから書く。ひな形は adapters/original_template.py。アダプタは次の名前を持つモジュール:
+The API of the original code is not known, so a thin adapter wrapping it (adapters/original.py) is to be
+written once the code is available. The template is adapters/original_template.py. An adapter is a module with these names:
 
   NAME: str
-  height(V, A, seed) -> 2 次元の ndarray      必須。式 (4) の H（中心化の前でよい）
-  field(f, seed, n=128) -> ndarray | None       任意。T_gamma をかける前の F。n を変えられなければ
-                                                n != 128 で None を返す（命題 6 の検査が skip になる）
-  params(V, A) -> (f, s, gamma) | None          任意。式 (1)-(3)
-  features(H) -> (Rq, C) | None                 任意。元のコードの記述子
-  dataset() -> (X, y) | None                    任意。元のコードが作った 120 枚の特徴とラベル
-  fig3_heights() -> {name: ndarray} | None       任意。図 3 の 3 枚（calm / anger / complex）の高さ。
-                                                元のコードで図 3 を描き直し、図から取り戻した高さと比べる
+  height(V, A, seed) -> 2-D ndarray              required. H of eq. (4) of Harada (2026) (before centring is acceptable)
+  field(f, seed, n=128) -> ndarray | None       optional. F before T_gamma is applied. If n cannot be varied,
+                                                return None for n != 128 (the check of Proposition 6 is then skipped)
+  params(V, A) -> (f, s, gamma) | None          optional. Eqs. (1)-(3) of Harada (2026)
+  features(H) -> (Rq, C) | None                 optional. The descriptors of the original code
+  dataset() -> (X, y) | None                    optional. Features and labels of the 120 surfaces produced by the original code
+  fig3_heights() -> {name: ndarray} | None       optional. Heights of the three panels of Fig. 3 of Harada (2026) (calm / anger / complex).
+                                                Fig. 3 is redrawn with the original code and compared with the heights recovered from the figure
 
-任意のものは、元のコードに相当する関数が無ければ None を返す関数にしておく。
+An optional name is a function returning None when the original code has no corresponding function.
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ DEFAULT_ADAPTER = ROOT / "adapters" / "original.py"
 
 @dataclass
 class ReconBackend:
-    """組み直しの生成器。render で A1〜A3 の仮定を切り替える。"""
+    """Reconstructed generator. The render configuration switches between assumptions A1-A3."""
 
     render: RenderConfig = dc_field(default_factory=RenderConfig)
     NAME: str = "recon"
@@ -62,7 +62,7 @@ class ReconBackend:
 
 
 class AdapterBackend:
-    """アダプタのモジュールを、足りない任意の関数を None で埋めて包む。"""
+    """Wrap an adapter module, filling each missing optional function with one returning None."""
 
     def __init__(self, mod: ModuleType):
         if not hasattr(mod, "height"):
@@ -96,14 +96,14 @@ class AdapterBackend:
 
 
 def adapter_path() -> Path | None:
-    """環境変数 ATACT_ORIGINAL_ADAPTER か、adapters/original.py。無ければ None。"""
+    """Environment variable ATACT_ORIGINAL_ADAPTER, or adapters/original.py. None if neither exists."""
     p = os.environ.get("ATACT_ORIGINAL_ADAPTER")
     path = Path(p) if p else DEFAULT_ADAPTER
     return path if path.exists() else None
 
 
 def load_adapter(path: str | Path) -> AdapterBackend:
-    """アダプタを読み込む。読み込むと元のコードが import されて動くので、先に中身を読むこと。"""
+    """Load the adapter. Loading imports and runs the original code, so read its contents first."""
     path = Path(path)
     spec = importlib.util.spec_from_file_location(f"atact_adapter_{path.stem}", path)
     mod = importlib.util.module_from_spec(spec)
@@ -117,7 +117,7 @@ def original() -> AdapterBackend | None:
 
 
 def available() -> dict:
-    """使える生成器を名前で返す。元のコードは、アダプタがあるときだけ入る。"""
+    """Return the available generators by name. The original code is included only if an adapter exists."""
     out = {"recon": ReconBackend(), "recon_warp": ReconBackend(RenderConfig(warp=0.25))}
     o = original()
     if o is not None:

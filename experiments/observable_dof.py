@@ -1,8 +1,8 @@
-"""観測できる自由度: 入力から、高さ図・書き出しの高さ図・記述子までの写像の階数。
+"""Observable degrees of freedom: rank of the map from the inputs to the height map, the min-max exported height map, and the descriptors.
 
-使い方: uv run python experiments/observable_dof.py
-条件: experiments/conditions/observable_dof.json（計算の前に固定してコミットした）
-出力: results/observable_dof.json と results/observable_dof.md
+Usage: uv run python experiments/observable_dof.py
+Conditions: experiments/conditions/observable_dof.json (fixed and committed before the computation)
+Output: results/observable_dof.json and results/observable_dof.md
 """
 
 from __future__ import annotations

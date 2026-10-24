@@ -1,1 +1,1 @@
-"""Affective Tactility の写像と生成器の組み直し（元のコードではない）。"""
+"""Reconstruction of the Affective Tactility mapping and generator (not the original code)."""

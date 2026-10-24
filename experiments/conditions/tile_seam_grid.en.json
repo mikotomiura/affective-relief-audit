@@ -1,0 +1,28 @@
+{
+  "translation_of": "tile_seam_grid.json (Japanese, authoritative; its SHA-256 is recorded in the results). This file is an English translation made on 2026-10-25, after the computation, and has no effect on it.",
+  "purpose": "Reproduce on synthetic surfaces the design of the seam evaluation of Gao et al. (2026) (Resize and Crop in their Table 1). A 1024 normal map reduced to 512 (PIL LANCZOS) and the central 512 crop are compared with the border continuity and gradient continuity of the authors' public code (copied). Measure whether the direction of the difference between the two reverses with the fineness of the surface (cycles per pixel). No claim is made about the conclusion of Gao et al. (that diffusion-based seam handling is best).",
+  "fixed_before_running": "This list was written before the computation. Conditions added or removed after seeing results are explained in this section.",
+  "field": "atact.gridcompare.field_and_grad (each octave sin.sin, f_o = f 2^o, amplitude 0.5^o, four octaves). Gradients computed analytically. Height scale atact.gridcompare.height_scale(f, 4, 0.3) (the formula giving RMS slope magnitude 0.3 for a periodic field; the same formula is used for non-integer f).",
+  "source_N": 1024,
+  "target_N": 512,
+  "surfaces_nonperiodic": {"f": [1.5, 3.5, 7.5, 15.5, 31.5], "octaves": 4, "role": "Normal maps with edge discontinuity that need seam handling (close to the outputs of Gao et al.)."},
+  "surfaces_periodic": {"f": [3, 5, 9, 17, 33], "octaves": 4, "role": "Negative control. The 1024 map at crop position (0, 0) tiles without seams. Because f is odd, the central half crop has a seam in the fundamental octave."},
+  "seeds": [1, 2, 3, 4, 5],
+  "crop_offsets": [[0.0, 0.0], [0.13, 0.29], [0.29, 0.71], [0.41, 0.07], [0.77, 0.53]],
+  "periodic_offsets": [[0.0, 0.0]],
+  "normals": "OpenGL-convention normals rounded to uint8 RGB (atact.gridcompare.to_rgb_u8). Metrics are computed on RGB values 0-255 (as in the public code).",
+  "predictions": [
+    "Q1 (negative control): for periodic fields, the border continuity of Resize is smaller than that of Crop (Resize keeps a seamless map; Crop has a seam in the fundamental octave). Even a seamless map has non-zero border continuity, because it counts one-pixel differences at the edge.",
+    "Q2: for non-periodic fields, report Resize - Crop (border and grad) for each f. The direction is not predicted.",
+    "Q3: decision on reversal. For non-periodic fields, 'the direction of the difference reverses with the fineness of the surface' if the mean of Resize - Crop has opposite signs at two values of f and both exceed twice their standard errors."
+  ],
+  "readouts": [
+    "border_avg and grad_cont_avg of Resize and Crop per f (mean and standard error over 5 seeds x 5 crops).",
+    "Mean and standard error of the paired difference Resize - Crop.",
+    "Reference scale: Table 1 of Gao et al. (2026), Resize 29.80 / 59.99, Crop 26.10 / 52.82 (border / grad)."
+  ],
+  "not_done": "High-pass (+HPF) and diffusion-based handling are not treated. A control with matched sampling interval (cropping the same physical range at the same spacing) is outside this computation.",
+  "deviations_before_running": [
+    "While writing tests (before the main computation) it was found that with even f (2, 4, 8, 16, 32) for the periodic fields, the central half crop is also periodic and does not work as a negative control (f = 4, 256 -> 128: Resize 12.36 > Crop 6.48). f was changed to odd values (3, 5, 9, 17, 33), and Q1 was amended to note that even a seamless map counts one-pixel edge differences. The main computation was run after this revision."
+  ]
+}

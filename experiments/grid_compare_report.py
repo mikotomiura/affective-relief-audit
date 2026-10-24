@@ -1,7 +1,7 @@
-"""results/glcm_native_grid.json と results/tile_seam_grid.json から集計の表を書く。
+"""Write the aggregate tables from results/glcm_native_grid.json and results/tile_seam_grid.json.
 
-使い方: uv run python experiments/grid_compare_report.py
-出力: results/grid_compare.md
+Usage: uv run python experiments/grid_compare_report.py
+Output: results/grid_compare.md
 """
 
 from __future__ import annotations

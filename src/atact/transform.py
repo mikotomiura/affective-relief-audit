@@ -1,4 +1,4 @@
-"""高さの変換 T_gamma（式 (4)）と、なめらかにした T_{gamma,eps}。"""
+"""Height transform T_gamma (eq. (4) of Harada (2026)) and its smoothed version T_{gamma,eps}."""
 
 from __future__ import annotations
 
@@ -7,15 +7,15 @@ from scipy.special import gamma as Gamma
 
 
 def t_gamma(u, g):
-    """T_gamma(u) = sign(u) |u|^(1/gamma)。"""
+    """T_gamma(u) = sign(u) |u|^(1/gamma)."""
     u = np.asarray(u, dtype=float)
     return np.sign(u) * np.abs(u) ** (1.0 / g)
 
 
 def t_gamma_eps(u, g, eps):
-    """零点の特異性を幅 eps でならした版。奇関数で +-1 を保つ。
+    """Version with the singularity at zero smoothed over width eps. Odd, and preserves +-1.
 
-    |u| >> eps では T_gamma に近く、0 の近くの傾きは eps^(1/gamma - 1) 程度に抑えられる。
+    For |u| >> eps it is close to T_gamma; the slope near 0 is bounded by about eps^(1/gamma - 1).
     """
     u = np.asarray(u, dtype=float)
     k = (1.0 / g - 1.0) / 2.0
@@ -23,14 +23,14 @@ def t_gamma_eps(u, g, eps):
 
 
 def sigma2_single_sine(g):
-    """命題 3: F = sin(theta) のとき E|T_gamma(F)|^2 の閉じた形。"""
+    """Proposition 3: closed form of E|T_gamma(F)|^2 for F = sin(theta)."""
     return Gamma(1.0 / g + 0.5) / (np.sqrt(np.pi) * Gamma(1.0 / g + 1.0))
 
 
 def fourier_coeff_odd(n, g):
-    """付録 A 補題 A.4.1: T_gamma(sin theta) = sum b_n sin(n theta) の係数 b_n（n は奇数、n > 1/gamma）。
+    """Appendix A, Lemma A.4.1: coefficients b_n in T_gamma(sin theta) = sum b_n sin(n theta) (n odd, n > 1/gamma).
 
-    DLMF 5.12.6 の虚部と反転公式（DLMF 5.5.3）から得た閉じた形。
+    Closed form obtained from the imaginary part of DLMF 5.12.6 and the reflection formula (DLMF 5.5.3).
     """
     from scipy.special import gammaln
 

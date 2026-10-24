@@ -1,7 +1,7 @@
-"""results/hf_ratio_edge.json から集計の表を書く（条件の一覧の readouts の順）。
+"""Write the aggregate tables from results/hf_ratio_edge.json (in the order of readouts in the conditions file).
 
-使い方: uv run python experiments/hf_ratio_edge_report.py
-出力: results/hf_ratio_edge.md
+Usage: uv run python experiments/hf_ratio_edge_report.py
+Output: results/hf_ratio_edge.md
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-GAO_SPAN = (0.009, 0.103)  # Gao ら 2026 表 1 の比較されたモデルの間の差（最小と最大）
+GAO_SPAN = (0.009, 0.103)  # Differences between the compared models in Table 1 of Gao et al. 2026 (minimum and maximum)
 
 
 def load():
@@ -30,7 +30,7 @@ def table(rows, cut, proc):
 
 
 def spread(rows, cut, proc):
-    """同じ表面・種・格子での、切り出しによる最大と最小の差。"""
+    """Maximum minus minimum over crops, for the same surface, seed and grid."""
     g = defaultdict(list)
     for r in rows:
         if r["cutoff"] == cut and r["processing"] == proc:

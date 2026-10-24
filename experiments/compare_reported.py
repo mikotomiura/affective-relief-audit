@@ -1,12 +1,12 @@
-"""報告値（表 3・75/25）と、選んだ生成器で出した値を並べる。
+"""Place the reported values (Table 3 of Harada 2026 and the 75/25 split) beside the values computed with the chosen generator.
 
-使い方:
+Usage:
   uv run python experiments/compare_reported.py --backend recon --jitter 1.0 1.25 1.5
-  uv run python experiments/compare_reported.py --backend original     # アダプタがあるとき
-出力: results/compare_<backend>.md（--out で変えられる）
+  uv run python experiments/compare_reported.py --backend original     # when an adapter is available
+Output: results/compare_<backend>.md (changeable with --out)
 
-recon の値は組み直しの生成器での値。ジッタ w は原稿に書かれていないので（A4）、いくつかの値で並べる。
-元のコードが dataset()（元の 120 枚の特徴）を返すなら、それをこちらの分類の手順で評価した表も出す。
+Values for recon come from the reconstructed generator. The jitter w is not given in the preprint (Harada 2026; assumption A4), so several values are tabulated.
+If the original code returns dataset() (the features of the original 120 surfaces), a table evaluating them with the classification procedure used here is also produced.
 """
 
 from __future__ import annotations

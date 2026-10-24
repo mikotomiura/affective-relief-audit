@@ -1,4 +1,4 @@
-"""命題 1〜4・6 の性質と、原稿の表 1 の値を確かめる。"""
+"""Checks the properties in Propositions 1-4 and 6 and the values in Table 1 of Harada (2026)."""
 
 import numpy as np
 import pytest
@@ -8,7 +8,7 @@ from atact.field import RenderConfig, height, minmax, procedural_field
 from atact.mapping import gamma_from_fs, jacobian, params
 from atact.transform import sigma2_single_sine, t_gamma, t_gamma_eps
 
-# 原稿の表 1（式 (1)-(3) から導いた隅の値）
+# Table 1 of Harada (2026) (corner values derived from eqs. (1)-(3))
 TABLE1 = [
     ((1, -1), (3.0, 0.06, 0.9)),
     ((-1, -1), (3.0, 0.30, 1.495)),
@@ -26,7 +26,7 @@ def test_table1(va, fsg):
 def test_p1_rank2_parallelogram():
     J = jacobian()
     assert np.linalg.matrix_rank(J) == 2
-    assert np.isclose(J[:, 0] @ J[:, 1], -0.2975 * 0.5525)  # -0.1644。直交しない -> 長方形ではない
+    assert np.isclose(J[:, 0] @ J[:, 1], -0.2975 * 0.5525)  # -0.1644; not orthogonal -> not a rectangle
     rng = np.random.default_rng(1)
     V, A = rng.uniform(-1, 1, (2, 1000))
     f, s, g = params(V, A)
@@ -43,8 +43,8 @@ def test_p1_plane_coefficients():
 def test_p2_basic_properties(g):
     u = np.linspace(-1, 1, 2001)
     T = t_gamma(u, g)
-    assert np.allclose(T, -t_gamma(-u, g))           # 奇関数
-    assert np.all(np.diff(T) > 0)                     # 狭義単調
+    assert np.allclose(T, -t_gamma(-u, g))           # odd function
+    assert np.all(np.diff(T) > 0)                     # strictly monotone
     assert np.allclose(t_gamma(np.array([-1, 0, 1.0]), g), [-1, 0, 1])
     inside = np.abs(u) <= 1
     if g > 1:
@@ -70,14 +70,14 @@ def test_p3_rq_linear_in_s():
 
 
 def test_rq_is_root_mean_square():
-    # 整数周期の正弦の RMS は 1/sqrt(2)（絶対値の平均なら 2/pi になり区別できる）
+    # The RMS of a sine with integer periods is 1/sqrt(2) (the mean absolute value would be 2/pi, so the two are distinguishable)
     x = np.arange(256) / 256
     H = np.tile(np.sin(2 * np.pi * 4 * x), (256, 1))
     assert np.isclose(rq(H), 1 / np.sqrt(2))
 
 
 def test_centroid_of_pure_tone():
-    # 単一の周波数 k の正弦は重心が k になる
+    # A sine of single frequency k has centroid k
     x = np.arange(128) / 128
     H = np.tile(np.sin(2 * np.pi * 6 * x), (128, 1))
     assert np.isclose(centroid(H), 6.0)
@@ -96,7 +96,7 @@ def test_field_deterministic_by_seed():
 
 
 def test_p6_smoothing_bounds_gradient():
-    # gamma > 1 では格子を細かくすると最大勾配が増え、eps でならすと増え方が抑えられる
+    # For gamma > 1 refining the grid increases the maximum gradient; smoothing with eps damps the increase
     g = 2.6
     raw = [max_gradient(t_gamma(procedural_field(5.0, RenderConfig(n=n)), g)) for n in (128, 1024)]
     sm = [
@@ -120,7 +120,7 @@ def test_height_uses_regime_parameters():
     assert centroid(H2) > centroid(H1)
 
 
-# ---- 付録 A（advice/proofs/appendix-a.tex）の各主張 ----
+# ---- Claims of Appendix A (advice/proofs/appendix-a.tex) ----
 
 from scipy.integrate import quad
 from scipy.special import gamma as Gamma_fn
@@ -131,7 +131,7 @@ from atact.transform import fourier_coeff_odd
 
 
 def _sine(f, n, g, phase=0.0):
-    # 零点に乗る標本は sin(pi) = 1.2e-16 になり、T_gamma が (1e-16)^(1/gamma) に増幅するので 0 にそろえる
+    # A sample at a zero gives sin(pi) = 1.2e-16, which T_gamma amplifies to (1e-16)^(1/gamma); set it to 0
     u = np.sin(2 * np.pi * f * np.arange(n) / n + phase)
     u[np.abs(u) < 1e-12] = 0.0
     return t_gamma(u, g)
@@ -149,7 +149,7 @@ def _d_gamma(g, nmax=4_000_001):
 
 
 def _k_limit(g, f):
-    """定理 A.6.1 (i) の極限の定数 K_gamma(f)。"""
+    """The limit constant K_gamma(f) of Theorem A.6.1 (i)."""
     a = 1 / g
     phi = lambda t: zeta(1 + a, t) - zeta(1 + a, 1 - t)  # sum_m sign(t+m)|t+m|^(-1-a)
     pts = [j / (2 * f) for j in range(1, f) if j / (2 * f) < 0.5]
@@ -172,7 +172,7 @@ def test_a4_bn_closed_form_matches_fft(g):
         assert np.isclose(-2 * z[n].imag, fourier_coeff_odd(n, g), rtol=1e-8)
     for n in (51, 201):
         assert np.isclose(-2 * z[n].imag, fourier_coeff_odd(n, g), rtol=1e-5)
-    assert np.allclose(z[2:200:2], 0, atol=1e-12)  # 偶数次は 0
+    assert np.allclose(z[2:200:2], 0, atol=1e-12)  # even orders vanish
 
 
 @pytest.mark.parametrize("g", [0.9, 1.75, 2.6])
@@ -190,7 +190,7 @@ def test_a4_bn_sign_and_monotone():
 
 
 def test_a4_exception_odd_alpha():
-    # gamma = 1 は sin そのもの。gamma = 1/3 は sin^3 = (3 sin t - sin 3t)/4
+    # gamma = 1 gives sin itself; gamma = 1/3 gives sin^3 = (3 sin t - sin 3t)/4
     assert np.allclose(fourier_coeff_odd(np.arange(3, 101, 2), 1.0), 0, atol=1e-15)
     m = 4096
     z = np.fft.fft(_sine(1, m, 1 / 3)) / m
@@ -237,12 +237,12 @@ def test_a6_limit_constant(g, f):
 
 
 def _cstar(g, nmax=2_000_001):
-    """定理 A.6.1 (ii) の C*。sum n|b_n| は n^(-1/gamma) でしか収束しないので尾部を Hurwitz のゼータで足す。"""
+    """The constant C* of Theorem A.6.1 (ii). The sum of n|b_n| converges only like n^(-1/gamma), so the tail is added via the Hurwitz zeta function."""
     a = 1 / g
     n = np.arange(1, nmax, 2)
     b = np.abs(fourier_coeff_odd(n, g))
     c = abs(_c_gamma(g))
-    j0 = (nmax - 1) // 2  # 次の奇数 nmax = 2 j0 + 1
+    j0 = (nmax - 1) // 2  # next odd number nmax = 2 j0 + 1
     num = (n * b).sum() + c * 2 ** (-a) * zeta(a, j0 + 0.5)
     den = b.sum() + c * 2 ** (-1 - a) * zeta(1 + a, j0 + 0.5)
     return num / den
@@ -251,11 +251,11 @@ def _cstar(g, nmax=2_000_001):
 def test_a6_gamma_below_one_converges():
     g, f = 0.9, 5
     lim = f * _cstar(g)
-    assert np.isclose(lim, f * _cstar(g, 4_000_001), rtol=1e-8)  # 打ち切りに依らない
+    assert np.isclose(lim, f * _cstar(g, 4_000_001), rtol=1e-8)  # independent of the truncation
     c = [centroid_1d(_sine(f, m, g)) for m in (2**13, 2**16, 2**20)]
-    assert round(c[0], 2) == 7.21  # 命題 5 の表
+    assert round(c[0], 2) == 7.21  # Proposition 5 table
     assert np.all(np.diff(c) > 0) and c[-1] < lim
-    # 差は N^(1 - 1/gamma) で減る: N を 2^4 倍にすると 2^(4 * (1 - 1/0.9)) = 0.735 倍
+    # The difference decreases like N^(1 - 1/gamma): multiplying N by 2^4 scales it by 2^(4 * (1 - 1/0.9)) = 0.735
     assert np.isclose((lim - c[2]) / (lim - c[1]), 2 ** (4 * (1 - 1 / g)), rtol=0.01)
 
 
@@ -302,7 +302,7 @@ def test_a2_smoothed_transform(g, eps):
 def test_a3_grid_sigma_monotone_in_gamma():
     s = [np.mean(_sine(5, 128, g) ** 2) for g in (0.9, 1.0, 1.75, 2.6)]
     assert np.all(np.diff(s) > 0)
-    assert np.isclose(np.mean(_sine(5, 128, 1.75)), 0, atol=1e-12)  # 格子の上でも対称
+    assert np.isclose(np.mean(_sine(5, 128, 1.75)), 0, atol=1e-12)  # symmetric on the grid as well
 
 
 KAPPA0 = np.pi * quad(lambda t: t / np.sin(np.pi * t) if t > 0 else 1 / np.pi, 0, 0.5)[0]
@@ -310,7 +310,7 @@ KAPPA0 = np.pi * quad(lambda t: t / np.sin(np.pi * t) if t > 0 else 1 / np.pi, 0
 
 def test_a7_noninteger_f_n_over_log_n():
     catalan = sum((-1) ** k / (2 * k + 1) ** 2 for k in range(200_000))  # DLMF 25.11.40
-    assert np.isclose(KAPPA0, 2 * catalan / np.pi, rtol=1e-9)  # 付録 A 系 A.7.1 の前の恒等式
+    assert np.isclose(KAPPA0, 2 * catalan / np.pi, rtol=1e-9)  # identity preceding Corollary A.7.1 of Appendix A
     r = []
     for n in (2**12, 2**16, 2**20):
         z = np.sin(2 * np.pi * 5.3 * np.arange(n) / n)
@@ -319,14 +319,14 @@ def test_a7_noninteger_f_n_over_log_n():
 
 
 def test_a7_zero_jump_grows_like_log():
-    # f = 5.5, phi = 0 は J = 0（端で値はつながり、傾きだけが跳ぶ）
+    # f = 5.5, phi = 0 gives J = 0 (values match at the edge; only the slope jumps)
     c = [centroid_1d(np.sin(2 * np.pi * 5.5 * np.arange(n) / n)) for n in (2**12, 2**16, 2**20)]
     assert np.all(np.diff(c) > 0) and c[-1] < 2 * c[0]
 
 
 @pytest.mark.parametrize("g", [0.9, 0.5])
 def test_a6_cstar_closed_form(g):
-    # 注意 A.6.2: 1 < alpha < 3 で C* = 4 alpha / (3 alpha - 1)、D = Gamma(a/2) / (sqrt(pi) Gamma((a+1)/2))
+    # Remark A.6.2: for 1 < alpha < 3, C* = 4 alpha / (3 alpha - 1), D = Gamma(a/2) / (sqrt(pi) Gamma((a+1)/2))
     a = 1 / g
     assert np.isclose(_cstar(g), 4 * a / (3 * a - 1), rtol=1e-9)
     d_closed = Gamma_fn(a / 2) / (np.sqrt(np.pi) * Gamma_fn((a + 1) / 2))
@@ -335,7 +335,7 @@ def test_a6_cstar_closed_form(g):
 
 
 def test_a6_even_f_limit_depends_on_gcd():
-    # f = 6: d = gcd(f, N) ごとに極限が分かれる（d = 2 と d = 6、どちらも N/d は偶数）
+    # f = 6: the limit splits according to d = gcd(f, N) (d = 2 and d = 6; N/d is even in both)
     g = 1.75
     a = 1 / g
     for n, d in ((1048576, 2), (1048572, 6)):

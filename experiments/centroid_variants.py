@@ -1,11 +1,11 @@
-"""式 (6) の読み方の違い（atact.descriptors.centroid_variant）で、命題 7 の重心だけの精度がどう動くか。
+"""How the centroid-only accuracy of Proposition 7 changes with the reading of eq. (6) of Harada (2026) (atact.descriptors.centroid_variant).
 
-使い方: uv run python experiments/centroid_variants.py
-出力: results/centroid_variants.json と results/centroid_variants.md
+Usage: uv run python experiments/centroid_variants.py
+Output: results/centroid_variants.json and results/centroid_variants.md
 
-生成器は組み直しの既定（雑音なし）で、ワープ 0 と 0.25。重心の定義を 32 通りに振り、
-重心だけの精度が報告の 74.2% 前後まで下がる定義があるかを見る。Rq は定義を変えないので、どの行も同じ。
-すべて組み直しの生成器での値で、元のコード（ESM_1.zip）の値ではない。
+The generator is the reconstruction default (no noise), with warp 0 and 0.25. The centroid definition is varied over 32 variants,
+to see whether any definition lowers the centroid-only accuracy to about the reported 74.2%. Rq does not depend on the definition, so it is the same in every row.
+All values come from the reconstructed generator, not from the original code (ESM_1.zip).
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ def run_one(args):
 def main():
     import sys
 
-    if "--render-only" in sys.argv:  # 計算をやり直さず、JSON から表だけ書き直す
+    if "--render-only" in sys.argv:  # rewrite only the table from the JSON, without recomputing
         rows = json.loads((OUT / "centroid_variants.json").read_text())["rows"]
         (OUT / "centroid_variants.md").write_text(render_md(rows))
         return

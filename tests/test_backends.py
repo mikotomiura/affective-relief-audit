@@ -1,10 +1,10 @@
-"""生成器の差し替え口（atact.backends）と、生成器の変種（A1 の振り）の確かめ。
+"""Tests of the generator back-end interface (atact.backends) and of the generator variants (the A1 variations).
 
-1. 配管: 組み直しを包むだけの偽のアダプタで、差し替え口が結果を変えないこと。
-2. 適合: 組み直しと、元のコード（アダプタがあれば）に同じ約束をかける。
-   元のコードが落ちたら、それは式 (1)-(4) と実装の食い違いの所見になる。
-3. 既定の固定: 変種を足しても、既定の生成器の出力が 1 ビットも動かないこと。
-4. 変種ごとの性質: freq_unit・octave_form・noise がそれぞれ意図した効果を持つこと。
+1. Plumbing: with a fake adapter that merely wraps the reconstruction, the interface leaves results unchanged.
+2. Conformance: the same contract is imposed on the reconstruction and on the original code (if an adapter exists).
+   A failure of the original code is a finding of disagreement between eqs. (1)-(4) of Harada (2026) and its implementation.
+3. Default pinned: adding variants does not change a single bit of the default generator output.
+4. Per-variant properties: freq_unit, octave_form and noise each have their intended effect.
 """
 
 import hashlib
@@ -21,7 +21,7 @@ from atact.field import RenderConfig, height, minmax, procedural_field
 from atact.mapping import params
 from atact.transform import t_gamma
 
-# 原稿の表 1
+# Table 1 of Harada (2026)
 TABLE1 = [
     ((1, -1), (3.0, 0.06, 0.9)),
     ((-1, -1), (3.0, 0.30, 1.495)),
@@ -32,7 +32,7 @@ TABLE1 = [
 
 FAKE_ADAPTER = textwrap.dedent(
     '''
-    """組み直しを包むだけの偽のアダプタ（配管の検査用）。"""
+    """Fake adapter that merely wraps the reconstruction (for testing the plumbing)."""
     from atact.field import RenderConfig, height as _height, procedural_field
 
     NAME = "fake"
@@ -53,7 +53,7 @@ def fake(tmp_path):
     return load_adapter(p)
 
 
-# ---------------------------------------------------------------- 1. 配管
+# ---------------------------------------------------------------- 1. Plumbing
 
 
 def test_fake_adapter_matches_builtin_dataset(fake):
@@ -66,15 +66,15 @@ def test_fake_adapter_matches_builtin_dataset(fake):
 
 
 def test_backend_is_actually_used(tmp_path):
-    # 偽のアダプタが組み直しと同じだと、backend を無視しても上の検査は緑になる。高さを 2 倍にした版で確かめる
+    # A fake adapter identical to the reconstruction would pass the check above even if backend were ignored; check with a version whose height is doubled
     p = tmp_path / "double.py"
     p.write_text(FAKE_ADAPTER.replace("return _height(V, A, RenderConfig(), seed)",
                                       "return 2 * _height(V, A, RenderConfig(), seed)"))
     cfg = DatasetConfig(per_class=3)
     X0, _, _ = make_dataset(cfg)
     X2, _, _ = make_dataset(cfg, backend=load_adapter(p))
-    assert np.allclose(X2[:, 0], 2 * X0[:, 0])  # Rq は 2 倍
-    assert np.allclose(X2[:, 1], X0[:, 1])      # 重心は倍率に依らない
+    assert np.allclose(X2[:, 0], 2 * X0[:, 0])  # Rq doubles
+    assert np.allclose(X2[:, 1], X0[:, 1])      # the centroid is independent of the scale factor
 
 
 def test_missing_optional_functions_are_none(fake):
@@ -110,7 +110,7 @@ def test_adapter_path_from_env(tmp_path, monkeypatch):
     assert "original" not in backends.available()
 
 
-# ---------------------------------------------------------------- 2. 適合
+# ---------------------------------------------------------------- 2. Conformance
 
 
 def _conformance_backends():
@@ -155,10 +155,10 @@ def _field_or_skip(be, f, seed=42, n=None):
 
 @pytest.mark.parametrize("va", [v for v, _ in TABLE1])
 def test_conf_eq4_height_is_s_tgamma_f(be, va):
-    # 式 (4): H = s T_gamma(F)。中心化の有無は許す
+    # Eq. (4): H = s T_gamma(F); centring is allowed to be present or absent
     f, s, g = params(*va)
     F = _field_or_skip(be, f)
-    assert np.abs(F).max() <= 1 + 1e-9  # A2: [-1, 1] に入っている
+    assert np.abs(F).max() <= 1 + 1e-9  # A2: values lie in [-1, 1]
     H = be.height(*va, 42)
     want = s * t_gamma(F, g)
     assert np.allclose(H - H.mean(), want - want.mean(), atol=1e-9)
@@ -176,25 +176,25 @@ def test_conf_p4_minmax_erases_s(be):
 
 
 def test_conf_p6_gradient_grows_with_grid(be):
-    # 粗い格子は最高のオクターブ（f の 8 倍）を解像しないので、細かい側の 2 点で比べる
+    # A coarse grid does not resolve the highest octave (8 f); compare the two finer grids
     F1 = _field_or_skip(be, 5.0, n=1024)
     F2 = _field_or_skip(be, 5.0, n=2048)
     g = 2.6
-    # gamma > 1 では格子を倍にすると最大勾配が増える（理論は 2^(1-1/gamma) = 1.53）
+    # For gamma > 1 the maximum gradient grows when the grid is doubled (theory: 2^(1-1/gamma) = 1.53)
     assert max_gradient(t_gamma(F2, g)) / max_gradient(t_gamma(F1, g)) > 1.3
-    # gamma = 1 では F が滑らかなので、最大勾配は収束している
+    # For gamma = 1, F is smooth and the maximum gradient has converged
     assert max_gradient(F2) / max_gradient(F1) < 1.05
 
 
-# ---------------------------------------------------------------- 3. 既定の固定
+# ---------------------------------------------------------------- 3. Default pinned
 
 
 def _digest(a):
-    # 浮動小数の末尾の揺れで落ちないよう、10 桁で丸めてから SHA-256 をとる
+    # Round to 10 digits before taking the SHA-256, so that last-digit floating-point jitter does not cause failures
     return hashlib.sha256(np.round(np.asarray(a, dtype=float), 10).tobytes()).hexdigest()[:16]
 
 
-# 2026-10-24 に、A1 の変種を足す前の版（6e0be23）で取った値
+# Values recorded on 2026-10-24 from the version before the A1 variants were added (6e0be23)
 DEFAULT_DIGESTS = {
     ("F", 0.0, 3.0): "1fd0d1a09fe51785",
     ("F", 0.0, 7.0): "c29221a61df3bf1f",
@@ -214,20 +214,20 @@ def test_default_generator_unchanged(key):
     assert _digest(a) == DEFAULT_DIGESTS[key]
 
 
-# ---------------------------------------------------------------- 4. 変種ごとの性質
+# ---------------------------------------------------------------- 4. Per-variant properties
 
 ONE = dict(octaves=1, warp=0.0)
 
 
 def test_freq_unit_half_halves_pure_tone():
-    # 1 段だけ・ワープ無し・gamma = 1 なら F は純音。半周期の単位では重心がちょうど半分
+    # With a single octave, no warp and gamma = 1, F is a pure tone; in half-period units the centroid is exactly half
     c = centroid(procedural_field(6.0, RenderConfig(**ONE)))
     h = centroid(procedural_field(6.0, RenderConfig(**ONE, freq_unit="half")))
     assert np.isclose(h / c, 0.5)
 
 
 def test_octave_form_product_vs_sum_centroid():
-    # 積 sin(wx) sin(wy) の半径は sqrt(2) f、和 sin(wx) + sin(wy) は f
+    # The product sin(wx) sin(wy) has radius sqrt(2) f; the sum sin(wx) + sin(wy) has radius f
     p = centroid(procedural_field(6.0, RenderConfig(**ONE, octave_form="product")))
     s = centroid(procedural_field(6.0, RenderConfig(**ONE, octave_form="sum")))
     assert np.isclose(p, 6.0 * np.sqrt(2))
@@ -235,7 +235,7 @@ def test_octave_form_product_vs_sum_centroid():
 
 
 def test_octave_form_rank():
-    # 積は行列として階数 1、和と向きの乱数の平面波は階数 2
+    # As a matrix the product has rank 1; the sum and the plane wave with random orientation have rank 2
     def rank(form):
         return np.linalg.matrix_rank(procedural_field(5.0, RenderConfig(**ONE, octave_form=form)), tol=1e-8)
 
@@ -247,14 +247,14 @@ def test_octave_form_rank():
 def test_oriented_direction_depends_on_seed():
     a = procedural_field(5.0, RenderConfig(**ONE, octave_form="oriented"), seed=1)
     b = procedural_field(5.0, RenderConfig(**ONE, octave_form="oriented"), seed=2)
-    # 位相だけでなく向きが変わる: 2 次元スペクトルの最大の位置が違う
+    # Not only the phase but the orientation changes: the location of the maximum of the 2-D spectrum differs
     pa = np.unravel_index(np.abs(np.fft.fft2(a)).argmax(), a.shape)
     pb = np.unravel_index(np.abs(np.fft.fft2(b)).argmax(), b.shape)
     assert pa != pb
 
 
 def _high_fraction(F, cut=60):
-    # 最高のオクターブ（f = 5 の 8 倍 = 40 周期、積の半径 56.6）より上だけを数える
+    # Count only above the highest octave (8 f = 40 cycles for f = 5; product radius 56.6)
     pw = np.abs(np.fft.fft2(F - F.mean())) ** 2
     return pw[radial_frequency(F.shape[0]) > cut].sum() / pw.sum()
 

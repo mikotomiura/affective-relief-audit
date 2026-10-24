@@ -1,12 +1,12 @@
-"""元のコード（ESM_1.zip）を包むアダプタのひな形。
+"""Template for an adapter wrapping the original code (ESM_1.zip).
 
-使い方:
-  1. ESM_1.zip を external/esm1/ に展開する（external/ は git の外）。中身を読んでから先へ進む。
-  2. このファイルを adapters/original.py に写し、下の TODO を元のコードの関数で埋める。
-  3. uv run pytest -q tests/test_backends.py で、アダプタが約束を守るかを確かめる。
+Usage:
+  1. Unpack ESM_1.zip into external/esm1/ (external/ is outside git). Read its contents before proceeding.
+  2. Copy this file to adapters/original.py and fill the TODOs below with functions of the original code.
+  3. Run uv run pytest -q tests/test_backends.py to check that the adapter keeps its contract.
 
-元のコードの関数名や引数は届くまで分からない。ここでは「何を返せばよいか」だけを決める。
-元のコードに無いものは None を返したままにする（それ自体が分かったことになる）。
+The function names and arguments of the original code are not known. Here only what each function must return is fixed.
+Leave anything absent from the original code returning None (that is itself a finding).
 """
 
 from __future__ import annotations
@@ -19,47 +19,47 @@ import numpy as np
 NAME = "original"
 ESM = Path(__file__).resolve().parents[1] / "external" / "esm1"
 
-# TODO: 元のコードのモジュールを import する。例:
+# TODO: import the module of the original code. Example:
 # sys.path.insert(0, str(ESM / "src"))
 # import affective_relief as orig
 
 
 def height(V: float, A: float, seed: int = 42) -> np.ndarray:
-    """式 (4) の H = s T_gamma(F)。min-max の前の、単位のある高さ。128 x 128 を想定。"""
+    """H = s T_gamma(F), eq. (4) of Harada (2026). Height with units, before min-max. A 128 x 128 grid is assumed."""
     raise NotImplementedError("元のコードの高さの関数を呼ぶ")
 
 
 def field(f: float, seed: int = 42, n: int = 128) -> np.ndarray | None:
-    """T_gamma をかける前の F（n x n）。元のコードが分けていなければ None。
+    """F before T_gamma is applied (n x n). None if the original code does not separate it.
 
-    格子の大きさ n を変えられなければ、n != 128 のときに None を返す（命題 6 の検査が skip になる）。
+    If the grid size n cannot be varied, return None for n != 128 (the check of Proposition 6 is then skipped).
     """
     return None
 
 
 def params(V: float, A: float):
-    """(f, s, gamma)。元のコードの写像。式 (1)-(3) と違えば、それが所見になる。"""
+    """(f, s, gamma). The mapping of the original code. If it differs from eqs. (1)-(3), that is a finding."""
     return None
 
 
 def features(H: np.ndarray):
-    """元のコードの (Rq, C)。式 (5)(6) の実装の違いを見るために使う。"""
+    """(Rq, C) of the original code. Used to see differences in the implementation of eqs. (5)(6)."""
     return None
 
 
 def dataset():
-    """元のコードが作った (X, y)。X は 120 x 2 の (Rq, C)、y は 0/1。
+    """(X, y) produced by the original code. X is 120 x 2 (Rq, C); y is 0/1.
 
-    ラベルの向きは recon と合わせる: 0 = positive/low-arousal、1 = negative/high-arousal。
-    元のコードが保存した行列（CSV など）があれば、それを読むだけでよい。
+    The label orientation matches the reconstruction: 0 = positive/low-arousal, 1 = negative/high-arousal.
+    If the original code saved a matrix (e.g. CSV), it suffices to read it.
     """
     return None
 
 
 def fig3_heights():
-    """図 3 の 3 枚 {"calm": H, "anger": H, "complex": H}。元のコードの図を描く手順で作った高さ。
+    """The three panels of Fig. 3, {"calm": H, "anger": H, "complex": H}: heights produced by the procedure the original code uses to draw the figure.
 
-    図 3 は 256 x 256 の格子で描かれている（表 2 の 128 ではない。atact.fig3 の冒頭を参照）。
-    元のコードが図を描く関数を持っていなければ None。色を付ける前の高さを返す。
+    Fig. 3 is drawn on a 256 x 256 grid (not the 128 of Table 2; see the head of atact.fig3).
+    None if the original code has no function that draws the figure. Return the height before colouring.
     """
     return None
