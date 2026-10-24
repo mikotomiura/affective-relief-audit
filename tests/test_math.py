@@ -236,14 +236,34 @@ def test_a6_limit_constant(g, f):
     assert np.isclose(centroid_1d(_sine(f, n, g)) / n ** (1 - a), _k_limit(g, f), rtol=0.01)
 
 
+def _cstar(g, nmax=2_000_001):
+    """定理 A.6.1 (ii) の C*。sum n|b_n| は n^(-1/gamma) でしか収束しないので尾部を Hurwitz のゼータで足す。"""
+    a = 1 / g
+    n = np.arange(1, nmax, 2)
+    b = np.abs(fourier_coeff_odd(n, g))
+    c = abs(_c_gamma(g))
+    j0 = (nmax - 1) // 2  # 次の奇数 nmax = 2 j0 + 1
+    num = (n * b).sum() + c * 2 ** (-a) * zeta(a, j0 + 0.5)
+    den = b.sum() + c * 2 ** (-1 - a) * zeta(1 + a, j0 + 0.5)
+    return num / den
+
+
 def test_a6_gamma_below_one_converges():
     g, f = 0.9, 5
-    n = np.arange(1, 4_000_001, 2)
-    b = np.abs(fourier_coeff_odd(n, g))
-    lim = f * (n * b).sum() / b.sum()
-    c = [centroid_1d(_sine(f, m, g)) for m in (2**10, 2**14, 2**18)]
+    lim = f * _cstar(g)
+    assert np.isclose(lim, f * _cstar(g, 4_000_001), rtol=1e-8)  # 打ち切りに依らない
+    c = [centroid_1d(_sine(f, m, g)) for m in (2**13, 2**16, 2**20)]
+    assert round(c[0], 2) == 7.21  # 命題 5 の表
     assert np.all(np.diff(c) > 0) and c[-1] < lim
-    assert lim - c[-1] < (lim - c[0]) / 2
+    # 差は N^(1 - 1/gamma) で減る: N を 2^4 倍にすると 2^(4 * (1 - 1/0.9)) = 0.735 倍
+    assert np.isclose((lim - c[2]) / (lim - c[1]), 2 ** (4 * (1 - 1 / g)), rtol=0.01)
+
+
+def test_a6_even_f_reduces_by_gcd():
+    g = 1.75
+    a = 1 / g
+    n = 2**20
+    assert np.isclose(centroid_1d(_sine(2, n, g)) / n ** (1 - a), 2**a * _k_limit(g, 1), rtol=0.01)
 
 
 @pytest.mark.parametrize("n", [128, 1000, 4096])
@@ -289,7 +309,8 @@ KAPPA0 = np.pi * quad(lambda t: t / np.sin(np.pi * t) if t > 0 else 1 / np.pi, 0
 
 
 def test_a7_noninteger_f_n_over_log_n():
-    assert np.isclose(KAPPA0, 2 * 0.915965594177219 / np.pi, rtol=1e-12)  # 2G/pi（数値の一致）
+    catalan = sum((-1) ** k / (2 * k + 1) ** 2 for k in range(200_000))  # DLMF 25.11.40
+    assert np.isclose(KAPPA0, 2 * catalan / np.pi, rtol=1e-9)  # 付録 A 系 A.7.1 の前の恒等式
     r = []
     for n in (2**12, 2**16, 2**20):
         z = np.sin(2 * np.pi * 5.3 * np.arange(n) / n)
