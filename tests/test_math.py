@@ -322,3 +322,22 @@ def test_a7_zero_jump_grows_like_log():
     # f = 5.5, phi = 0 は J = 0（端で値はつながり、傾きだけが跳ぶ）
     c = [centroid_1d(np.sin(2 * np.pi * 5.5 * np.arange(n) / n)) for n in (2**12, 2**16, 2**20)]
     assert np.all(np.diff(c) > 0) and c[-1] < 2 * c[0]
+
+
+@pytest.mark.parametrize("g", [0.9, 0.5])
+def test_a6_cstar_closed_form(g):
+    # 注意 A.6.2: 1 < alpha < 3 で C* = 4 alpha / (3 alpha - 1)、D = Gamma(a/2) / (sqrt(pi) Gamma((a+1)/2))
+    a = 1 / g
+    assert np.isclose(_cstar(g), 4 * a / (3 * a - 1), rtol=1e-9)
+    d_closed = Gamma_fn(a / 2) / (np.sqrt(np.pi) * Gamma_fn((a + 1) / 2))
+    assert np.isclose(_d_gamma(g), d_closed, rtol=1e-7)
+    assert np.isclose(fourier_coeff_odd(1, g) / d_closed, 2 * a / (a + 1))
+
+
+def test_a6_even_f_limit_depends_on_gcd():
+    # f = 6: d = gcd(f, N) ごとに極限が分かれる（d = 2 と d = 6、どちらも N/d は偶数）
+    g = 1.75
+    a = 1 / g
+    for n, d in ((1048576, 2), (1048572, 6)):
+        assert np.gcd(6, n) == d and (n // d) % 2 == 0
+        assert np.isclose(centroid_1d(_sine(6, n, g)) / n ** (1 - a), d**a * _k_limit(g, 6 // d), rtol=0.01)
