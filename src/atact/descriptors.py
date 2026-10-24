@@ -81,3 +81,11 @@ def max_gradient(H: np.ndarray) -> float:
     n = H.shape[0]
     gy, gx = np.gradient(H, 1.0 / n)
     return float(np.hypot(gx, gy).max())
+
+
+def centroid_1d(z: np.ndarray) -> float:
+    """式 (6) の 1 次元版（付録 A 式 (1)）: 振幅で重みを付けた周波数の重心。"""
+    zc = z - z.mean()
+    mag = np.abs(np.fft.fft(zc))
+    k = np.abs(np.fft.fftfreq(len(z)) * len(z))
+    return float((k * mag).sum() / mag.sum())

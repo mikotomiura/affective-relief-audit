@@ -118,3 +118,186 @@ def test_height_uses_regime_parameters():
     H2 = height(-1, 1)
     assert rq(H2) > 5 * rq(H1)
     assert centroid(H2) > centroid(H1)
+
+
+# ---- 付録 A（advice/proofs/appendix-a.tex）の各主張 ----
+
+from scipy.integrate import quad
+from scipy.special import gamma as Gamma_fn
+from scipy.special import zeta
+
+from atact.descriptors import centroid_1d
+from atact.transform import fourier_coeff_odd
+
+
+def _sine(f, n, g, phase=0.0):
+    # 零点に乗る標本は sin(pi) = 1.2e-16 になり、T_gamma が (1e-16)^(1/gamma) に増幅するので 0 にそろえる
+    u = np.sin(2 * np.pi * f * np.arange(n) / n + phase)
+    u[np.abs(u) < 1e-12] = 0.0
+    return t_gamma(u, g)
+
+
+def _c_gamma(g):
+    a = 1 / g
+    return 4 * Gamma_fn(1 + a) * np.cos(np.pi * a / 2) / np.pi
+
+
+def _d_gamma(g, nmax=4_000_001):
+    a = 1 / g
+    n = np.arange(1, nmax, 2)
+    return fourier_coeff_odd(n, g).sum() + _c_gamma(g) * nmax ** (-a) / (2 * a)
+
+
+def _k_limit(g, f):
+    """定理 A.6.1 (i) の極限の定数 K_gamma(f)。"""
+    a = 1 / g
+    phi = lambda t: zeta(1 + a, t) - zeta(1 + a, 1 - t)  # sum_m sign(t+m)|t+m|^(-1-a)
+    pts = [j / (2 * f) for j in range(1, f) if j / (2 * f) < 0.5]
+    integral = quad(lambda t: abs(f * t - round(f * t)) * phi(t), 0, 0.5, points=pts or None, limit=500)[0]
+    return _c_gamma(g) * integral / (2 * _d_gamma(g))
+
+
+def _sandwich(g, f, n):
+    k = np.arange(1, n // 2, 2)
+    b, bn = fourier_coeff_odd(k, g), fourier_coeff_odd(n - k, g)
+    w = np.abs((f * k + n // 2) % n - n // 2)  # ||f k||_N
+    return (w * (b - bn)).sum() / b.sum(), (w * b).sum() / (b - bn).sum()
+
+
+@pytest.mark.parametrize("g", [0.9, 1.75, 2.6])
+def test_a4_bn_closed_form_matches_fft(g):
+    m = 2**16
+    z = np.fft.fft(_sine(1, m, g)) / m
+    for n in (1, 3, 5):
+        assert np.isclose(-2 * z[n].imag, fourier_coeff_odd(n, g), rtol=1e-8)
+    for n in (51, 201):
+        assert np.isclose(-2 * z[n].imag, fourier_coeff_odd(n, g), rtol=1e-5)
+    assert np.allclose(z[2:200:2], 0, atol=1e-12)  # 偶数次は 0
+
+
+@pytest.mark.parametrize("g", [0.9, 1.75, 2.6])
+def test_a4_bn_decay_constant(g):
+    n = 100_001
+    assert np.isclose(fourier_coeff_odd(n, g) * n ** (1 + 1 / g) / _c_gamma(g), 1, atol=1e-4)
+
+
+def test_a4_bn_sign_and_monotone():
+    n = np.arange(1, 2001, 2)
+    b = fourier_coeff_odd(n, 1.75)  # alpha < 1
+    assert np.all(b > 0) and np.all(np.diff(b) < 0)
+    b = fourier_coeff_odd(n, 0.9)  # 1 < alpha < 3
+    assert b[0] > 0 and np.all(b[1:] < 0) and np.all(np.diff(np.abs(b[1:])) < 0)
+
+
+def test_a4_exception_odd_alpha():
+    # gamma = 1 は sin そのもの。gamma = 1/3 は sin^3 = (3 sin t - sin 3t)/4
+    assert np.allclose(fourier_coeff_odd(np.arange(3, 101, 2), 1.0), 0, atol=1e-15)
+    m = 4096
+    z = np.fft.fft(_sine(1, m, 1 / 3)) / m
+    assert np.allclose([-2 * z[1].imag, -2 * z[3].imag], [0.75, -0.25])
+    assert np.allclose(z[5:100], 0, atol=1e-12)
+
+
+@pytest.mark.parametrize("g", [1.75, 2.6])
+def test_a5_alias_bounds(g):
+    n = 256
+    beta = (2j * np.fft.fft(_sine(1, n, g)) / n).real  # beta_k = 2i zhat(k) / N
+    k = np.arange(1, n // 2, 2)
+    b, bn = fourier_coeff_odd(k, g), fourier_coeff_odd(n - k, g)
+    assert np.all(beta[k] <= b + 1e-12)
+    assert np.all(beta[k] >= b - bn - 1e-12)
+    assert np.allclose(beta[0 : n : 2], 0, atol=1e-12)
+
+
+def test_a5_permutation():
+    n, f = 128, 5
+    z1 = np.abs(np.fft.fft(_sine(1, n, 1.75)))
+    zf = np.abs(np.fft.fft(_sine(f, n, 1.75)))
+    k = np.arange(n)
+    assert np.allclose(zf[(f * k) % n], z1, atol=1e-9)
+
+
+TABLE_P5 = {1.75: [10.36, 18.26, 32.69, 58.89], 2.6: [13.50, 29.71, 67.27, 154.69]}
+
+
+@pytest.mark.parametrize("g", [1.75, 2.6])
+def test_a6_sandwich_and_table(g):
+    for n, ref in zip((128, 512, 2048, 8192), TABLE_P5[g]):
+        c = centroid_1d(_sine(5, n, g))
+        lo, hi = _sandwich(g, 5, n)
+        assert lo <= c <= hi
+        assert round(c, 2) == ref
+
+
+@pytest.mark.parametrize("g,f", [(1.75, 5), (2.6, 7)])
+def test_a6_limit_constant(g, f):
+    n = 2**18
+    a = 1 / g
+    assert np.isclose(centroid_1d(_sine(f, n, g)) / n ** (1 - a), _k_limit(g, f), rtol=0.01)
+
+
+def test_a6_gamma_below_one_converges():
+    g, f = 0.9, 5
+    n = np.arange(1, 4_000_001, 2)
+    b = np.abs(fourier_coeff_odd(n, g))
+    lim = f * (n * b).sum() / b.sum()
+    c = [centroid_1d(_sine(f, m, g)) for m in (2**10, 2**14, 2**18)]
+    assert np.all(np.diff(c) > 0) and c[-1] < lim
+    assert lim - c[-1] < (lim - c[0]) / 2
+
+
+@pytest.mark.parametrize("n", [128, 1000, 4096])
+def test_a6_gamma_one_constant(n):
+    assert np.isclose(centroid_1d(_sine(5, n, 1.0)), 5.0)
+
+
+def test_a6_gamma_to_one_limit_is_f():
+    assert np.isclose(_k_limit(1.01, 5), 5, rtol=0.05)
+
+
+@pytest.mark.parametrize("g", [1.75, 2.6])
+def test_a2_slope_bounds(g):
+    a = 1 / g
+    for n in (128, 1024, 8192):
+        h = 1 / n
+        for ph in np.linspace(0, 1, 7):
+            z = _sine(1, n, g, ph)
+            d = np.abs(np.roll(z, -1) - np.roll(z, 1)).max() / (2 * h)
+            # |F'(x0)| = 2 pi、||F'|| = 2 pi
+            assert (2 * np.pi / 4) ** a <= d * h ** (1 - a) <= (2 * np.pi) ** a + 1e-9
+
+
+@pytest.mark.parametrize("g", [1.75, 2.6])
+@pytest.mark.parametrize("eps", [0.01, 0.05, 0.2])
+def test_a2_smoothed_transform(g, eps):
+    a = 1 / g
+    u = np.linspace(-1, 1, 400_001)
+    y = t_gamma_eps(u, g, eps)
+    assert np.all(np.diff(y) > 0)
+    assert np.isclose(np.gradient(y, u).max(), eps ** (a - 1) * (1 + eps**2) ** ((1 - a) / 2), rtol=1e-3)
+    assert np.abs(y - t_gamma(u, g)).max() <= eps**a
+    assert np.all(np.abs(y) <= np.abs(t_gamma(u, g)) + 1e-15)
+
+
+def test_a3_grid_sigma_monotone_in_gamma():
+    s = [np.mean(_sine(5, 128, g) ** 2) for g in (0.9, 1.0, 1.75, 2.6)]
+    assert np.all(np.diff(s) > 0)
+    assert np.isclose(np.mean(_sine(5, 128, 1.75)), 0, atol=1e-12)  # 格子の上でも対称
+
+
+KAPPA0 = np.pi * quad(lambda t: t / np.sin(np.pi * t) if t > 0 else 1 / np.pi, 0, 0.5)[0]
+
+
+def test_a7_noninteger_f_n_over_log_n():
+    assert np.isclose(KAPPA0, 2 * 0.915965594177219 / np.pi, rtol=1e-12)  # 2G/pi（数値の一致）
+    r = []
+    for n in (2**12, 2**16, 2**20):
+        z = np.sin(2 * np.pi * 5.3 * np.arange(n) / n)
+        r.append(centroid_1d(z) * np.log(n) / n)
+    assert np.all(np.diff(r) > 0) and r[-1] < KAPPA0
+
+
+def test_a7_zero_jump_grows_like_log():
+    # f = 5.5, phi = 0 は J = 0（端で値はつながり、傾きだけが跳ぶ）
+    c = [centroid_1d(np.sin(2 * np.pi * 5.5 * np.arange(n) / n)) for n in (2**12, 2**16, 2**20)]
+    assert np.all(np.diff(c) > 0) and c[-1] < 2 * c[0]

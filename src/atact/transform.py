@@ -25,3 +25,17 @@ def t_gamma_eps(u, g, eps):
 def sigma2_single_sine(g):
     """命題 3: F = sin(theta) のとき E|T_gamma(F)|^2 の閉じた形。"""
     return Gamma(1.0 / g + 0.5) / (np.sqrt(np.pi) * Gamma(1.0 / g + 1.0))
+
+
+def fourier_coeff_odd(n, g):
+    """付録 A 補題 A.4.1: T_gamma(sin theta) = sum b_n sin(n theta) の係数 b_n（n は奇数、n > 1/gamma）。
+
+    DLMF 5.12.6 の虚部と反転公式（DLMF 5.5.3）から得た閉じた形。
+    """
+    from scipy.special import gammaln
+
+    a = 1.0 / g
+    n = np.asarray(n, dtype=float)
+    sign = np.sign(Gamma((n - a) / 2.0))
+    ratio = sign * np.exp(gammaln((n - a) / 2.0) - gammaln(1.0 + (n + a) / 2.0))
+    return 2.0 ** (1.0 - a) * Gamma(a + 1.0) * np.cos(np.pi * a / 2.0) / np.pi * ratio
