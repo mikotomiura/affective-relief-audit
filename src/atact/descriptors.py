@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from functools import lru_cache
+
 import numpy as np
 
 
@@ -89,3 +91,53 @@ def centroid_1d(z: np.ndarray) -> float:
     mag = np.abs(np.fft.fft(zc))
     k = np.abs(np.fft.fftfreq(len(z)) * len(z))
     return float((k * mag).sum() / mag.sum())
+
+
+@lru_cache(maxsize=2)
+def _radial_frequency_cached(n: int) -> np.ndarray:
+    r = radial_frequency(n)
+    r.flags.writeable = False
+    return r
+
+
+def spectral_centroids(H: np.ndarray, kmax: float) -> dict:
+    """Three centroids from one DFT of H - mean(H): amplitude-weighted over all bins (S2.3, 'centroid_amp'),
+    power-weighted over all bins (S2.4, 'centroid_power') and power-weighted on 0 < rho <= kmax (S2.4,
+    'centroid_band_power'). They equal centroid, centroid_power and spectral.centroid_band(H, kmax, 'power').
+    """
+    n = H.shape[0]
+    if kmax > n / 2:
+        raise ValueError("kmax must be <= N/2")
+    mag = np.abs(np.fft.fft2(H - H.mean()))
+    rho = _radial_frequency_cached(n)
+    out = {"centroid_amp": float((rho * mag).sum() / mag.sum())}
+    mag *= mag
+    out["centroid_power"] = float((rho * mag).sum() / mag.sum())
+    keep = (rho <= kmax) & (rho > 0)
+    out["centroid_band_power"] = float((rho[keep] * mag[keep]).sum() / mag[keep].sum())
+    return out
+
+
+def spectral_centroids_1d(z: np.ndarray, kmax: float) -> dict:
+    """One-dimensional analogue of spectral_centroids, with |k| in place of rho (S2.7 for 'centroid_amp')."""
+    n = len(z)
+    if kmax > n / 2:
+        raise ValueError("kmax must be <= N/2")
+    mag = np.abs(np.fft.fft(z - z.mean()))
+    k = np.abs(np.fft.fftfreq(n) * n)
+    pw = mag**2
+    keep = (k <= kmax) & (k > 0)
+    return {"centroid_amp": float((k * mag).sum() / mag.sum()),
+            "centroid_power": float((k * pw).sum() / pw.sum()),
+            "centroid_band_power": float((k[keep] * pw[keep]).sum() / pw[keep].sum())}
+
+
+def hann_1d(n: int) -> np.ndarray:
+    """One-dimensional analogue of the window of S3.1: w(i) = sin^2(pi i / n)."""
+    return np.sin(np.pi * np.arange(n) / n) ** 2
+
+
+def windowed_1d(z: np.ndarray) -> np.ndarray:
+    """One-dimensional analogue of spectral.windowed (S3.1)."""
+    x = (z - z.mean()) * hann_1d(len(z))
+    return x - x.mean()

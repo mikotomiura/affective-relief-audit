@@ -112,3 +112,11 @@ def hf_ratio_float(normal: np.ndarray, freq_threshold: float = DEFAULT_FREQ_THRE
     hp = hp / (np.linalg.norm(hp, axis=-1, keepdims=True) + 1e-8)
     after = _signal_energy(np.clip((hp + 1.0) / 2.0, 0, 1))
     return float(np.clip(after / before, 0.0, 1.0))
+
+
+def normal_from_height(z: np.ndarray, side: float = 1.0) -> np.ndarray:
+    """The unit normals of normal_rgb_from_height before the uint8 encoding (S2.8), as an H x W x 3 float array."""
+    n = z.shape[0]
+    dzdy, dzdx = np.gradient(z, side / n)
+    v = np.stack([-dzdx, dzdy, np.ones_like(z)], axis=-1)
+    return v / np.linalg.norm(v, axis=-1, keepdims=True)

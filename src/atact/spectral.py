@@ -124,3 +124,13 @@ def linear_hf_ratio(z: np.ndarray, freq_threshold: float) -> float:
     ehp = np.abs(np.fft.fft2(hp)) ** 2
     ehp[0, 0] = 0.0
     return float(ehp.sum() / e.sum())
+
+
+def windowed_normals_float(v: np.ndarray) -> np.ndarray:
+    """windowed_normals without the uint8 rounding of input and output (for the float variant of S2.9).
+
+    `v` is an H x W x 3 array of unit normals in [-1, 1]; the result is renormalised unit normals.
+    """
+    m = v.reshape(-1, 3).mean(0)
+    w = m + (v - m) * hann2d(v.shape[0])[..., None]
+    return w / np.linalg.norm(w, axis=-1, keepdims=True)
