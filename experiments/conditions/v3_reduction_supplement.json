@@ -1,0 +1,32 @@
+{
+  "purpose": "Supplementary exploration of validation 3: how the reduction method and the grid on which normals are computed determine the change of hf_ratio_phys with coarsening on the Surface-Topography Challenge measurements, and whether the counts of flips reported in validation 3 depend on the boundary effect of the periodic low-pass applied to non-periodic crops.",
+  "status": "Exploratory. Designed on 2026-10-25 after the results of validation 3 (results/validation3_public.json, commit 0acb76d) and after an informal exploration of the same question had been seen. It is not blind and is not used as evidence for the claims of the main text; its results belong to the supplement and are reported as exploratory. It contains no predictions.",
+  "version": 1,
+  "spec": "experiments/spec/generator-and-descriptors.md",
+  "data": "The 38 Challenge measurements of experiments/conditions/validation3_public.json (same files, same SHA-256 check, same P x P central crop after plane removal, same spacing and side L).",
+  "levels": "full (n = P), half (n = P/2), quarter (n = P/4).",
+  "reductions": [
+    {"name": "decimate_fourier", "rule": "As in validation 3 (S4): ideal low-pass on the periodic P x P frame, keeping the bins whose components lie in [-n/2, n/2), sampled on the grid n."},
+    {"name": "mirror", "rule": "Even (mirror) extension of the crop to 2P x 2P, ideal low-pass on that frame keeping the bins whose components lie in [-n, n) (the same physical band), the band-limited field sampled at every (P/n)-th pixel of the first P x P quadrant. The periodic frame has no value jump at its boundary."},
+    {"name": "subsample", "rule": "As in validation 3: every (P/n)-th sample, no low-pass."}
+  ],
+  "descriptors": [
+    {"name": "hf_ratio_px", "rule": "As in validation 3 (uint8 normal map, freq_threshold = 120)."},
+    {"name": "hf_ratio_phys", "rule": "As in validation 3 (uint8 normal map, freq_threshold = 120 n / P)."},
+    {"name": "hf_ratio_phys_float", "rule": "The float variant of hf_ratio_phys (S2.9)."},
+    {"name": "centroid_amp", "rule": "As in validation 3 (S2.3, raw)."},
+    {"name": "centroid_band_power", "rule": "As in validation 3 (S2.4, K = P/8)."}
+  ],
+  "decomposition": {
+    "rule": "For hf_ratio_phys_float and the coarse level n (half and quarter), the change from full is written as the sum of three terms: content (s1 - s0), sampling of the normal map (s2 - s1) and differences on the coarse grid (s3 - s2), where s0 is the value at full; s1 uses the heights band-limited to the retained bins of level n, with normals computed on the grid P; s2 uses the normals of s1 taken at every (P/n)-th pixel, evaluated on the grid n; s3 is the value at level n. Computed for the band-limits of decimate_fourier and of mirror.",
+    "small_slope_control": "The same decomposition with the heights multiplied by 1e-3 (nearly linear normals)."
+  },
+  "readouts": [
+    "For every reduction and descriptor: values at the three levels; the numbers of measurements whose value increases strictly, decreases strictly or is non-monotone over the levels; |quarter - full|.",
+    "For every reduction and descriptor: flips as defined in V2 and V3 of validation 3 (relative-difference threshold 0.05 at both levels; main count over pairs from different containers).",
+    "The decomposition and the small-slope control (means over measurements of the absolute value of each term, and every term per measurement).",
+    "The RMS slope of each crop at full (spectral derivative) and the RMS of the boundary jump of the periodic extension relative to the RMS height."
+  ],
+  "not_done": "TactileDreamFusion (its inputs are normal maps, not heights, and validation 3 already reduces them per component). Other reduction methods (for example windowing), which change the interior of the field.",
+  "deviations": []
+}

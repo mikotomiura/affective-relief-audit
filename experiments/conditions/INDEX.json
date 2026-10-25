@@ -76,6 +76,23 @@
    "old_sha256": "149b589b42a779f20be4706a13691016dc2c1b0bcef7ca95e51d8a69a386c2d8",
    "new_sha256": "1ca8bfcbd382c28fd00c508e7e0004f9eecc95ee5c6f5989d7c93660e1be5a51",
    "reason": "The flip_positive control of version 2 could not produce the flip predicted by P-E7 (found by a code review before the run); its tones were replaced. Changed before the main computation of this file was run (see 'deviations' in the file)."
+  },
+  {
+   "date": "2026-10-25",
+   "file": "v3_reduction_supplement.json",
+   "from_version": null,
+   "to_version": 1,
+   "old_sha256": null,
+   "new_sha256": "7f2f6108fae7862686a38f366212ac7478b8b8d39ca2045060be6f920d2d9b2a",
+   "reason": "Added under 'exploratory': a supplementary exploration of validation 3 designed after its results had been seen (reduction methods and the change of hf_ratio_phys with coarsening). It is not among the registered computations and is not used as evidence for the main claims."
   }
- ]
+ ],
+ "exploratory": {
+  "v3_reduction_supplement.json": {
+   "path": "experiments/conditions/v3_reduction_supplement.json",
+   "sha256": "7f2f6108fae7862686a38f366212ac7478b8b8d39ca2045060be6f920d2d9b2a",
+   "version": 1,
+   "note": "Exploratory, designed after the results of validation 3; not blind; for the supplement only."
+  }
+ }
 }
