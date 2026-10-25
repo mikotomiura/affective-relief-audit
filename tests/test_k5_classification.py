@@ -69,7 +69,11 @@ def test_seed_ranges_do_not_overlap():
         ranges.append((k5.SEEDS["power_b"](r)[0], k5.SEEDS["power_b"](r)[0] + n))
     for t in ("large_A", "large_B"):
         ranges += [(x, x + 5000) for x in k5.SEEDS[t]]
-    ranges.append((900000, 920000))  # smoke
+    sm = k5.SMOKE_SEEDS
+    ranges += [(sm["experiment"][0], sm["experiment"][0] + n), (sm["experiment"][1], sm["experiment"][1] + n)]
+    ranges += [(x, x + 20) for r in range(3) for x in sm["power_a"](r)] + [(sm["power_b"](r)[0], sm["power_b"](r)[0] + 20)
+                                                                         for r in range(2)]
+    ranges += [(x, x + 200) for t in ("large_A", "large_B") for x in sm[t]]
     ranges.sort()
     assert all(ranges[i][1] <= ranges[i + 1][0] for i in range(len(ranges) - 1))
 
@@ -188,7 +192,7 @@ def test_table_rows_and_row_predictions():
     r = dict(r, condition="corners", w=0.3, representation="minmax")
     d, o = k5.row_predictions(r)
     assert "<= the same row on H (P-K5-1)" in d and "= the same row of ii_s (P-K5-5)" in d
-    assert "<= C and B of the same cell (P-K5-10)" in o
+    assert "<= C and B of the same cell (svm; P-K5-10)" in o
 
 
 def test_predictions_file_ids_match_script():
@@ -196,3 +200,72 @@ def test_predictions_file_ids_match_script():
     ids = [p["id"] for p in pred["predictions"]]
     assert ids == [f"P-K5-{i}" for i in range(1, 13)]
     assert pred["conditions"]["sha256"] == k5.sha(k5.COND)
+
+
+def test_jitter_stream_is_not_the_phase_stream():
+    for sd in (1000, 1234, 50007):
+        ph = np.random.default_rng(sd).uniform(0, 2 * np.pi, 2) / np.pi - 1
+        for g in (0, 1):
+            assert not np.allclose(k5.jitter_u(sd, g), ph)
+
+
+def test_features_order_matches_labels():
+    n = 6
+    X = np.zeros((n, 2, 2, 2, 2, 3))
+    for i in range(n):
+        for g in range(2):
+            X[i, g] = 1000 * i + 100 * g
+    X += np.arange(3)  # descriptor index in the last axis
+    X[:, :, 1] += 10   # N index 1
+    X[:, :, :, 1] += 20  # minmax
+    X[:, :, :, :, 1] += 40  # hann
+    F = k5.features(X, 1, "minmax", "raw", ["sq", "centroid_band_power"])
+    G = k5.features(X, 0, "H", "hann", ["centroid_amp"])
+    assert list(G[:, 0]) == [1000 * (r // 2) + 100 * (r % 2) + 41 for r in range(2 * n)]
+    y = k5.labels(n)
+    for row in range(2 * n):
+        i, g = divmod(row, 2)
+        assert g == y[row]
+        assert list(F[row]) == [1000 * i + 100 * g + 30, 1000 * i + 100 * g + 32]
+
+
+def synthetic(c, value=0.8):
+    table = []
+    for r in k5.table_rows(c):
+        single = len(r["descriptor_set"]) == 1
+        clfs = ("svm", "threshold") if single else ("svm",)
+        v = 0.5 if r["condition"] in k5.NULL else value
+        table.append(dict(r, estimate_finite_svm=v, ci95_svm=[v - 0.05, v + 0.05],
+                          estimate_finite_threshold=v if single else None, tost_chance={k: r["condition"] in k5.NULL
+                          for k in clfs}, perm_p={k: 0.01 for k in clfs}))
+    data = {}
+    for cond, w in k5.combos(c):
+        X = np.ones((4, 2, 2, 2, 2, 3))
+        X[:, 0, :, :, :, 0] = 2.0  # group 0 has larger sq
+        data[k5.ckey(cond, w)] = {"X": X, "params": [[{"clipped": False}] * 4] * 2}
+    return table, data
+
+
+def test_predictions_detect_planted_violations():
+    table, data = synthetic(COND)
+    P = k5.predictions(COND, table, data)
+    for key in ("P-K5-1", "P-K5-3", "P-K5-4", "P-K5-5", "P-K5-6", "P-K5-7", "P-K5-8", "P-K5-10", "P-K5-11", "P-K5-12"):
+        assert all(i["holds"] for i in P[key]), key
+    T = k5.lookup(table)
+    T[("i_V", 0.3, 128, "raw", "H", "SC")]["estimate_finite_svm"] = 0.7       # P-K5-7
+    T[("corners", 0.1, 512, "hann", "minmax", "S")]["estimate_finite_svm"] = 0.9  # P-K5-1 (and others)
+    T[("i_A", 0.5, 128, "raw", "H", "C")]["estimate_finite_svm"] = 0.9       # P-K5-8
+    data["i_V_w0.1"]["X"][2, 1, 0, 0, 0, 0] = 5.0                            # P-K5-6 pair order
+    data["corners_w0.3"]["X"][0, 0, 1, 1, 0, 1] = 1.5                        # P-K5-5 descriptors
+    T[("iii_null", None, 128, "raw", "H", "S")]["tost_chance"]["threshold"] = False  # P-K5-3
+    P = k5.predictions(COND, table, data)
+    v7 = P["P-K5-7"][0]["violating"]
+    assert any(v.startswith("i_V|0.3|128|raw|H SC 0.7000") for v in v7) and len(v7) == 3  # plus the two raised cells
+    assert P["P-K5-1"][0]["violations"] == 1 and P["P-K5-1"][1]["holds"]
+    assert P["P-K5-8"][0]["violations"] >= 1
+    assert P["P-K5-6"][0]["violations"] == 1
+    assert not P["P-K5-5"][0]["holds"]
+    assert P["P-K5-3"][0]["violations"] == 1 and P["P-K5-3"][1]["holds"]
+    table, data = synthetic(COND)
+    data["i_A_w0.1"]["X"][0, 0, 0, 1, 0, 1] = np.nan
+    assert not k5.predictions(COND, table, data)["P-K5-4"][0]["holds"]

@@ -80,7 +80,10 @@ INTERPRETATION = [
     "A = -0.5 / 0.5; ii_s, ii_s_gamma and corners: (1, -1) / (-1, 1)). iii_null and check_same_seed use the (f, s, "
     "gamma) of corner (1, -1) for both groups.",
     "Jitter (decision recorded before any computation): the surface of group g with seed s draws u = "
-    "default_rng([s, g]).uniform(-1, 1, 2) and its jitter is w u. i_V adds w u[0] to V only and i_A adds w u[1] to A "
+    "default_rng([s, g, 1]).uniform(-1, 1, 2) and its jitter is w u. (The decision before any computation named "
+    "default_rng([s, g]); an independent check found before the power runs that SeedSequence pads the entropy with "
+    "zeros, so [s, 0] gives the same draws as default_rng(s), and group-0 jitter would have equalled the first two "
+    "phase draws of the field rescaled. The third word 1 makes the stream distinct for both groups.) i_V adds w u[0] to V only and i_A adds w u[1] to A "
     "only; ii_s, ii_s_gamma and corners add both and clip to [-1, 1]. The same u is used for the three values of w and "
     "for every condition, N, processing and representation, so these differ only in the quantity named.",
     "Surface: F by S1.1-S1.4 (maxabs, four octaves, no warp; atact.field.procedural_field_separable), H = s T_gamma(F) "
@@ -126,6 +129,26 @@ INTERPRETATION = [
     "support vectors; a solver tolerance of 1e-12 instead of 1e-3 gave the same accuracies). The accuracies of every "
     "unequal cell are listed beside the count. This was noticed in a smoke run before the experiment and the "
     "criterion was not changed.",
+    "Limits stated before the run (from the independent checks): the bootstrap keeps the out-of-fold predictions "
+    "fixed, so its interval does not include the variation from refitting the classifier, and the power runs (a) "
+    "measure how often equivalence is declared when the true accuracy is 0.5, not the error rate at the margins "
+    "0.45 and 0.55. The power rule bounds each column of iii_null separately, while P-K5-3 is a joint claim over all "
+    "columns; the joint rate observed in the power runs is reported beside it. The large-sample level of one "
+    "descriptor is the in-sample accuracy of the best threshold, which is biased upwards by selection (not only for "
+    "iii_null), and the level of two descriptors is the accuracy of a linear SVM; both are estimates for these "
+    "classifier families and can lie below the Bayes accuracy when the best decision region is not a half-line or "
+    "half-plane. The held-out accuracy of the threshold on set B is reported beside the level.",
+    "Correction of a basis stated before the run (the criterion is unchanged): the basis of P-K5-9 says that sq "
+    "differs between the groups through the sampling of the maximum. For integer f coprime to N (f = 3 and 7 at "
+    "N = 128 and 512) the map i -> f i mod N permutes the grid, so the sampled arrays of the two surfaces of a pair "
+    "are permutations of each other and raw sq is identical; under ii_s_gamma sq differs only because the jittered "
+    "f is not an integer (edge of the domain), and under hann also through the window.",
+    "Diagnostics added before the run beside unchanged criteria: for P-K5-2 the number of violations in which raw C "
+    "has the same accuracy at both N (so that no smaller change is possible), and for P-K5-8 the number of violations "
+    "outside the S rows of ii_s_gamma. Row tags name the classifier ('svm') where a criterion is evaluated on svm "
+    "only; for pairwise predictions (P-K5-1, -2, -4, -6, -7, -9, -11) the tag is attached to the row predicted to be "
+    "smaller, equal or derived, not to both rows. perm_p counts permuted accuracies >= observed - 1e-12, a guard "
+    "against floating-point noise; accuracies are multiples of 1/(2n), so it does not change the count.",
     "Smoke runs (--smoke) use seeds from 900000 upwards with 20 pairs, fewer replicates and fewer runs; they test the "
     "script only and their values are not used for any decision.",
 ]
@@ -135,7 +158,9 @@ INTERPRETATION = [
 
 
 def jitter_u(seed: int, g: int) -> np.ndarray:
-    return np.random.default_rng([seed, g]).uniform(-1.0, 1.0, 2)
+    """The third entropy word keeps this stream distinct from default_rng(seed) of the phases: SeedSequence pads
+    the entropy with zeros, so default_rng([seed, 0]) would repeat the phase draws of group 0."""
+    return np.random.default_rng([seed, g, 1]).uniform(-1.0, 1.0, 2)
 
 
 def surface_params(cond: str, g: int, seed: int, w: float | None) -> dict:
@@ -356,7 +381,7 @@ def row_predictions(r: dict) -> tuple[list[str], list[str]]:
     elif cond == "ii_s_gamma" and sn == "S":
         d.append("no direction relative to chance (P-K5-9)")
     else:
-        d.append("above chance (P-K5-12)")
+        d.append("above chance (svm; P-K5-12)")
     if rep == "minmax" and sn == "S" and cond in ("ii_s", "ii_s_gamma", "corners"):
         d.append("<= the same row on H (P-K5-1)")
     if rep == "minmax" and sn == "S" and cond == "i_V":
@@ -374,20 +399,20 @@ def row_predictions(r: dict) -> tuple[list[str], list[str]]:
         d.append("N = 512 >= N = 128 (P-K5-11)")
     if cond not in NULL:
         if sn == "SC":
-            o.append(">= max(S, C) of the same cell (P-K5-7)")
-        o.append("non-increasing in w (P-K5-8)")
+            o.append(">= max(S, C) of the same cell (svm; P-K5-7)")
+        o.append("non-increasing in w (svm; P-K5-8)")
         if cond == "ii_s_gamma" and sn == "S" and proc == "raw" and rep == "H":
-            o.append("< S of i_V, i_A, ii_s and corners in the same column (P-K5-9)")
+            o.append("< S of i_V, i_A, ii_s and corners in the same column (svm; P-K5-9)")
         if cond in ("i_A", "ii_s", "ii_s_gamma") or (cond == "corners" and rep == "minmax"):
             if sn in ("C", "B"):
-                o.append(">= S of the same cell (P-K5-10)")
+                o.append(">= S of the same cell (svm; P-K5-10)")
             if sn == "S":
-                o.append("<= C and B of the same cell (P-K5-10)")
+                o.append("<= C and B of the same cell (svm; P-K5-10)")
         if cond == "i_V" and rep == "H":
             if sn == "S":
-                o.append(">= C of the same cell (P-K5-10)")
+                o.append(">= C of the same cell (svm; P-K5-10)")
             if sn == "C":
-                o.append("<= S of the same cell (P-K5-10)")
+                o.append("<= S of the same cell (svm; P-K5-10)")
     return d or ["none"], o or ["none"]
 
 
@@ -454,7 +479,8 @@ def stage_power(c: dict, seeds: dict, runs_a: int, runs_b: int, cands: list[int]
         keys = list(res["a"][0][npairs])
         rate = {k: float(np.mean([res["a"][r][npairs][k][2] for r in range(runs_a)])) for k in keys}
         mean_acc = {k: float(np.mean([res["a"][r][npairs][k][0] for r in range(runs_a)])) for k in keys}
-        summary["a"][str(npairs)] = {"equivalence_rate": rate, "mean_accuracy": mean_acc,
+        joint = float(np.mean([all(res["a"][r][npairs][k][2] for k in keys) for r in range(runs_a)]))
+        summary["a"][str(npairs)] = {"equivalence_rate": rate, "mean_accuracy": mean_acc, "joint_rate": joint,
                                      "min_rate": min(rate.values()), "min_rate_column": min(rate, key=rate.get),
                                      "holds": bool(min(rate.values()) >= 0.8)}
         hw = [(res["b"][r][npairs][k][1][1] - res["b"][r][npairs][k][1][0]) / 2
@@ -555,7 +581,9 @@ def stage_experiment(c: dict, seeds: dict, npairs: int, n_boot: int, n_perm: int
             done[k] = v
             if time.time() - last > 60 or d == len(jobs):
                 partial.parent.mkdir(parents=True, exist_ok=True)
-                partial.write_text(json.dumps({"fingerprint": fingerprint(npairs, n_boot, n_perm), "rows": done}))
+                tmp = partial.with_suffix(".tmp")
+                tmp.write_text(json.dumps({"fingerprint": fingerprint(npairs, n_boot, n_perm), "rows": done}))
+                os.replace(tmp, partial)
                 last = time.time()
                 el = time.time() - t0
                 print(f"[experiment] {len(done)}/{len(rows)} rows, {el:.0f} s, about "
@@ -564,7 +592,10 @@ def stage_experiment(c: dict, seeds: dict, npairs: int, n_boot: int, n_perm: int
 
 
 def fingerprint(npairs, n_boot, n_perm) -> str:
-    return f"{sha(COND)}|{sha(SPEC)}|{sha(PRED)}|{sha(Path(__file__))}|{npairs}|{n_boot}|{n_perm}"
+    import sklearn
+
+    return (f"{sha(COND)}|{sha(SPEC)}|{sha(PRED)}|{sha(Path(__file__))}|{npairs}|{n_boot}|{n_perm}|"
+            f"{np.__version__}|{sklearn.__version__}")
 
 
 # --- analysis -------------------------------------------------------------------------------------------------------
@@ -607,6 +638,8 @@ def acc(r: dict, clf: str):
 
 
 def max_rel_diff(a: np.ndarray, b: np.ndarray) -> float:
+    if not (np.isfinite(a).all() and np.isfinite(b).all()):
+        return float("inf")
     return float(np.max(np.abs(a - b) / np.maximum(np.abs(a), np.abs(b))))
 
 
@@ -638,9 +671,10 @@ def predictions(c: dict, table: list[dict], data: dict) -> dict:
                     base = abs(acc(T[("i_A", w, 512, "raw", rep, "C")], clf) - acc(T[("i_A", w, 128, "raw", rep, "C")], clf))
                     dd = abs(acc(T[("i_A", w, 512, proc, rep, sn)], clf) - acc(T[("i_A", w, 128, proc, rep, sn)], clf))
                     if not dd < base:
-                        bad.append((w, rep, dd, base))
+                        bad.append((w, rep, dd, base, "raw C unchanged" if base == 0 else ""))
             items.append({"part": f"i_A: |change with N| of {proc} {sn} < that of raw C ({clf})",
                           "cells": len(ws) * len(REPRS), "violations": len(bad),
+                          "violations_with_raw_C_unchanged": sum(b[3] == 0 for b in bad),
                           "violating": [list(map(str, b)) for b in bad], "holds": not bad})
     P["P-K5-2"] = items
     # P-K5-3
@@ -729,6 +763,7 @@ def predictions(c: dict, table: list[dict], data: dict) -> dict:
                         if not all(a[i] >= a[i + 1] for i in range(len(a) - 1)):
                             bad.append(f"{cd}|{n}|{p}|{rep}|{sn}: " + ", ".join(f"{x:.4f}" for x in a))
     P["P-K5-8"] = [{"part": "svm accuracy non-increasing in w", "columns": tot, "violations": len(bad),
+                    "violations_outside_S_rows_of_ii_s_gamma": sum(not (b.startswith("ii_s_gamma|") and b.split(":")[0].endswith("|S")) for b in bad),
                     "violating": bad, "holds": not bad}]
     # P-K5-9
     bad = []
@@ -831,11 +866,13 @@ def report_power(meta: dict, S: dict) -> str:
           f"(a) iii_null, {S['runs_a']} runs: smallest equivalence rate over the columns, and its complement (the "
           "observed false non-equivalence rate). (b) corners, w = 0.5, N = 128, raw, H, svm, {sq, centroid_amp}, "
           f"{S['runs_b']} runs: mean half-width of the 95% interval.", "",
-          "| n | (a) min rate | column with min rate | false non-equivalence | (a) holds | (b) mean half-width | (b) holds |",
-          "|---|---|---|---|---|---|---|"]
+          "The joint rate is the fraction of runs in which every column is declared at chance at once (P-K5-3 is a "
+          "joint claim; the power rule only bounds each column).", "",
+          "| n | (a) min rate | column with min rate | false non-equivalence | joint rate | (a) holds | (b) mean half-width | (b) holds |",
+          "|---|---|---|---|---|---|---|---|"]
     for n in S["candidates"]:
         a, b = S["a"][str(n)], S["b"][str(n)]
-        L.append(f"| {n} | {a['min_rate']:.3f} | {a['min_rate_column']} | {1 - a['min_rate']:.3f} | {fmt(a['holds'])} | "
+        L.append(f"| {n} | {a['min_rate']:.3f} | {a['min_rate_column']} | {1 - a['min_rate']:.3f} | {a['joint_rate']:.3f} | {fmt(a['holds'])} | "
                  f"{b['mean_half_width']:.4f} | {fmt(b['holds'])} |")
     L += ["", "Equivalence rate by column, for each n:", "", "| column | " + " | ".join(str(n) for n in S["candidates"]) + " |",
           "|---|" + "---|" * len(S["candidates"])]
@@ -888,7 +925,7 @@ def report_experiment(c: dict, meta: dict, S: dict, pred_text: dict) -> str:
                  f"{set_name(r['descriptor_set'])} | {r['predicted_level_large_sample']:.4f} | "
                  f"{r['estimate_finite_svm']:.4f} | {fmt(r['ci95_svm'])} | {fmt(r['estimate_finite_threshold'])} | "
                  f"{fmt(r['ci95_threshold'])} | {fmt(r['tost_chance'])} | {fmt(r['perm_p'])} |")
-    L += ["", "## Mechanism check (jitter-free centres, seeds 1000-1099)", "",
+    L += ["", f"## Mechanism check (jitter-free centres, seeds {meta.get('mechanism_seeds', '1000-1099')})", "",
           "| condition | group | N | repr | proc | descriptor | mean | sd | min | max |", "|---|---|---|---|---|---|---|---|---|---|"]
     for k, v in S["mechanism"].items():
         for g in (0, 1):
@@ -981,8 +1018,16 @@ def run_stage(stage: str, c: dict, pred_text: dict, out: Path, seeds: dict, cfg:
             check_meta(power["meta"])
             check_meta(framef["meta"])
             frame = framef["rows"]
+            if framef["meta"]["large_sample_sha256"] != sha(out / "k5_large_sample.json"):
+                raise SystemExit("k5_large_sample.json changed since the frame was written")
             meta = meta_base()
+            meta["script_sha256_of_stages"] = {"power": power["meta"]["script_sha256"],
+                                               "frame": framef["meta"]["script_sha256"]}
+            if len({meta["script_sha256"], *meta["script_sha256_of_stages"].values()}) > 1:
+                print("[experiment] note: the script differs from the one that wrote the power or frame file; "
+                      "both SHA-256 values are recorded", flush=True)
             meta["per_class_n"] = power["summary"]["per_class_n"]
+            meta["mechanism_seeds"] = f"{seeds['mechanism'][0]}-{seeds['mechanism'][0] + 99}"
             meta["frame_sha256"] = sha(out / "k5_table1_frame.json")
             meta["power_sha256"] = sha(out / "k5_power.json")
             r = stage_experiment(c, seeds, meta["per_class_n"], cfg["n_boot"], cfg["n_perm"], out / "partial" / f"{NAME}.json")
@@ -998,6 +1043,8 @@ def run_stage(stage: str, c: dict, pred_text: dict, out: Path, seeds: dict, cfg:
 
 
 def check_meta(meta: dict):
+    if json.loads(PRED.read_text())["conditions"]["sha256"] != sha(COND):
+        raise SystemExit("the predictions file refers to another version of the conditions")
     if (meta["conditions_sha256"] != sha(COND) or meta["spec_sha256"] != sha(SPEC)
             or meta["predictions_sha256"] != sha(PRED)):
         raise SystemExit("conditions, specification or predictions changed since the values were computed")
