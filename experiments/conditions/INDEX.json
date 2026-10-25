@@ -85,6 +85,15 @@
    "old_sha256": null,
    "new_sha256": "7f2f6108fae7862686a38f366212ac7478b8b8d39ca2045060be6f920d2d9b2a",
    "reason": "Added under 'exploratory': a supplementary exploration of validation 3 designed after its results had been seen (reduction methods and the change of hf_ratio_phys with coarsening). It is not among the registered computations and is not used as evidence for the main claims."
+  },
+  {
+   "date": "2026-10-25",
+   "file": "k5_table1_predictions.json",
+   "from_version": null,
+   "to_version": 1,
+   "old_sha256": null,
+   "new_sha256": "6cf0f96992bd4acab004d03f66b0566c355f84f14eb8bf869709d9a33db7693b",
+   "reason": "Added: the predicted direction and order for every row of Table 1 of K5, written before any K5 computation. Not a change of k5_classification.json."
   }
  ],
  "exploratory": {
@@ -93,6 +102,14 @@
    "sha256": "7f2f6108fae7862686a38f366212ac7478b8b8d39ca2045060be6f920d2d9b2a",
    "version": 1,
    "note": "Exploratory, designed after the results of validation 3; not blind; for the supplement only."
+  }
+ },
+ "predictions": {
+  "k5_table1_predictions.json": {
+   "path": "experiments/conditions/k5_table1_predictions.json",
+   "sha256": "6cf0f96992bd4acab004d03f66b0566c355f84f14eb8bf869709d9a33db7693b",
+   "for": "k5_classification.json (version 1)",
+   "note": "Predicted direction and order for Table 1 of K5, written from K1-K4 before any K5 computation. The conditions file is unchanged."
   }
  }
 }

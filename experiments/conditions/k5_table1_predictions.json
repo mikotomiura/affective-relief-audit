@@ -1,0 +1,85 @@
+{
+ "purpose": "Predicted direction and predicted order for every row of Table 1 of K5 (experiments/conditions/k5_classification.json, version 1), derived from K1-K4 (Propositions 1-5 and 8 of the mathematical part) before any computation of K5. The third prediction column, the level from large-sample simulation, is computed afterwards and entered into the Table 1 frame (results/k5_table1_frame.json) before the experiment.",
+ "fixed_before_running": "Written on 2026-10-25 before any K5 computation (no smoke run, no power runs, no large-sample simulation, no experiment had been run). The conditions file is not changed. The predictions P-K5-1 to P-K5-3 are those of the conditions file and are repeated here only by reference; P-K5-4 to P-K5-12 are added here. Operational criteria are stated with each prediction; where a criterion compares accuracies it uses point estimates, and the bootstrap intervals are reported beside them.",
+ "conditions": {
+  "path": "experiments/conditions/k5_classification.json",
+  "sha256": "09a914161be116f44ab83f32277e5c48db3f304370f0f2bad59e5009b152d5e6",
+  "version": 1
+ },
+ "notation": {
+  "S": "descriptor set [sq]",
+  "C": "descriptor set [centroid_amp]",
+  "B": "descriptor set [centroid_band_power]",
+  "SC": "descriptor set [sq, centroid_amp]",
+  "group 0 / group 1": "the first and second centre listed for the condition in the conditions file (i_V: V = -0.5 / 0.5; i_A: A = -0.5 / 0.5; ii_s, ii_s_gamma and corners: (1, -1) / (-1, 1))",
+  "non-null conditions": "i_V, i_A, ii_s, ii_s_gamma and corners",
+  "column": "one combination of N, processing, representation, descriptor set and classifier"
+ },
+ "rule_values_at_centres": "From eqs. (1)-(3) (arithmetic on the rule, no simulation): i_V (f, s, gamma) = (5, 0.24, 1.899) and (5, 0.12, 1.601); i_A (4, 0.18, 1.474) and (6, 0.18, 2.026); corners (3, 0.06, 0.9) and (7, 0.30, 2.6). For a single sine, sigma_gamma = 0.693, 0.759, 0.770, 0.791, 0.799 and 0.829 at gamma = 0.9, 1.474, 1.601, 1.899, 2.026 and 2.6 (Proposition 3).",
+ "predictions": [
+  {
+   "id": "P-K5-1",
+   "source": "conditions file (predictions_now)",
+   "criterion": "For ii_s, ii_s_gamma and corners, in every cell with the same w, N and processing, the accuracy of S on minmax is at most the accuracy of S on H; evaluated separately for svm and threshold.",
+   "note": "The reason given in the conditions file (the export removes s) applies to corners. In ii_s and ii_s_gamma s is fixed at 0.18 in both groups, so Proposition 4 gives no direction there; the prediction is kept as frozen and is tested as stated."
+  },
+  {
+   "id": "P-K5-2",
+   "source": "conditions file (predictions_now)",
+   "criterion": "For i_A, raw centroid_amp (set C), the accuracy at N = 512 is at least that at N = 128 for every w and representation (svm and threshold separately). The absolute difference between N = 512 and N = 128 is smaller for B (raw) and for C (hann) than for C (raw), compared within the same w, representation and classifier."
+  },
+  {
+   "id": "P-K5-3",
+   "source": "conditions file (predictions_now)",
+   "criterion": "iii_null is 'at chance' by the TOST in every column. check_same_seed has accuracy exactly 0.5 in every column."
+  },
+  {
+   "id": "P-K5-4",
+   "basis": "Proposition 4 and the definitions S2.3-S2.4 and S3.1: the min-max export is H -> (H - min H)/R with R > 0, the centroids are ratios invariant under a positive factor and unaffected by an added constant (they are computed after centring), and the window of S3.1 is linear in the centred height. The centroid values on minmax therefore equal those on H for every surface, under both processings.",
+   "criterion": "The largest relative difference between centroid_amp (and centroid_band_power) on minmax and on H, over all surfaces, is below 1e-9. The accuracies of C and of B on minmax equal those on H in every cell (both classifiers); the number of unequal cells is reported."
+  },
+  {
+   "id": "P-K5-5",
+   "basis": "Proposition 4: ii_s and corners use the same jittered (V, A), hence the same (f, gamma) and seed, and differ only in s. The minmax export removes s, and the centroids do not depend on s.",
+   "criterion": "The largest relative difference between ii_s and corners of every descriptor on minmax, and of the two centroids on H, is below 1e-9. The accuracies of ii_s and corners are equal in every minmax row and in the C and B rows on H (both classifiers); the number of unequal cells is reported."
+  },
+  {
+   "id": "P-K5-6",
+   "basis": "Proposition 3: in i_V both surfaces of a pair share the field F (f = 5 and the same seed), and along -V the rule increases s and gamma with (Mv)_f = 0. For w <= 0.5, group 0 has the smaller V in every pair. The proposition assumes a symmetric distribution of F; the sampled F is only approximately symmetric.",
+   "criterion": "For i_V, raw, H, every N and w: sq of the group-0 surface exceeds sq of the group-1 surface in every pair. For i_V, the accuracy of S on minmax is at most that of S on H in every cell with the same w, N and processing (svm and threshold separately)."
+  },
+  {
+   "id": "P-K5-7",
+   "basis": "Proposition 8, part 1: the Bayes accuracy of a descriptor pair is at least that of each of its members. This holds for Bayes accuracy; for a finite linear SVM it is a prediction, not a theorem.",
+   "criterion": "In every cell of the non-null conditions, the svm accuracy of SC is at least the larger of the svm accuracies of S and C."
+  },
+  {
+   "id": "P-K5-8",
+   "basis": "Jitter rule of the conditions file: the parameter distributions of the two groups are scaled by w around fixed centres, with the same uniform draws for every w. Larger w brings the groups closer in (V, A). The overlap of the descriptor distributions also depends on the spread over seeds, so this is a prediction, not a theorem.",
+   "criterion": "For every non-null condition and column, the svm accuracy is non-increasing in w: acc(w = 0.1) >= acc(w = 0.3) >= acc(w = 0.5)."
+  },
+  {
+   "id": "P-K5-9",
+   "basis": "S1.2 and Proposition 3: in ii_s_gamma both groups have s = 0.18 and gamma = 1, so H = 0.18 F. For integer f the field on the unit square is the base-frequency-1 field with the same phases tiled f x f times, so its continuous RMS and maximum do not depend on f; the two surfaces of a pair share the seed and therefore the phases. sq then differs between the groups only through the sampling of the maximum and, for non-integer f, the edge of the domain. In the other non-null conditions sq is moved by s, by gamma, or by both.",
+   "criterion": "For raw H, the svm accuracy of S in ii_s_gamma is lower than that of S in i_V, i_A, ii_s and corners, in every column with the same w and N. No direction relative to chance is predicted for the S rows of ii_s_gamma."
+  },
+  {
+   "id": "P-K5-10",
+   "basis": "Propositions 3-5: the centroids move with f (and with gamma), sq moves with s and gamma. Where f differs between the groups (i_A: 4 against 6 at the centres; ii_s, ii_s_gamma and corners: 3 against 7), the centroids separate the groups at least as well as sq, except where s also differs and sq is computed on H (corners on H, excluded). Where f is the same (i_V), sq on H is moved by s and gamma and the centroid by gamma only.",
+   "criterion": "svm accuracies within each cell: for i_A, ii_s and ii_s_gamma (both representations) and corners on minmax, acc(C) >= acc(S) and acc(B) >= acc(S). For i_V on H, acc(S) >= acc(C)."
+  },
+  {
+   "id": "P-K5-11",
+   "basis": "Proposition 5 and K4: for gamma > 1 the amplitude-weighted centroid grows like N^(1 - 1/gamma), so the ratio of the centroids at gamma = 1.899 and 1.601 (i_V centres, f = 5 integer) grows by a factor of about 4^0.098 = 1.15 from N = 128 to 512, whereas sq does not grow with N. The prediction assumes that the relative spread over seeds does not grow faster.",
+   "criterion": "For i_V, raw C, the accuracy at N = 512 is at least that at N = 128 for every w and representation (svm and threshold separately)."
+  },
+  {
+   "id": "P-K5-12",
+   "basis": "In every non-null condition at least one of s, gamma and f differs between the groups, and Propositions 3-5 say that sq moves with s and gamma and the centroids with f and gamma. The exception is the S rows of ii_s_gamma (P-K5-9).",
+   "criterion": "Above chance: in every row of the non-null conditions except the S rows of ii_s_gamma, the 95% pair-bootstrap interval of the svm accuracy lies above 0.5."
+  }
+ ],
+ "row_texts": {
+  "rule": "predicted_direction lists, for the row, the predictions that state a direction for it (relative to chance, or relative to the same row under another representation, N or condition). predicted_order lists the predictions that order the row against other descriptor sets of the same cell or against other values of w or other conditions. The script that builds the Table 1 frame (experiments/k5_classification.py, --frame) generates these lists from the criteria above; a row with no applicable prediction says 'none'."
+ }
+}
