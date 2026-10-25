@@ -149,6 +149,38 @@ Criterion: Above chance: in every row of the non-null conditions except the S ro
 
 Violating cells: ii_s_gamma_w0.1|512|raw|H|centroid_amp; ii_s_gamma_w0.1|512|raw|H|sq+centroid_amp; ii_s_gamma_w0.1|512|raw|minmax|centroid_amp; ii_s_gamma_w0.1|512|raw|minmax|sq+centroid_amp; ii_s_gamma_w0.3|512|raw|H|centroid_amp; ii_s_gamma_w0.3|512|raw|H|sq+centroid_amp; ii_s_gamma_w0.3|512|raw|minmax|centroid_amp; ii_s_gamma_w0.3|512|raw|minmax|sq+centroid_amp; ii_s_gamma_w0.5|512|raw|H|centroid_amp; ii_s_gamma_w0.5|512|raw|H|sq+centroid_amp; ii_s_gamma_w0.5|512|raw|minmax|centroid_amp; ii_s_gamma_w0.5|512|raw|minmax|sq+centroid_amp
 
+## Conclusions by prediction (written after the run)
+
+This section was written by hand after the run and after the generated results were committed unedited. It does not change any criterion. The judgements are those of the Predictions section above; the text states what the measured values show beside each prediction. Statements marked "supplementary" rest on checks that are not in the registered list of computations and are not used as the basis of any claim.
+
+Summary: 4 of the 12 predictions hold in every part (P-K5-4, -5, -6, -11), 1 holds in its single part (P-K5-9), 2 hold in some parts (P-K5-2: 5 of 6; P-K5-3: 1 of 2), and 5 do not hold (P-K5-1, -7, -8, -10, -12).
+
+**P-K5-1 (does not hold).** The order "S on minmax <= S on H" fails in 4 of 36 cells for each classifier. All violations are in the S rows of ii_s_gamma, whose accuracies lie between 0.497 and 0.507 in both representations, so the order is between two values at chance. For ii_s and corners the prediction holds in every cell. The prediction did not exclude cells in which both accuracies are at chance, and it is recorded as not holding.
+
+**P-K5-2 (5 of 6 parts hold).** With svm, the accuracy of raw C for i_A at N = 512 is at least that at N = 128 in every cell. With the threshold, it fails at w = 0.1 in both representations (0.9833 at N = 128, 0.9823 at N = 512, one surface out of 960). The four parts on the size of the change with N (raw B and hann C smaller than raw C) hold for both classifiers, with no violation in which raw C was unchanged.
+
+**P-K5-3 (1 of 2 parts hold).** check_same_seed has accuracy exactly 0.5 in all 56 columns. iii_null is not declared at chance in 11 of 56 columns. In all 11 the lower end of the 90% interval lies below 0.45; none exceeds 0.55. The accuracies of iii_null lie between 0.461 and 0.514 (mean 0.483 over the 56 columns). The power runs at per_class_n = 480, which did not meet the power rule (smallest per-column rate 0.73), predicted this: the per-column rates imply on average 12.3 columns not declared at chance, and all 56 columns were declared together in 8% of the 200 runs. The mean accuracy over runs in the power runs was 0.4996, so the shift below 0.5 here is one realisation on the low side. The permutation p values of iii_null (0.27 to 0.98) do not indicate accuracy above chance. The prediction does not hold, and the reason is the limited power at the sample size used, which was stated before the run.
+
+**P-K5-4 (holds).** The centroids on minmax and on H agree to a relative difference of 3.0e-13, and the accuracies of C and B are equal in every cell for both classifiers. The svm discrepancy through the intercept, noted in the smoke run (Reading of the conditions), did not occur in the experiment.
+
+**P-K5-5 (holds).** ii_s and corners agree on every descriptor on minmax (relative difference 2.5e-14) and on the centroids on H (1.5e-14), and their accuracies are equal in every predicted row.
+
+**P-K5-6 (holds).** For i_V, raw, H, sq of group 0 exceeds sq of group 1 in all 2880 pairs, and S on minmax is at most S on H in every cell for both classifiers.
+
+**P-K5-7 (does not hold).** The svm accuracy of SC is below the larger of S and C in 7 of 120 cells (6 of i_V, 1 of i_A). The largest shortfall is 0.0032 (three surfaces out of 960); in every violating cell the better single descriptor has accuracy 0.95 or higher.
+
+**P-K5-8 (does not hold).** The svm accuracy is not non-increasing in w in 10 of 160 columns. Six are S rows of ii_s_gamma at chance. The other four are the B rows of i_V at N = 128, where the accuracy at w = 0.3 exceeds that at w = 0.1 by one surface out of 960 (0.0010).
+
+**P-K5-9 (holds).** For raw H, the svm accuracy of S under ii_s_gamma is below that of the other non-null conditions in all 6 columns. The basis stated with the prediction was partly wrong (Reading of the conditions: for integer f coprime to N, raw sq of the two surfaces of a pair is identical). The prediction holding does not support that basis.
+
+**P-K5-10 (does not hold).** The order of single descriptors fails in 3 of 96 cells: ii_s on H and on minmax and corners on minmax, at w = 0.5, N = 128, raw, where S and B have accuracy 1.0 and C has 0.9979 (two surfaces). The order for i_V on H (S >= C) holds.
+
+**P-K5-11 (holds).** For i_V, raw C, the accuracy at N = 512 is at least that at N = 128 in every cell for both classifiers.
+
+**P-K5-12 (does not hold).** The 95% interval of the svm accuracy lies above 0.5 in 444 of 456 rows. The 12 exceptions are the C and SC rows of ii_s_gamma at N = 512, raw, for every w and both representations (svm accuracy 0.506 to 0.519). In the same rows the threshold reaches 0.761 to 0.773, close to the large-sample levels of the frame (0.759 to 0.767, best threshold on set A). The large-sample level of these rows was taken from the threshold for both classifiers, so it does not predict the svm accuracy.
+
+Supplementary (not in the registered list of computations): in ii_s_gamma at w = 0.1, N = 512, raw, H, centroid_amp of each group has a point mass at its minimum (9.05 for group 0 and 21.12 for group 1, also the medians) and a long upper tail (maxima 63.9 and 72.2). This matches the clipping fractions (0.758 of the surfaces have a clipped coordinate; their f is the integer at the corner). A linear SVM (C = 1) and a logistic regression fitted to all 960 surfaces of this cell have training accuracies of 0.519, while the best threshold lies between the two point masses. The hinge and logistic losses are pulled by the upper tail of group 0, and their cut does not separate the point masses. At N = 128 the tails are short (maxima 22.7 and 35.9) and the svm reaches 0.90 on all data. This is offered as a reading of the failure of P-K5-12, not as a tested mechanism.
+
 ## Table 1
 
 | condition | w | N | proc | repr | set | level (large sample) | svm | 95% CI svm | threshold | 95% CI threshold | at chance (TOST) | perm p |
