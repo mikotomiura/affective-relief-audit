@@ -53,10 +53,21 @@ INTERPRETATION = [
     "decimate_fourier (primary) and by subsample (control). TDF levels are made from the normal map per component "
     "by decimate_normals (S5.4); the finest level is the input itself (patch with alpha dropped, central 1024 block of "
     "the tiled map) and is not re-encoded.",
-    "TDF float variant: the decoded normals n = rgb/255 * 2 - 1 of each level, renormalised (no further rounding).",
+    "TDF float variant: the decoded input normals n = rgb/255 * 2 - 1 are reduced per component by decimate_fourier "
+    "in floating point and renormalised, without the uint8 re-encoding of the coarse levels (at the finest level it is "
+    "the decoded input, which is itself uint8). It isolates the effect of the re-encoding, not of the input quantisation.",
+    "V2 for TDF uses every pair of the 36 inputs (patches and tiled maps together, container = object), as the "
+    "condition states every pair within a dataset; level pairs are the relative levels (finest, half, quarter). The "
+    "split by input type is reported beside it. Kendall's tau is reported for V2 only; V3 restricts pairs, for which "
+    "a tau over all measurements would not apply.",
     "centroid_band_power uses K = P/8. At the quarter level K equals n/2; the bin at -n/2 along an axis is kept by "
     "decimate_fourier and its partner at +n/2 is not, so the retained bins on the circle rho = n/2 are not exactly "
-    "the same as at the finer levels (noted before the computation, in relation to P-V3).",
+    "the same as at the finer levels; in addition the real part taken after the inverse DFT halves the unpaired "
+    "boundary coefficient (noted before the computation, in relation to P-V3).",
+    "Pairs from different containers (the main count of V2) include measurements of the same kind of specimen made "
+    "by different groups with different instruments; the condition's 'not_done' excludes cross-instrument comparisons "
+    "of the same specimen from the main analysis, while V2 counts all different-container pairs. V2 is followed as "
+    "written; this overlap is noted, not resolved.",
     "Operational criteria (fixed in this script before the computation): 'increases (decreases) when the grid is "
     "coarsened' means strictly monotone over full, half, quarter for the measurement; 'the change of hf_ratio_phys "
     "is smaller' compares |quarter - full| per measurement; 'fewer flips' compares the main counts (pairs from "
@@ -127,9 +138,10 @@ def tdf_values(f: dict, path: Path) -> list[dict]:
         rgb = central_crop(rgb, 1024)
     n0 = rgb.shape[0]
     rows = []
+    v0 = rgb.astype(float) / 255 * 2 - 1
     for lev, n in zip(LEVELS, (n0, n0 // 2, n0 // 4)):
         r = rgb if n == n0 else decimate_normals(rgb, n)
-        v = r.astype(float) / 255 * 2 - 1
+        v = v0 if n == n0 else np.stack([decimate_fourier(v0[..., k], n) for k in range(3)], axis=-1)
         v = v / np.linalg.norm(v, axis=-1, keepdims=True)
         vals = {"hf_ratio_px": hf_ratio(r, 120.0), "hf_ratio_phys": hf_ratio(r, 120.0 * n / n0),
                 "hf_ratio_px_float": hf_ratio_float(v, 120.0), "hf_ratio_phys_float": hf_ratio_float(v, 120.0 * n / n0)}
@@ -169,7 +181,8 @@ def flip_summary(X, ids, containers, pair_filter=None) -> dict:
         fs = flips_relative(X[:, i], X[:, j], THRESHOLD, ids, same)
         out["level_pairs"].append({"levels": [LEVELS[i], LEVELS[j]], "flips_main": len(fd), "flips_same_container": len(fs),
                                    "pairs_main": len(diff), "pairs_same_container": len(same),
-                                   "tau": kendall_tau(X[:, i], X[:, j]), "examples": fd[:5]})
+                                   "tau": kendall_tau(X[:, i], X[:, j]) if pair_filter is None else None,
+                                   "examples": fd[:5]})
     out["flips_main"] = sum(x["flips_main"] for x in out["level_pairs"])
     out["flips_same_container"] = sum(x["flips_same_container"] for x in out["level_pairs"])
     return out
@@ -199,6 +212,9 @@ def analyse(c, rows) -> dict:
                                    "rel_diff_quarter": (np.abs(b[:, 2] - a[:, 2]) / np.abs(a[:, 2])).tolist()}
     tids = [f["file"] for f in tdf["files"]]
     tcont = [i.split("/")[0] for i in tids]
+    for d in ("hf_ratio_px", "hf_ratio_phys", "hf_ratio_px_float", "hf_ratio_phys_float"):
+        X = values_by(rows, "tdf", "decimate_fourier", d, tids)
+        S["tdf"][f"all/{d}"] = {"ids": tids, "values": X.tolist(), "V2": flip_summary(X, tids, tcont)}
     for kind in ("patch", "tiled"):
         sel = [k for k, i in enumerate(tids) if (kind == "patch") == i.endswith("normal_patch.png")]
         for d in ("hf_ratio_px", "hf_ratio_phys", "hf_ratio_px_float", "hf_ratio_phys_float"):
@@ -251,6 +267,8 @@ def predictions(S, ids) -> dict:
                       "of": len(X), "holds": bool(ok.all())})
         items.append({"part": f"tdf {kind}: flips of hf_ratio_px (not predicted)",
                       "flips_main": S["tdf"][f"{kind}/hf_ratio_px"]["V2"]["flips_main"], "holds": True})
+    items.append({"part": "tdf all 36 inputs: flips of hf_ratio_px (not predicted)",
+                  "flips_main": S["tdf"]["all/hf_ratio_px"]["V2"]["flips_main"], "holds": True})
     P["P-V5"] = items
     return P
 

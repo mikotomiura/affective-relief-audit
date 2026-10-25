@@ -48,7 +48,10 @@ def test_flip_surfaces_have_rms_slope_and_no_seed_dependence():
     z2, _ = eg.make_z(a, 256, 2, 0.13, 0.29)
     np.testing.assert_array_equal(z1, z2)
     c = a["amps"][0]
-    assert np.sqrt(((2 * np.pi * 6 * c) ** 2 + (2 * np.pi * 96 * 0.15 * c) ** 2) / 2) == pytest.approx(0.01)
+    assert np.sqrt(((2 * np.pi * 2 * c) ** 2 + (2 * np.pi * 60 * 0.316 * c) ** 2) / 2) == pytest.approx(0.01)
+    # Conditions version 3: every tone lies below 64 cycles, so no grid of the file (N >= 128) aliases it
+    b = [x for x in eg.surfaces() if x["name"] == "flip_b"][0]
+    assert a["freqs"] == (2, 60) and b["freqs"] == (8,) and max(a["freqs"] + b["freqs"]) < 64
 
 
 def test_pack_round_trip():

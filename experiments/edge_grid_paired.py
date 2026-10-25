@@ -51,8 +51,8 @@ K_BAND = 32.0
 Z_SCALE = 1 / 30  # hf_ratio.height_to_normals: z = H / 30 in units of L
 N_REF = 1024      # phys cutoff: freq_threshold = 120 N / 1024
 LEVELS = (-1.0, -0.5, 0.0, 0.5, 1.0)
-FLIP_A = {"freqs": (6, 96), "ratios": (1.0, 0.15)}
-FLIP_B = {"freqs": (40,), "ratios": (1.0,)}
+FLIP_A = {"freqs": (2, 60), "ratios": (1.0, 0.316)}  # conditions version 3
+FLIP_B = {"freqs": (8,), "ratios": (1.0,)}
 FLIP_RMS_SLOPE = 0.01
 HEIGHT_DESC = ("centroid_amp", "centroid_power", "centroid_band_power", "sq")
 HF_CUTS = ("px", "phys")
@@ -77,9 +77,10 @@ def unpack(t: dict) -> list[dict]:
     return rows
 
 INTERPRETATION = [
-    "Version 2 of the conditions: the five points with A = 0.25 (f = 5.5) are surfaces like the rule points but are "
+    "Conditions version 3. The five points with A = 0.25 (f = 5.5) are surfaces like the rule points but are "
     "not among the 25 rule points used for C3, C4 and C5; they enter C1, C2, the aliasing subset and P-E2 to P-E5.",
-    "flip_positive: surface a is z = c (sin(2 pi 6 x') + 0.15 sin(2 pi 96 x')) and surface b is z = c' sin(2 pi 40 x'), "
+    "flip_positive (version 3): surface a is z = c (sin(2 pi 2 x') + 0.316 sin(2 pi 60 x')) and surface b is "
+    "z = c' sin(2 pi 8 x'), "
     "with x' = x + x0 (zero phases; the crop offset shifts the tones), constant along y, in units of L. The "
     "amplitudes c and c' give a continuous RMS slope of 0.01. The surfaces have no random element, so the ten seeds "
     "give identical values; their standard error is 0 and, by S6.2, any change of sign with a non-zero difference "
@@ -90,24 +91,30 @@ INTERPRETATION = [
     "'hann', and the periodic component of S3.2 for 'pplus'.",
     "S6.2 order: the order of two surfaces at a level is the sign of the mean over seeds of sign(D_a - D_b); a flip "
     "also requires the mean paired difference to exceed twice its standard error over seeds at both levels.",
-    "C3 is computed for each N and crop; the ratios C1/C3 use the largest C3 over the five crops at the same N, and "
-    "the ratio |C2|/C3 uses the largest C3 over the five crops at N = 2048 (so that the ratios are not inflated by a "
-    "small C3). C2 is the value at N = 2048 minus the value at N = 128.",
+    "C3 is computed for each N and crop. The ratio (mean over seeds of C1) / C3 is reported for the C3 of each crop "
+    "at the same N; the summary ratio uses the largest C3 over the crops (so that it is not inflated by a small C3). "
+    "|C2| / C3 uses the C3 of the same crop at N = 2048, averaged over crops. C2 is the value at N = 2048 minus the "
+    "value at N = 128 for each seed and crop; its mean and standard error are reported per crop (paired by seed), "
+    "and the crop-averaged standard error is taken over the seed-level averages across crops (crops share seeds).",
     "C5: within each processing, the descriptors (the height descriptors computed under that processing, and the HF "
     "ratio in its two cutoffs and three variants under that processing) are ranked by the absolute standardised "
     "difference |d| between the corners (V, A) = (1, -1) and (-1, 1), d = (mean_a - mean_b) / sqrt((var_a + var_b)/2) "
     "over seeds; the signed d is reported. Whether the ranking changes is reported by counting distinct rankings.",
     "Operational criteria for the predictions (the condition file states directions; these were fixed in this script "
     "before the computation): P-E1 'below 1e-9 in relative terms' uses C1 and |C2| divided by the mean value; "
-    "'decreases monotonically' uses the mean over seeds and crops at successive N; P-E2 holds at an N if the "
-    "smallest mean C1 among sine_jump and the five points with A = 0.25 exceeds the largest among the five rule points "
-    "with A = 0, and the prediction holds if this is so at every N; P-E3 compares with the largest C3 over the five "
-    "crops at N = 2048; P-E4 compares C1 relative to the mean value (hann centroid_amp "
-    "and pplus centroid_amp against raw centroid_amp, centroid_band_power against raw centroid_power, which has the "
-    "same weighting) for each of the five points with A = 0.25 at every N; P-E5 uses the 25 rule points, the five "
-    "points with A = 0.25 and the two sine controls (flip_positive is P-E7), uint8 raw for the HF ratio, and counts flips over all pairs of grids within "
-    "each crop; P-E6 compares the mean over seeds and crops of |decimated - direct| / direct; P-E7 requires a flip of "
-    "the px linear ratio for every crop and no flip of the phys linear ratio for any crop.",
+    "'decreases monotonically' uses the mean over seeds and crops at successive N; P-E2 holds at an N if, for each V, "
+    "the mean C1 of the point (V, 0.25) exceeds that of the rule point (V, 0), and the mean C1 of sine_jump exceeds "
+    "that of every rule point with A = 0; the prediction holds if this is so at every N; P-E3 holds if the mean C1 of "
+    "at least one point with A = 0.25 exceeds C3 at N = 2048 for every crop (that is, the largest C3 over crops); "
+    "P-E4 compares the mean C1 (absolute) of hann centroid_amp and of pplus centroid_amp with raw centroid_amp, and "
+    "of centroid_band_power with raw centroid_power (the same weighting over the full band), for each of the five "
+    "points with A = 0.25 at every N, and reports the comparison of C1 relative to the mean value beside it; P-E5 "
+    "uses the 25 rule points, the five points with A = 0.25 and the two sine controls for the monotonicity and |C2| "
+    "parts, and the flips of C4 (the 25 rule points, as defined in the conditions) for the flip parts, with uint8 raw "
+    "for the HF ratio and flips counted over all pairs of grids within each crop; P-E6 compares the mean over seeds "
+    "and crops of |decimated - direct| (absolute; the relative difference is reported beside it), noting that only "
+    "the point (1, -1) has gamma <= 1; P-E7 requires a flip of the px linear ratio for every crop and no flip of the "
+    "phys linear ratio for any crop.",
 ]
 
 
@@ -239,18 +246,23 @@ def analyse(c, rows) -> dict:
             c1 = X.max(axis=1) - X.min(axis=1)  # seeds, N
             mean = X.mean(axis=(0, 1))  # N
             c2 = X[:, :, -1] - X[:, :, 0]  # seeds, crops
+            c2s = c2.mean(axis=1)  # seed-level averages across crops
             S["C1"].setdefault(key, {})[nm] = {"mean_by_N": c1.mean(0).tolist(),
                                               "se_by_N": (c1.std(0, ddof=1) / np.sqrt(c1.shape[0])).tolist(),
                                               "rel_by_N": (c1.mean(0) / np.abs(mean)).tolist(),
                                               "value_mean_by_N": mean.tolist()}
             S["C2"].setdefault(key, {})[nm] = {"mean": float(c2.mean()), "abs_mean": float(np.abs(c2).mean()),
-                                              "se": float(c2.std(ddof=1) / np.sqrt(c2.size)) if c2.size > 1 else 0.0,
+                                              "se": float(c2s.std(ddof=1) / np.sqrt(len(c2s))),
+                                              "mean_by_crop": c2.mean(axis=0).tolist(),
+                                              "se_by_crop": (c2.std(axis=0, ddof=1) / np.sqrt(c2.shape[0])).tolist(),
                                               "rel_abs_mean": float(np.abs(c2).mean() / abs(mean[0]))}
         R = np.array([T.arr(nm, key).mean(axis=0) for nm in rule_names])  # points, crops, N
         C3 = R.max(axis=0) - R.min(axis=0)  # crops, N
         S["C3"][key] = {"by_crop_N": C3.tolist(), "max_over_crops_by_N": C3.max(axis=0).tolist()}
         S["ratios"][key] = {nm: {"C1_over_C3_by_N": (np.array(S["C1"][key][nm]["mean_by_N"]) / C3.max(axis=0)).tolist(),
-                                 "absC2_over_C3": S["C2"][key][nm]["abs_mean"] / C3[:, -1].max()}
+                                 "C1_over_C3_by_crop_N": (np.array(S["C1"][key][nm]["mean_by_N"])[None, :] / C3).tolist(),
+                                 "absC2_over_C3": float(np.mean(np.abs(np.array(S["C2"][key][nm]["mean_by_crop"]))
+                                                                / C3[:, -1]))}
                             for nm in names}
     S["C4"] = c4(c, T, keys, rule_names)
     S["C5"] = c5(c, T, keys)
@@ -319,6 +331,7 @@ def aliasing(c, T, names) -> dict:
             m = T.arr(nm, key, Na, "decimate")
             rel = np.abs(m - d) / np.abs(d)
             out[key][nm] = {"rel_abs_diff_by_N": rel.mean(axis=(0, 1)).tolist(),
+                            "abs_diff_by_N": np.abs(m - d).mean(axis=(0, 1)).tolist(),
                             "mean_diff_by_N": (m - d).mean(axis=(0, 1)).tolist()}
     return out
 
@@ -342,10 +355,16 @@ def predictions(c, S, T, rule) -> dict:
     P["P-E1"] = items
     # P-E2
     items = []
+    by_v0 = {s["V"]: s["name"] for s in rule if s["A"] == 0}
+    by_v1 = {s["V"]: s["name"] for s in surfaces() if s["kind"] == "nonint"}
+    c1 = lambda nm, ni: S["C1"]["centroid_amp_raw"][nm]["mean_by_N"][ni]
     for ni, n in enumerate(Ns):
-        lo = min(S["C1"]["centroid_amp_raw"][nm]["mean_by_N"][ni] for nm in nonint + ["sine_jump"])
-        hi = max(S["C1"]["centroid_amp_raw"][nm]["mean_by_N"][ni] for nm in integ)
-        items.append({"N": n, "min_C1_noninteger": lo, "max_C1_A0": hi, "holds": bool(lo > hi)})
+        pairs = {V: (c1(by_v1[V], ni), c1(by_v0[V], ni)) for V in LEVELS}
+        pair_ok = all(a > b for a, b in pairs.values())
+        jump_ok = c1("sine_jump", ni) > max(c1(nm, ni) for nm in integ)
+        items.append({"N": n, "C1_A0.25_by_V": [pairs[V][0] for V in LEVELS], "C1_A0_by_V": [pairs[V][1] for V in LEVELS],
+                      "C1_sine_jump": c1("sine_jump", ni), "pairs_larger": sum(a > b for a, b in pairs.values()),
+                      "holds": bool(pair_ok and jump_ok)})
     P["P-E2"] = items
     # P-E3 (N = 2048, the largest grid of the conditions)
     ni = len(Ns) - 1
@@ -358,12 +377,14 @@ def predictions(c, S, T, rule) -> dict:
     items = []
     for treat, base in (("centroid_amp_hann", "centroid_amp_raw"), ("centroid_amp_pplus", "centroid_amp_raw"),
                         ("centroid_band_power_raw", "centroid_power_raw")):
-        cnt = tot = 0
+        cnt = cnt_rel = tot = 0
         for nm in nonint:
             for ni in range(len(Ns)):
                 tot += 1
-                cnt += S["C1"][treat][nm]["rel_by_N"][ni] < S["C1"][base][nm]["rel_by_N"][ni]
-        items.append({"treatment": treat, "baseline": base, "cells_smaller": cnt, "cells": tot, "holds": cnt == tot})
+                cnt += S["C1"][treat][nm]["mean_by_N"][ni] < S["C1"][base][nm]["mean_by_N"][ni]
+                cnt_rel += S["C1"][treat][nm]["rel_by_N"][ni] < S["C1"][base][nm]["rel_by_N"][ni]
+        items.append({"treatment": treat, "baseline": base, "cells_smaller": cnt, "cells_smaller_relative": cnt_rel,
+                      "cells": tot, "holds": cnt == tot})
     P["P-E4"] = items
     # P-E5
     items = []
@@ -384,9 +405,13 @@ def predictions(c, S, T, rule) -> dict:
     hi_g = [s["name"] for s in rule if s["gamma"] > 1]
     lo_g = [s["name"] for s in rule if s["gamma"] <= 1]
     for ni, n in enumerate([128, 256, 512]):
-        a = float(np.mean([S["aliasing"]["centroid_amp_raw"][nm]["rel_abs_diff_by_N"][ni] for nm in hi_g]))
-        b = float(np.mean([S["aliasing"]["centroid_amp_raw"][nm]["rel_abs_diff_by_N"][ni] for nm in lo_g]))
-        items.append({"N": n, "gamma_gt_1": a, "gamma_le_1": b, "points_le_1": lo_g, "holds": bool(a > b)})
+        al = S["aliasing"]["centroid_amp_raw"]
+        a = float(np.mean([al[nm]["abs_diff_by_N"][ni] for nm in hi_g]))
+        b = float(np.mean([al[nm]["abs_diff_by_N"][ni] for nm in lo_g]))
+        ar = float(np.mean([al[nm]["rel_abs_diff_by_N"][ni] for nm in hi_g]))
+        br = float(np.mean([al[nm]["rel_abs_diff_by_N"][ni] for nm in lo_g]))
+        items.append({"N": n, "gamma_gt_1": a, "gamma_le_1": b, "relative_gt_1": ar, "relative_le_1": br,
+                      "points_le_1": lo_g, "holds": bool(a > b)})
     P["P-E6"] = items
     # P-E7
     items = []

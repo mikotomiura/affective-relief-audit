@@ -63,6 +63,12 @@ INTERPRETATION = [
     f"{TOL_SLOPE} and below its magnitude between the two smallest N; 'does not depend on N' means that the "
     f"relative range over N of every seed is at most {TOL_FLAT}. Slopes are those of the primary range (N 512-4096) "
     "with 95% t intervals over seeds unless stated otherwise.",
+    "Fields covered by the predictions that do not name one: P-K4-5, P-K4-6 and P-K4-7 are decided on sum and "
+    "product1 (two-dimensional fields, the subject of K4 (c) and (d)); oned is reported in the tables but not "
+    "decided. P-K4-2 is decided against 1 - 1/gamma as written (negative at gamma = 0.9); whether the slope is also "
+    "within the tolerance of max(0, 1 - 1/gamma), the value implied by P-K4-1, is reported beside it.",
+    "The secondary analysis on the decimate_fourier version uses the same simultaneous level as the main criterion "
+    "(1 - 0.05/12), since it repeats a subset of the same 12 cells.",
 ]
 
 
@@ -168,32 +174,54 @@ def analyse(c: dict, rows: list[dict]) -> dict:
     Np = c["slope_ranges"]["primary"]
     Ns = c.get("_sensitivity_N", SENSITIVITY_N)
     fs = c["f_integer"] + c["f_noninteger"]
-    S = {"cells": []}
-    # slopes for every direct cell
+    S = {"cells": [], "cells_other_sampling": []}
+    # every direct cell (maxabs, seeds of the conditions)
     for field in ("sum", "product1", "oned"):
         for f in fs:
             for g in c["gamma"]:
                 for proc in PROCESSINGS:
                     for desc in DESCRIPTORS:
-                        C = series(rows, field, f, g, proc, desc, Nall, seeds)
-                        ip = [Nall.index(n) for n in Np]
-                        cell = {"field": field, "f": f, "gamma": g, "processing": proc, "descriptor": desc,
-                                "mean_by_N": C.mean(axis=0).tolist(),
-                                "se_by_N": (C.std(axis=0, ddof=1) / np.sqrt(len(seeds))).tolist(),
-                                "rel_range_max": float(((C.max(axis=1) - C.min(axis=1)) / C.mean(axis=1)).max()),
-                                "slope_primary": slope_summary(Np, C[:, ip]),
-                                "slope_descriptive": slope_summary(Nall, C)}
-                        if field != "oned" and proc == "raw" and desc == "centroid_amp":
-                            i0 = Nall.index(256)
-                            fit = log_corrected_fit(Nall[i0:], C[:, i0:])
-                            cell["log_corrected"] = {"b": t_interval(fit[:, 1]), "c": t_interval(fit[:, 2])}
-                        S["cells"].append(cell)
+                        S["cells"].append(cell_summary(rows, field, f, g, proc, desc, Nall, Np, seeds))
+    # the aliasing subset (decimate_fourier, r = 2 and r = 4) and the normalisation check (ampsum)
+    others = [("decimate", 2, "maxabs", Nall, seeds[:10]),
+              ("decimate", 4, "maxabs", [n for n in Nall if n <= 2048], seeds[:10])]
+    for f in (5, 5.5):
+        for g in c["gamma"]:
+            for sampling, r, norm, Nl, sd in others:
+                for proc in PROCESSINGS:
+                    for desc in DESCRIPTORS:
+                        S["cells_other_sampling"].append(
+                            cell_summary(rows, "sum", f, g, proc, desc, Nl, [n for n in Np if n in Nl], sd, sampling, r, norm))
+        for g in (0.9, 1.75):
+            for proc in PROCESSINGS:
+                for desc in DESCRIPTORS:
+                    S["cells_other_sampling"].append(
+                        cell_summary(rows, "sum", f, g, proc, desc, Nall, Np, seeds[:5], "direct", 1, "ampsum"))
     S["rejection"] = rejection(c, rows, Np, Ns)
     S["normalisation_check"] = normalisation_check(c, rows)
     S["aliasing"] = aliasing(c, rows)
     S["c_lnN_over_N"] = c_lnN_over_N(c, rows)
     S["predictions"] = predictions(c, S)
     return S
+
+
+def cell_summary(rows, field, f, g, proc, desc, Nl, Np, seeds, sampling="direct", r=1, norm="maxabs") -> dict:
+    """Seed means and standard errors by N, slopes over the primary range (the part of N 512-4096 that exists for the
+    cell) and over all N, local slopes, and the log-corrected fit over N >= 256."""
+    C = series(rows, field, f, g, proc, desc, Nl, seeds, sampling, r, norm)
+    ip = [Nl.index(n) for n in Np]
+    cell = {"field": field, "f": f, "gamma": g, "processing": proc, "descriptor": desc, "sampling": sampling, "r": r,
+            "normalize": norm, "N": Nl, "n_seeds": len(seeds),
+            "mean_by_N": C.mean(axis=0).tolist(),
+            "se_by_N": (C.std(axis=0, ddof=1) / np.sqrt(len(seeds))).tolist(),
+            "rel_range_max": float(((C.max(axis=1) - C.min(axis=1)) / C.mean(axis=1)).max()),
+            "slope_primary": slope_summary(Np, C[:, ip]),
+            "slope_descriptive": slope_summary(Nl, C)}
+    i0 = [k for k, n in enumerate(Nl) if n >= 256]
+    if len(i0) >= 4:
+        fit = log_corrected_fit([Nl[k] for k in i0], C[:, i0])
+        cell["log_corrected"] = {"b": t_interval(fit[:, 1]), "c": t_interval(fit[:, 2])}
+    return cell
 
 
 def find(S, **kw) -> dict:
@@ -207,7 +235,7 @@ def rejection(c, rows, Np, Ns, sampling="direct", r=1, fs=(3, 5, 7), seeds=None)
     gammas = [0.9, 1.25, 1.75, 2.6]
     m = len(fs) * len(gammas)
     level = bonferroni_level(12)
-    out = {"level": level, "m": m, "cells": []}
+    out = {"level": level, "level_basis": "Bonferroni over the 12 cells of the criterion", "cells_here": m, "cells": []}
     dec = {}
     for rng_name, Nr in (("primary", Np), ("sensitivity", Ns)):
         excl = []
@@ -304,7 +332,7 @@ def predictions(c, S) -> dict:
             items.append({"f": f, "gamma": g, "target": target, "slope": sp["mean"], "lo": sp["lo"], "hi": sp["hi"],
                           "local_last": cell["slope_descriptive"]["local_mean"][-1], "holds": bool(ok)})
     P["P-K4-1"] = {"items": items, "holds": all(i["holds"] for i in items)}
-    # P-K4-2 (gamma != 1; the one-dimensional exponent is max(0, 1 - 1/gamma), compared also with the measured oned slope)
+    # P-K4-2 (gamma != 1; decided against 1 - 1/gamma as written; max(0, 1 - 1/gamma) and the oned slope are reported)
     items = []
     for f in ints:
         for g in c["gamma"]:
@@ -312,9 +340,10 @@ def predictions(c, S) -> dict:
                 continue
             sp = find(S, field="product1", f=f, gamma=g, processing="raw", descriptor="centroid_amp")["slope_primary"]
             so = find(S, field="oned", f=f, gamma=g, processing="raw", descriptor="centroid_amp")["slope_primary"]
-            target = max(0.0, 1 - 1 / g)
+            target = 1 - 1 / g  # the condition's text: "close to the one-dimensional exponent 1 - 1/gamma"
             items.append({"f": f, "gamma": g, "target": target, "slope": sp["mean"], "lo": sp["lo"], "hi": sp["hi"],
-                          "oned_slope": so["mean"], "holds": bool(abs(sp["mean"] - target) <= TOL_SLOPE)})
+                          "oned_slope": so["mean"], "within_tol_of_max(0,target)": bool(abs(sp["mean"] - max(0.0, target)) <= TOL_SLOPE),
+                          "holds": bool(abs(sp["mean"] - target) <= TOL_SLOPE)})
     P["P-K4-2"] = {"items": items, "holds": all(i["holds"] for i in items)}
     # P-K4-3
     items = []
@@ -429,10 +458,10 @@ def write_report(c: dict, meta: dict, S: dict) -> str:
     for f in (3, 5, 7):
         for g in (0.9, 1.25, 1.75, 2.6):
             cell = find(S, field="sum", f=f, gamma=g, processing="raw", descriptor="centroid_amp")
-            lc = cell["log_corrected"]
-            L.append(f"| {f} | {g} | {', '.join(fmt(v) for v in cell['slope_descriptive']['local_mean'])} | "
-                     f"{fmt(lc['b']['mean'])} [{fmt(lc['b']['lo'])}, {fmt(lc['b']['hi'])}] | "
-                     f"{fmt(lc['c']['mean'])} [{fmt(lc['c']['lo'])}, {fmt(lc['c']['hi'])}] |")
+            lc = cell.get("log_corrected")
+            fit = (f"{fmt(lc['b']['mean'])} [{fmt(lc['b']['lo'])}, {fmt(lc['b']['hi'])}] | "
+                   f"{fmt(lc['c']['mean'])} [{fmt(lc['c']['lo'])}, {fmt(lc['c']['hi'])}]") if lc else "- | -"
+            L.append(f"| {f} | {g} | {', '.join(fmt(v) for v in cell['slope_descriptive']['local_mean'])} | {fit} |")
     A = S["aliasing"]
     L += ["", "### Secondary analysis on the decimate_fourier version (f = 5, r = 2, seeds 1-10)", "",
           f"- decimate_fourier: primary {A['secondary_rejection']['decision_primary']}, sensitivity "
@@ -490,6 +519,16 @@ def write_report(c: dict, meta: dict, S: dict) -> str:
         L.append(f"| {x['field']} | {x['f']} | {x['gamma']} | {x['processing']} | {x['descriptor']} | "
                  f"{fmt(sp['mean'], 4)} | [{fmt(sp['lo'], 4)}, {fmt(sp['hi'], 4)}] | "
                  f"{fmt(x['slope_descriptive']['mean'], 4)} |")
+    L += ["", "## Cells of the aliasing subset and of the normalisation check", "",
+          "Seed means by N (the N listed for each cell) and slopes over the part of the primary range that exists.", "",
+          "| sampling | r | normalize | seeds | f | gamma | processing | descriptor | N | means | slope (primary) | interval |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for x in S["cells_other_sampling"]:
+        sp = x["slope_primary"]
+        L.append(f"| {x['sampling']} | {x['r']} | {x['normalize']} | {x['n_seeds']} | {x['f']} | {x['gamma']} | "
+                 f"{x['processing']} | {x['descriptor']} | {x['N'][0]}-{x['N'][-1]} | "
+                 f"{', '.join(fmt(v, 2) for v in x['mean_by_N'])} | {fmt(sp['mean'], 4)} | "
+                 f"[{fmt(sp['lo'], 4)}, {fmt(sp['hi'], 4)}] |")
     L += ["", "## Seed means of the centroid by N", "",
           "| field | f | gamma | processing | descriptor | N 128 ... 4096 (mean; standard error of the last) |",
           "|---|---|---|---|---|---|"]
