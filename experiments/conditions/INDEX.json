@@ -20,8 +20,8 @@
   },
   "edge_grid_paired.json": {
    "path": "experiments/conditions/edge_grid_paired.json",
-   "sha256": "5b7b9a0c9f6d182d0e7dcd03a44497f2678795f6a0453c2adb76a4b20fd84cdf",
-   "version": 1
+   "sha256": "149b589b42a779f20be4706a13691016dc2c1b0bcef7ca95e51d8a69a386c2d8",
+   "version": 2
   },
   "validation3_public.json": {
    "path": "experiments/conditions/validation3_public.json",
@@ -58,5 +58,15 @@
   "observable_dof": "Its settings (four octaves, no warp, maxabs, N = 128, product octaves) agree with the specification, so its results (commit 0f320bc) are used without recomputation."
  },
  "second_opinion": "Before this commit the plan was sent to an external model (Codex) for missing conditions and ambiguous criteria; the resulting revisions are listed under 'deviations_before_running' in each file.",
- "history": []
+ "history": [
+  {
+   "date": "2026-10-25",
+   "file": "edge_grid_paired.json",
+   "from_version": 1,
+   "to_version": 2,
+   "old_sha256": "5b7b9a0c9f6d182d0e7dcd03a44497f2678795f6a0453c2adb76a4b20fd84cdf",
+   "new_sha256": "149b589b42a779f20be4706a13691016dc2c1b0bcef7ca95e51d8a69a386c2d8",
+   "reason": "Version 1 stated that the 20 rule points with A != 0 have non-integer f; f = 5 + 2A is an integer at all 25 points. Five points with A = 0.25 (f = 5.5) were added as edge-discontinuity controls and P-E2 to P-E4 refer to them. Changed before the main computation of this file was run (see 'deviations' in the file)."
+  }
+ ]
 }
