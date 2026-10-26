@@ -1,0 +1,2401 @@
+{
+ "meta": {
+  "source": "results/k5_classification.json",
+  "source_sha256": "a96c475bae36c43a71aa5b2bc9660cce530da628648afe6f8a7899c9f8cde653",
+  "predictions": "experiments/conditions/k5_table1_predictions.json",
+  "predictions_sha256": "6cf0f96992bd4acab004d03f66b0566c355f84f14eb8bf869709d9a33db7693b",
+  "script_sha256": "0cd1742df4dc85b48de932bf42954a5644ce477bd693cb4cc6b8f47efe9b272a",
+  "slice": {
+   "N": 128,
+   "processing": "raw",
+   "w": 0.3,
+   "w_null": null
+  }
+ },
+ "cells": [
+  {
+   "condition": "i_V",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= C of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_V",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "N = 512 >= N = 128 (P-K5-11)",
+     "id": "P-K5-11",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": "<= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9725,
+   "svm": 0.96875,
+   "ci95_svm": [
+    0.9572916666666667,
+    0.9791666666666666
+   ],
+   "threshold": 0.9666666666666667,
+   "ci95_threshold": [
+    0.9552083333333333,
+    0.9770833333333333
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_V",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": false
+    }
+   ],
+   "level_large_sample": 0.6835,
+   "svm": 0.6864583333333333,
+   "ci95_svm": [
+    0.6645833333333333,
+    0.7083333333333334
+   ],
+   "threshold": 0.6885416666666667,
+   "ci95_threshold": [
+    0.6677083333333333,
+    0.7114583333333333
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_V",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "i_V",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "<= the same row on H (P-K5-6)",
+     "id": "P-K5-6",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.8366,
+   "svm": 0.8375,
+   "ci95_svm": [
+    0.8166666666666667,
+    0.8583333333333333
+   ],
+   "threshold": 0.8364583333333333,
+   "ci95_threshold": [
+    0.815625,
+    0.8572916666666667
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_V",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "N = 512 >= N = 128 (P-K5-11)",
+     "id": "P-K5-11",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9725,
+   "svm": 0.96875,
+   "ci95_svm": [
+    0.9572916666666667,
+    0.9791666666666666
+   ],
+   "threshold": 0.9666666666666667,
+   "ci95_threshold": [
+    0.9552083333333333,
+    0.9770833333333333
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_V",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": false
+    }
+   ],
+   "level_large_sample": 0.6835,
+   "svm": 0.6864583333333333,
+   "ci95_svm": [
+    0.6645833333333333,
+    0.7083333333333334
+   ],
+   "threshold": 0.6885416666666667,
+   "ci95_threshold": [
+    0.6677083333333333,
+    0.7114583333333333
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_V",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9786,
+   "svm": 0.9760416666666667,
+   "ci95_svm": [
+    0.965625,
+    0.9854166666666667
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "i_A",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": "<= C and B of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9398,
+   "svm": 0.9291666666666667,
+   "ci95_svm": [
+    0.9135416666666667,
+    0.9447916666666667
+   ],
+   "threshold": 0.928125,
+   "ci95_threshold": [
+    0.9135416666666667,
+    0.94375
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_A",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "N = 512 >= N = 128 (P-K5-2)",
+     "id": "P-K5-2",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9458,
+   "svm": 0.9510416666666667,
+   "ci95_svm": [
+    0.9364583333333333,
+    0.9635416666666666
+   ],
+   "threshold": 0.95,
+   "ci95_threshold": [
+    0.9354166666666667,
+    0.9625
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_A",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "change between N = 128 and 512 smaller than for raw C (P-K5-2)",
+     "id": "P-K5-2",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 0.9979166666666667,
+   "ci95_svm": [
+    0.9947916666666666,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_A",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9778,
+   "svm": 0.971875,
+   "ci95_svm": [
+    0.9614583333333333,
+    0.98125
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "i_A",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": "<= C and B of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9483,
+   "svm": 0.94375,
+   "ci95_svm": [
+    0.9291666666666667,
+    0.9572916666666667
+   ],
+   "threshold": 0.9416666666666667,
+   "ci95_threshold": [
+    0.9260416666666667,
+    0.9552083333333333
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_A",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "N = 512 >= N = 128 (P-K5-2)",
+     "id": "P-K5-2",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9458,
+   "svm": 0.9510416666666667,
+   "ci95_svm": [
+    0.9364583333333333,
+    0.9635416666666666
+   ],
+   "threshold": 0.95,
+   "ci95_threshold": [
+    0.9354166666666667,
+    0.9625
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_A",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "change between N = 128 and 512 smaller than for raw C (P-K5-2)",
+     "id": "P-K5-2",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 0.9979166666666667,
+   "ci95_svm": [
+    0.9947916666666666,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "i_A",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9845,
+   "svm": 0.978125,
+   "ci95_svm": [
+    0.96875,
+    0.9864583333333333
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "ii_s",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": "<= C and B of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row of corners (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row of corners (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "ii_s",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "<= the same row on H (P-K5-1)",
+     "id": "P-K5-1",
+     "holds": true
+    },
+    {
+     "text": "= the same row of corners (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": "<= C and B of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "= the same row of corners (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "= the same row of corners (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row of corners (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "ii_s_gamma",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "no direction relative to chance (P-K5-9)",
+     "id": "P-K5-9",
+     "holds": null
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": false
+    },
+    {
+     "text": "< S of i_V, i_A, ii_s and corners in the same column (svm; P-K5-9)",
+     "id": "P-K5-9",
+     "holds": true
+    },
+    {
+     "text": "<= C and B of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5049,
+   "svm": 0.4979166666666667,
+   "ci95_svm": [
+    0.49166666666666664,
+    0.5041666666666667
+   ],
+   "threshold": 0.5083333333333333,
+   "ci95_threshold": [
+    0.5020833333333333,
+    0.5145833333333333
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 0.706,
+    "threshold": 0.074
+   }
+  },
+  {
+   "condition": "ii_s_gamma",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9324,
+   "svm": 0.88125,
+   "ci95_svm": [
+    0.8625,
+    0.9
+   ],
+   "threshold": 0.934375,
+   "ci95_threshold": [
+    0.91875,
+    0.9489583333333333
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s_gamma",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s_gamma",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.8905,
+   "svm": 0.88125,
+   "ci95_svm": [
+    0.8625,
+    0.9
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "ii_s_gamma",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "no direction relative to chance (P-K5-9)",
+     "id": "P-K5-9",
+     "holds": null
+    },
+    {
+     "text": "<= the same row on H (P-K5-1)",
+     "id": "P-K5-1",
+     "holds": false
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": false
+    },
+    {
+     "text": "<= C and B of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5037,
+   "svm": 0.50625,
+   "ci95_svm": [
+    0.4979166666666667,
+    0.515625
+   ],
+   "threshold": 0.49583333333333335,
+   "ci95_threshold": [
+    0.4864583333333333,
+    0.5052083333333334
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 0.129,
+    "threshold": 0.757
+   }
+  },
+  {
+   "condition": "ii_s_gamma",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.9324,
+   "svm": 0.88125,
+   "ci95_svm": [
+    0.8625,
+    0.9
+   ],
+   "threshold": 0.934375,
+   "ci95_threshold": [
+    0.91875,
+    0.9489583333333333
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s_gamma",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "ii_s_gamma",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.8905,
+   "svm": 0.88125,
+   "ci95_svm": [
+    0.8625,
+    0.9
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "corners",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "corners",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row of ii_s (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "corners",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row of ii_s (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "corners",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "corners",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "<= the same row on H (P-K5-1)",
+     "id": "P-K5-1",
+     "holds": true
+    },
+    {
+     "text": "= the same row of ii_s (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": "<= C and B of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "corners",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "= the same row of ii_s (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "corners",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    },
+    {
+     "text": "= the same row of ii_s (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    },
+    {
+     "text": ">= S of the same cell (svm; P-K5-10)",
+     "id": "P-K5-10",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": 1.0,
+   "ci95_threshold": [
+    1.0,
+    1.0
+   ],
+   "tost_chance": {
+    "svm": false,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.001,
+    "threshold": 0.001
+   }
+  },
+  {
+   "condition": "corners",
+   "w": 0.3,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "above chance (svm; P-K5-12)",
+     "id": "P-K5-12",
+     "holds": true
+    },
+    {
+     "text": "= the same row of ii_s (P-K5-5)",
+     "id": "P-K5-5",
+     "holds": true
+    },
+    {
+     "text": ">= max(S, C) of the same cell (svm; P-K5-7)",
+     "id": "P-K5-7",
+     "holds": true
+    },
+    {
+     "text": "non-increasing in w (svm; P-K5-8)",
+     "id": "P-K5-8",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 1.0,
+   "svm": 1.0,
+   "ci95_svm": [
+    1.0,
+    1.0
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": false
+   },
+   "perm_p": {
+    "svm": 0.001
+   }
+  },
+  {
+   "condition": "iii_null",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "at chance by the TOST (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5079,
+   "svm": 0.47604166666666664,
+   "ci95_svm": [
+    0.45,
+    0.503125
+   ],
+   "threshold": 0.48020833333333335,
+   "ci95_threshold": [
+    0.45,
+    0.5114583333333333
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 0.909,
+    "threshold": 0.833
+   }
+  },
+  {
+   "condition": "iii_null",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "at chance by the TOST (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": false
+    }
+   ],
+   "level_large_sample": 0.5073,
+   "svm": 0.48125,
+   "ci95_svm": [
+    0.44895833333333335,
+    0.5125
+   ],
+   "threshold": 0.46145833333333336,
+   "ci95_threshold": [
+    0.43226562500000004,
+    0.4895833333333333
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.814,
+    "threshold": 0.983
+   }
+  },
+  {
+   "condition": "iii_null",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "at chance by the TOST (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": false
+    }
+   ],
+   "level_large_sample": 0.5046,
+   "svm": 0.4791666666666667,
+   "ci95_svm": [
+    0.45,
+    0.5083333333333333
+   ],
+   "threshold": 0.471875,
+   "ci95_threshold": [
+    0.44375,
+    0.5
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.839,
+    "threshold": 0.923
+   }
+  },
+  {
+   "condition": "iii_null",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "at chance by the TOST (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.504,
+   "svm": 0.48333333333333334,
+   "ci95_svm": [
+    0.45309895833333336,
+    0.5125
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": true
+   },
+   "perm_p": {
+    "svm": 0.813
+   }
+  },
+  {
+   "condition": "iii_null",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "at chance by the TOST (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.507,
+   "svm": 0.48541666666666666,
+   "ci95_svm": [
+    0.45729166666666665,
+    0.5125260416666665
+   ],
+   "threshold": 0.5135416666666667,
+   "ci95_threshold": [
+    0.48854166666666665,
+    0.5395833333333333
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 0.764,
+    "threshold": 0.273
+   }
+  },
+  {
+   "condition": "iii_null",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "at chance by the TOST (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": false
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5073,
+   "svm": 0.48125,
+   "ci95_svm": [
+    0.44895833333333335,
+    0.5125
+   ],
+   "threshold": 0.46145833333333336,
+   "ci95_threshold": [
+    0.43226562500000004,
+    0.4895833333333333
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.814,
+    "threshold": 0.983
+   }
+  },
+  {
+   "condition": "iii_null",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "at chance by the TOST (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": false
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5046,
+   "svm": 0.4791666666666667,
+   "ci95_svm": [
+    0.45,
+    0.5083333333333333
+   ],
+   "threshold": 0.471875,
+   "ci95_threshold": [
+    0.44375,
+    0.5
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": false
+   },
+   "perm_p": {
+    "svm": 0.839,
+    "threshold": 0.923
+   }
+  },
+  {
+   "condition": "iii_null",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "at chance by the TOST (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.4976,
+   "svm": 0.48854166666666665,
+   "ci95_svm": [
+    0.46145833333333336,
+    0.515625
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": true
+   },
+   "perm_p": {
+    "svm": 0.74
+   }
+  },
+  {
+   "condition": "check_same_seed",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "exactly 0.5 (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5,
+   "svm": 0.5,
+   "ci95_svm": [
+    0.5,
+    0.5
+   ],
+   "threshold": 0.5,
+   "ci95_threshold": [
+    0.5,
+    0.5
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 1.0,
+    "threshold": 1.0
+   }
+  },
+  {
+   "condition": "check_same_seed",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "exactly 0.5 (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5,
+   "svm": 0.5,
+   "ci95_svm": [
+    0.5,
+    0.5
+   ],
+   "threshold": 0.5,
+   "ci95_threshold": [
+    0.5,
+    0.5
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 1.0,
+    "threshold": 1.0
+   }
+  },
+  {
+   "condition": "check_same_seed",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "exactly 0.5 (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5,
+   "svm": 0.5,
+   "ci95_svm": [
+    0.5,
+    0.5
+   ],
+   "threshold": 0.5,
+   "ci95_threshold": [
+    0.5,
+    0.5
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 1.0,
+    "threshold": 1.0
+   }
+  },
+  {
+   "condition": "check_same_seed",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "H",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "exactly 0.5 (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5,
+   "svm": 0.5,
+   "ci95_svm": [
+    0.5,
+    0.5
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": true
+   },
+   "perm_p": {
+    "svm": 1.0
+   }
+  },
+  {
+   "condition": "check_same_seed",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "S",
+   "predictions": [
+    {
+     "text": "exactly 0.5 (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5,
+   "svm": 0.5,
+   "ci95_svm": [
+    0.5,
+    0.5
+   ],
+   "threshold": 0.5,
+   "ci95_threshold": [
+    0.5,
+    0.5
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 1.0,
+    "threshold": 1.0
+   }
+  },
+  {
+   "condition": "check_same_seed",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "C",
+   "predictions": [
+    {
+     "text": "exactly 0.5 (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5,
+   "svm": 0.5,
+   "ci95_svm": [
+    0.5,
+    0.5
+   ],
+   "threshold": 0.5,
+   "ci95_threshold": [
+    0.5,
+    0.5
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 1.0,
+    "threshold": 1.0
+   }
+  },
+  {
+   "condition": "check_same_seed",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "B",
+   "predictions": [
+    {
+     "text": "exactly 0.5 (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    },
+    {
+     "text": "= the same row on H (P-K5-4)",
+     "id": "P-K5-4",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5,
+   "svm": 0.5,
+   "ci95_svm": [
+    0.5,
+    0.5
+   ],
+   "threshold": 0.5,
+   "ci95_threshold": [
+    0.5,
+    0.5
+   ],
+   "tost_chance": {
+    "svm": true,
+    "threshold": true
+   },
+   "perm_p": {
+    "svm": 1.0,
+    "threshold": 1.0
+   }
+  },
+  {
+   "condition": "check_same_seed",
+   "w": null,
+   "N": 128,
+   "processing": "raw",
+   "representation": "minmax",
+   "descriptor_set": "SC",
+   "predictions": [
+    {
+     "text": "exactly 0.5 (P-K5-3)",
+     "id": "P-K5-3",
+     "holds": true
+    }
+   ],
+   "level_large_sample": 0.5,
+   "svm": 0.5,
+   "ci95_svm": [
+    0.5,
+    0.5
+   ],
+   "threshold": null,
+   "ci95_threshold": null,
+   "tost_chance": {
+    "svm": true
+   },
+   "perm_p": {
+    "svm": 1.0
+   }
+  }
+ ]
+}
