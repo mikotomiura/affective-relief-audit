@@ -154,3 +154,13 @@ K = 32 equals the stored K5 accuracies in all 120 classifier rows.
 - N = 512, hann, w = 0.3, threshold: yes
 - N = 512, hann, w = 0.5, svm: no
 - N = 512, hann, w = 0.5, threshold: no
+
+## Conclusions (written after the run)
+
+This section was written by hand after the run and after the generated results were committed unedited (e168ba7). The conditions state no numerical predictions; the computation is exploratory and for the supplement only. The ranges below were taken from the rows of this file after the run.
+
+- The control holds: at K = 32 the accuracies equal the stored K5 accuracies in all 120 classifier rows.
+- i_A: the band edge does not drive the accuracy. Over K = 16 to 64 the accuracy changes from its value at K = 32 by at most 0.002 at w = 0.1 and 0.3 and by at most 0.018 at w = 0.5 (both classifiers, both grids, both processings). The accuracy is at least 0.99 for every K at w = 0.1 and 0.3, and not at w = 0.5, where it is already 0.963 at K = 32.
+- i_V: the level of C_band depends strongly on K. Over all rows it lies between 0.554 and 0.887; it is lowest at K = 16 (0.554 to 0.596), highest at K = 24 (0.826 to 0.887), and 0.676 to 0.697 at K = 32. Here f = 5, and the octave peaks lie at radius sqrt(2) 2^o f = 7.1, 14.1, 28.3 and 56.6, so K = 24 excludes octave 2 and K = 32 includes it. The accuracy is not monotone in K.
+- ii_s, ii_s_gamma and corners: the accuracy does not change with K in any row.
+- The reviewer's concern was that octave 3 of group 0 in i_A crosses K = 32. The octave peaks of the product field lie on the diagonals, at radius sqrt(2) 2^o f, so in i_A it is octave 2 of group 1 that crosses K = 32, and this crossing does not change the accuracy. Where the band edge does matter is i_V, through the octave that the band includes or excludes at the fixed f = 5.
