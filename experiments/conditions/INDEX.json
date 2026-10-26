@@ -45,8 +45,8 @@
   },
   "text_path_example.json": {
    "path": "experiments/conditions/text_path_example.json",
-   "sha256": "6765ade369abcac8b000073378ef7d0b6d9273a85145baf9f7f085c6a66b8f4b",
-   "version": 1
+   "sha256": "c453a2b2824bfe893c1c5ba3fb0a8d4dab7dad71783d770974a6572f7db85c6c",
+   "version": 2
   }
  },
  "earlier_conditions": {
@@ -122,6 +122,15 @@
    "old_sha256": null,
    "new_sha256": "1f1570a347deacf9dbd28579d6f323e9c3afe999df3b0969a7ed2790aab9503f",
    "reason": "Added: K2 and K6, the maximum gradient against N under T_gamma and T_{gamma,eps} at three points of the rule, the worked example tying eps to a printer, and the surfaces of Fig. 2. Written before any computation in this file; revised before this commit after independent checks (see 'deviations_before_running' in the file)."
+  },
+  {
+   "date": "2026-10-26",
+   "file": "text_path_example.json",
+   "from_version": 1,
+   "to_version": 2,
+   "old_sha256": "6765ade369abcac8b000073378ef7d0b6d9273a85145baf9f7f085c6a66b8f4b",
+   "new_sha256": "c453a2b2824bfe893c1c5ba3fb0a8d4dab7dad71783d770974a6572f7db85c6c",
+   "reason": "After the run (results ad02721): the figures redrawn for the paper, text B alone in the main figure and texts A and B side by side in the supplement, with a magnified window of the (V, A) plane, from the stored results without replacing or re-estimating any stored value (first author's decision; see 'deviations' in the file). Version 1 was added in c2a325e without an entry here; its SHA-256 is old_sha256."
   }
  ],
  "exploratory": {

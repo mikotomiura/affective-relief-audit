@@ -1,7 +1,7 @@
 {
  "purpose": "The text example of Section 6: two short texts, taken sentence by sentence through the lexicon baseline (rewritten Section 2.2 of the preprint) to points (V, A), through the rule to (f, s, gamma), and to one tile per sentence. The example shows how the choice of export (common height scale, min-max, and the smoothed transform with eps) changes the work made from the same text, and, by comparing a text whose sentences match few lexicon terms with an expanded version of the same sentences that matches more, how much each point of the path rests on the number Z of matched terms (each point is the mean of Z term values; for independent values of equal variance the variance of the mean is 1/Z of that of one term, its standard deviation 1/sqrt(Z); a repeated term is not an independent value). Text B differs from A in its words as well as in Z, so the comparison shows the dependence on Z together with the change of content and does not separate the two. It is an illustration; no claim of the paper rests on it beyond what K1 (Propositions 1 and 4) and K2 (Proposition A.2.4) already state.",
  "fixed_before_running": "Written on 2026-10-26, before any computation in this file. Values seen before: only the matched terms, their number Z per sentence and whether each matched term is in the stop-word list below (computed to check that the lexicon covers the texts; V and A were not printed). Text A: 'Is this the place?' Z = 3 (is, this, place); 'Where am I?' Z = 2 (where, am); 'Who am I?' Z = 1 (am); all matched terms except 'place' are stop words. Text B: Z = 5, 7, 5, of which 3, 2, 2 are not stop words (station, cold, rain; lost, platform; face, voice). Text B was drafted in two versions that differ only in its third sentence ('Who am I, now that nobody remembers my name?', Z = 4 with no term outside the stop-word list, was replaced so that every sentence of B keeps at least one such term); the choice used Z only. Neither text was chosen or changed after seeing any value of V or A (see also the accident under 'deviations_before_running'). Any change after this commit increases the version, is listed under 'deviations' with its reason, and is added to the history of INDEX.json.",
- "version": 1,
+ "version": 2,
  "spec": "experiments/spec/generator-and-descriptors.md (clauses are cited as S1.1 etc.)",
  "lexicon": {
   "name": "NRC VAD Lexicon v2.1 (Mohammad 2025), default form, scores in [-1, 1]",
@@ -39,7 +39,7 @@
   "Per text, sentence, variant and export, at N = 128 and 1024: the largest physical slope (height scale) |grad H| / L with the gradient of S2.6 (numpy.gradient over the grid, edges included), as an angle in degrees; the height scale is D / (2 s_max) for the common exports and D / (max H - min H) for min-max. Whether the grid point of the largest slope lies in the first or last row or column is recorded. Under min-max the height scale is recomputed on each grid, so the change of the min-max angle between N combines the finer differences and the new scale.",
   "Per text, sentence and variant: the largest change of shape between common_eps and common, max |z_eps - z| in mm, at N = 128.",
   "Per variant and grid: the largest difference between the exported min-max images and the min-max of T_gamma(F) with s removed (P-T1); and, across both texts, Z and the common-scale span of each tile relative to the largest span over all tiles of the variant (descriptive).",
-  "The figure: (a) the paths of both texts in the (V, A) square, sentences numbered in order (A1-A3, B1-B3); (b) one tile per sentence (columns, text A then text B) under the three exports (rows), grey levels on the common scale (common, common_eps: z / D + 1/2) or per tile (min-max: z / D), N = 128. The supplement has the same figure for the variant without function words. Unmatched sentences (Z = 0) are ringed and marked '(no term)', so that they are not read as neutral texts, and labels of coincident points are merged."
+  "The figure (version 1, drawn by the run and kept as generated in results/figs/fig5_text_path.pdf and figS_text_path_nofunction.pdf): (a) the paths of both texts in the (V, A) square, sentences numbered in order (A1-A3, B1-B3); (b) one tile per sentence (columns, text A then text B) under the three exports (rows), grey levels on the common scale (common, common_eps: z / D + 1/2) or per tile (min-max: z / D), N = 128. Unmatched sentences (Z = 0) are ringed and marked '(no term)', so that they are not read as neutral texts, and labels of coincident points are merged. From version 2 the figures of the paper are those of 'figures_v2'."
  ],
  "predictions": [
   "P-T1 (exact, K1 Proposition 4; an implementation control): for every sentence, variant and grid, the exported min-max image equals (T - min T) / (max T - min T), T = T_gamma(F), computed separately, to within 1e-12, so s (and through it the valence V, except where V acts through gamma) leaves no trace in the min-max export.",
@@ -49,7 +49,9 @@
  ],
  "not_predicted": "The values of V and A, the spans, the angles, the size of the change made by eps, and how far the points of text B lie from those of text A are not predicted; they are reported as they come out. How the example is read in Section 6 is written after the run.",
  "not_done": "Other texts, other seeds, other lexicons, negation or context, printed tiles. The example does not claim that the lexicon baseline measures the emotion of a text. With Z of 1 to 3 in text A, each point is the value of one to three words, most of them function words; text B raises Z but is one expanded text, not a sample, so the comparison illustrates the dependence on Z and does not estimate it. A control that keeps the content and changes only Z (an artificial lexicon) is not made.",
- "deviations": [],
+ "deviations": [
+  "2026-10-26, after the run (results ad02721, conclusions add80c6), version 1 -> 2: the figure item of 'readouts' changed and 'figures_v2' added. Reason: the first author's decision to use text B in Section 6 and to keep text A in the supplement (decision 10 of the analysis record and decision 1 of the drafting record), and the overlap of the labels in panel (a) noted in the conclusions. The figures are redrawn from the stored results; no stored value is replaced or re-estimated, and the tiles are regenerated for drawing and checked against the stored readouts ('figures_v2'). The item was revised after independent checks (Codex and a code review) before it was committed and before the figures of version 2 were drawn; a layout preview of the panels was drawn into a temporary directory outside the repository while the script was written. Nothing else changed. The script of the run (text_path_example.py --report) checks the SHA-256 of this file and refuses after this change; the stored report is not rewritten."
+ ],
  "deviations_before_running": [
   "2026-10-26, before any computation and before this file was committed: revised after independent checks (Codex and a code review). Changes: the 1/Z statement corrected (variance of the mean, not spread) and the comparison of A and B stated as not separating Z from content; the expected coverage made machine-readable and checked before the run; the real run made to refuse uncommitted inputs, and failed predictions stated not to stop it; P-T1 per variant and grid against a separately computed min-max; P-T4 extended to (V, A), the parameters and both grids; the edge location of the largest slope and the non-integer f recorded; unmatched sentences marked in the figure. The texts, the seed, the grids, the exports, eps and the dimensions were not changed.",
   "2026-10-26, before this file was committed: an accident in a mutation test of the script. With the guard against uncommitted inputs removed (the mutation), the test of that guard ran the full computation on texts A and B and wrote results/text_path_example.md and the two figures into results/ (the JSON went to a temporary directory). The analyst looked only at the first lines (header and the two texts), not at any value, and deleted the three files unopened. The test now replaces the computation by a stub, so a broken guard cannot start it. Nothing in this file was changed because of the accident."
@@ -93,5 +95,45 @@
   },
   "note": "Z per sentence as seen in the coverage check before the run. The script compares the counts of sentences and Z with these lists before computing any tile and stops on a difference."
  },
- "run_rules": "The real run refuses to start if the conditions, the script, the specification or the library differ from the last commit, or if the lexicon, the stop-word list or the eps differ from those named here. A failed prediction does not stop the run; the results are stored as they come out and the failure is reported."
+ "run_rules": "The real run refuses to start if the conditions, the script, the specification or the library differ from the last commit, or if the lexicon, the stop-word list or the eps differ from those named here. A failed prediction does not stop the run; the results are stored as they come out and the failure is reported.",
+ "figures_v2": {
+  "why": "The first author chose text B for the example of Section 6 (2026-10-26, 'B' in the first author's words) and to keep text A in the supplement beside B (2026-10-26). In the figures of version 1 the points of panel (a) lie within 0.3 of the centre and their labels overlap.",
+  "source": "results/text_path_example.json as committed in ad02721 (SHA-256 under 'source_sha256'). No stored value is replaced or re-estimated: V, A, f, s, gamma, eps, the seed and the dimensions are read from that file after its SHA-256 has been checked. The tiles themselves are not stored in that file; they are regenerated for drawing (see 'tiles').",
+  "tiles": "The tiles are generated again from (f, s, gamma) of the file, its seed and eps, at N = 128 (the first grid of the file; checked), with tile() of the run script. Before anything is drawn the script checks that the run script, the library files and the versions of numpy and scipy are those recorded in the file (so the tiles come from the same code), and compares every readout stored for N = 128 (spans, slopes, angles, edge flags, G, change of shape, the control quantities of P-T1 to P-T3) with the regenerated one; a difference above 1e-12 stops the script. These readouts do not determine the image pixel by pixel (a transposed or mirrored tile has the same readouts); the identity of the images rests on the identity of the code and the inputs, and the readouts guard against a different field, seed, eps or parameter.",
+  "main": {
+   "file": "results/figs/fig5_text_path_B.pdf",
+   "variant": "main",
+   "texts": [
+    "B"
+   ],
+   "panel_a": "The path of text B in the (V, A) plane shown on [-0.3, 0.3] x [-0.3, 0.3] (all points of B lie inside; the script stops if one does not), with an inset of the whole square [-1, 1]^2 that marks the shown window; the centre (0, 0) is marked.",
+   "window": 0.3
+  },
+  "supplement": [
+   {
+    "file": "results/figs/figS_text_path_AB.pdf",
+    "variant": "main",
+    "texts": [
+     "A",
+     "B"
+    ],
+    "window": 0.3
+   },
+   {
+    "file": "results/figs/figS_text_path_AB_nofunction.pdf",
+    "variant": "function_words_removed",
+    "texts": [
+     "A",
+     "B"
+    ],
+    "window": 0.6
+   }
+  ],
+  "panel_b": "As in version 1: one tile per sentence (columns) under the three exports (rows), the same grey levels, N = 128.",
+  "labels": "Unmatched sentences are ringed and marked '(no term)'; labels of coincident points of one text are merged; each label is placed in the first of eight directions in which it stays inside panel (a) and overlaps no other label, the legend, the inset or a point; the script stops if a label does not fit.",
+  "unchanged": "The texts, the lexicon, the variants, the rule, the field, the seed, the grids, the exports, eps, the dimensions, the readouts other than the figure, the predictions and the stored results. The figures of version 1 stay in results/figs as generated.",
+  "source_sha256": "300ed0c8c77b43f949ee82edcd70a4b3e0949b0ba1e6ccc2ecc752871cc56730",
+  "grid_N": 128,
+  "record": "results/text_path_figures.json: the SHA-256 of the conditions, of both scripts and of the library, the git state, the largest deviation of the regenerated readouts, the final label boxes and the plotted grey levels. Written by experiments/text_path_figures.py together with the figures; the script refuses to start if any of the four outputs exists."
+ }
 }
