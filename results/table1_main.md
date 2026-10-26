@@ -1,6 +1,6 @@
 # Table 1, main-text version (K5)
 
-Extracted from `results/k5_classification.json` (SHA-256 `a96c475bae36c43a71aa5b2bc9660cce530da628648afe6f8a7899c9f8cde653`, commit 3f58861) by `experiments/table1_main.py` (SHA-256 `88601ab98287598c988a1a70ab3d99b3d50447baca60dc926a8bac93019c8731`). No new computation. Slice: N = 128, processing raw, w = 0.3 (the null conditions have no w). The full table of 544 rows is in `results/k5_classification.md`.
+Extracted from `results/k5_classification.json` (SHA-256 `a96c475bae36c43a71aa5b2bc9660cce530da628648afe6f8a7899c9f8cde653`, commit 3f58861) by `experiments/table1_main.py` (SHA-256 `3cfcb288916dd4d2442b4be9254f5a7faea3bbe8a8366a346535ed8b96e5a000`). No new computation. Slice: N = 128, processing raw, w = 0.3 (the null conditions have no w). The full table of 544 rows is in `results/k5_classification.md`.
 
 Predictions are numbered as in `experiments/conditions/k5_table1_predictions.json`; an asterisk marks a prediction that does not hold in this cell (evaluated from the stored accuracies with the criterion of that prediction restricted to this cell). Level: large-sample level of the frame. Intervals: 95% pair bootstrap.
 

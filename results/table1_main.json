@@ -4,7 +4,7 @@
   "source_sha256": "a96c475bae36c43a71aa5b2bc9660cce530da628648afe6f8a7899c9f8cde653",
   "predictions": "experiments/conditions/k5_table1_predictions.json",
   "predictions_sha256": "6cf0f96992bd4acab004d03f66b0566c355f84f14eb8bf869709d9a33db7693b",
-  "script_sha256": "88601ab98287598c988a1a70ab3d99b3d50447baca60dc926a8bac93019c8731",
+  "script_sha256": "3cfcb288916dd4d2442b4be9254f5a7faea3bbe8a8366a346535ed8b96e5a000",
   "slice": {
    "N": 128,
    "processing": "raw",
