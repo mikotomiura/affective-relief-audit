@@ -145,6 +145,12 @@
    "sha256": "790ad9d15d8bca8134c87c8452e0754ae275acba2860425e20dfa963f8189c0b",
    "version": 1,
    "note": "Exploratory, designed after the results of K4 (commit cb369b4); not blind; for the supplement only. The slopes over the finite N ranges of Appendix B and the rejection of the estimate rest on K4 alone."
+  },
+  "cband_cutoff_sensitivity.json": {
+   "path": "experiments/conditions/cband_cutoff_sensitivity.json",
+   "sha256": "ff06240540df1e088c47a4cd95324a7f68011aace76e002851f33c8f520ab62a",
+   "version": 1,
+   "note": "Exploratory, designed after the K5 results (commit 3f58861) and a reviewer's comment on the band edge; not blind; for the supplement only."
   }
  },
  "predictions": {

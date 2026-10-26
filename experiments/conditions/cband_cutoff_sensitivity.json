@@ -1,0 +1,21 @@
+{
+  "purpose": "Supplement: sensitivity of the K5 accuracies of the band-fixed power centroid C_band to the band limit K. With K = 32 cycles per domain, the band ends inside the range of the rule: the octave peaks of the field lie at (+-2^o f, +-2^o f), at radius sqrt(2) 2^o f, and octave 2 (radius 4 sqrt(2) f) crosses K = 32 at f = 5.66, inside group 1 of condition i_A (f from about 5.4 to 6.6 at w = 0.3). The accuracy 1 of C_band under i_A may therefore come in part from whether the band contains octave 2.",
+  "fixed_before_running": "Written on 2026-10-26, after the K5 results (commit 3f58861) and after a reviewer of the manuscript pointed out the band edge. Not blind to the K5 results. For the supplement only; nothing in it is evidence for the claims of the main text.",
+  "version": 1,
+  "spec": "experiments/spec/generator-and-descriptors.md",
+  "base": "experiments/conditions/k5_classification.json (version 1): conditions, centres, jitter streams, seeds of the experiment (1000 + i), 480 pairs per condition, five-fold cross-validation grouped by pair, the linear svm and the single threshold, the 95% pair-bootstrap interval (2000 resamples, the same resample indices). No permutation test.",
+  "conditions": ["i_V", "i_A", "ii_s", "ii_s_gamma", "corners"],
+  "jitter_w": [0.1, 0.3, 0.5],
+  "grids_N": [128, 512],
+  "processing": ["raw", "hann"],
+  "representation": "H only (C_band is a ratio and does not change under the min-max export).",
+  "band_limits_K": [16, 24, 32, 40, 48, 64],
+  "control": "Implementation control: at K = 32 the svm and threshold accuracies must equal the stored K5 accuracies of the same rows (results/k5_classification.json) to within 1e-12. If any row differs, the script stops and writes no results.",
+  "readouts": [
+    "Accuracy (svm and threshold) with its 95% pair-bootstrap interval for every condition, w, N, processing and K.",
+    "For each row, the difference from K = 32 and the largest absolute difference over K.",
+    "For i_A: whether the accuracy stays at 0.99 or above for every K, for each classifier."
+  ],
+  "reading_rule": "The interval of a difference between two K is not computed (the same surfaces enter both, and the pair bootstrap of the difference was not fixed). Differences are reported as numbers, with the intervals of each accuracy beside them.",
+  "deviations": []
+}
