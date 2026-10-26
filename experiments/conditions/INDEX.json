@@ -42,6 +42,11 @@
    "path": "experiments/conditions/k2_gradient_and_figures.json",
    "sha256": "1f1570a347deacf9dbd28579d6f323e9c3afe999df3b0969a7ed2790aab9503f",
    "version": 1
+  },
+  "text_path_example.json": {
+   "path": "experiments/conditions/text_path_example.json",
+   "sha256": "6765ade369abcac8b000073378ef7d0b6d9273a85145baf9f7f085c6a66b8f4b",
+   "version": 1
   }
  },
  "earlier_conditions": {

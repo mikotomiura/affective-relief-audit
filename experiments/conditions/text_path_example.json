@@ -1,0 +1,97 @@
+{
+ "purpose": "The text example of Section 6: two short texts, taken sentence by sentence through the lexicon baseline (rewritten Section 2.2 of the preprint) to points (V, A), through the rule to (f, s, gamma), and to one tile per sentence. The example shows how the choice of export (common height scale, min-max, and the smoothed transform with eps) changes the work made from the same text, and, by comparing a text whose sentences match few lexicon terms with an expanded version of the same sentences that matches more, how much each point of the path rests on the number Z of matched terms (each point is the mean of Z term values; for independent values of equal variance the variance of the mean is 1/Z of that of one term, its standard deviation 1/sqrt(Z); a repeated term is not an independent value). Text B differs from A in its words as well as in Z, so the comparison shows the dependence on Z together with the change of content and does not separate the two. It is an illustration; no claim of the paper rests on it beyond what K1 (Propositions 1 and 4) and K2 (Proposition A.2.4) already state.",
+ "fixed_before_running": "Written on 2026-10-26, before any computation in this file. Values seen before: only the matched terms, their number Z per sentence and whether each matched term is in the stop-word list below (computed to check that the lexicon covers the texts; V and A were not printed). Text A: 'Is this the place?' Z = 3 (is, this, place); 'Where am I?' Z = 2 (where, am); 'Who am I?' Z = 1 (am); all matched terms except 'place' are stop words. Text B: Z = 5, 7, 5, of which 3, 2, 2 are not stop words (station, cold, rain; lost, platform; face, voice). Text B was drafted in two versions that differ only in its third sentence ('Who am I, now that nobody remembers my name?', Z = 4 with no term outside the stop-word list, was replaced so that every sentence of B keeps at least one such term); the choice used Z only. Neither text was chosen or changed after seeing any value of V or A (see also the accident under 'deviations_before_running'). Any change after this commit increases the version, is listed under 'deviations' with its reason, and is added to the history of INDEX.json.",
+ "version": 1,
+ "spec": "experiments/spec/generator-and-descriptors.md (clauses are cited as S1.1 etc.)",
+ "lexicon": {
+  "name": "NRC VAD Lexicon v2.1 (Mohammad 2025), default form, scores in [-1, 1]",
+  "file": "external/nrc-vad-v2.1-20261026/NRC-VAD-Lexicon-v2.1/NRC-VAD-Lexicon-v2.1.txt (not in the repository; its terms of use do not allow redistribution)",
+  "file_sha256": "42c718817fc91d5c133581b24b0bb31d2b14a0b16edb19bc6ce6ab70343e5a45",
+  "zip_sha256": "8bcd04831ffda149f683f8d3091c76a3aee138ee3aa1924b67b50b9416d37df0",
+  "procedure": "atact.lexicon (commit 94a5730): lower-case, tokens are runs of letters with internal apostrophes or hyphens, multiword entries matched greedily from the left, longest first; V and A are the means over the Z matched terms, without clipping; a sentence with Z = 0 is given (0, 0) and flagged as unmatched."
+ },
+ "variants": {
+  "main": "All matched terms are averaged, as in the rule of the preprint (decision of the researcher, 2026-10-26).",
+  "function_words_removed": "Supplement only. A matched term is dropped when every one of its tokens is in the stop-word list of scikit-learn 1.9.1 (sklearn.feature_extraction.text.ENGLISH_STOP_WORDS, 318 words; SHA-256 of the sorted words joined by newlines 40e0a284c5b9a220efffd18d4d739fbd3270091d6ce2c75b6effe289d3be5487). The list is a fixed published one, chosen so that the cut is not made by hand. Expected from the coverage check above: Z = 1, 0, 0 for text A (its last two sentences are unmatched and given (0, 0)) and 3, 2, 2 for text B."
+ },
+ "rule": "(f, s, gamma) from (V, A) by eqs. (1)-(3) of the preprint (atact.mapping.params).",
+ "surface": {
+  "field": "F by S1.1-S1.3 (four octaves, product form, no warp) with atact.field.procedural_field_separable, normalisation 'ampsum' (S1.4: F = F_raw / 1.875), the same as the eps example of k2_gradient_and_figures.json, so that the eps of that example applies with the same meaning.",
+  "seed": 42,
+  "seed_note": "The same seed for every sentence of both texts (the reference seed of Table 2 of the preprint and of Fig. 2), so that tiles differ only through (f, s, gamma).",
+  "grids_N": [
+   128,
+   1024
+  ],
+  "grids_note": "N = 128 (the grid of the preprint; grid spacing 0.39 mm at L = 50 mm) for the figure and all readouts; N = 1024 for the maximum slopes only, to show how they depend on the grid.",
+  "heights": "H = s T_gamma(F) and H_eps = s T_{gamma,eps}(F).",
+  "f_note": "f = 3 + 2(A + 1) is in general not an integer here, so the field jumps at the domain edge (S1.6). The figure shows the tiles as generated; the largest slope is read over all grid points, edges included, with one-sided differences at the edge that do not see the jump, and whether the largest slope lies on the edge is recorded."
+ },
+ "exports": {
+  "dimensions": "The dimensions of the eps example (k2_gradient_and_figures.json): L = 50 mm, D = 1.2 mm, s_max = 0.30.",
+  "common": "Common height scale: z = D H / (2 s_max) in mm, the same for every tile.",
+  "minmax": "min-max of each tile: z = D (H - min H) / (max H - min H).",
+  "common_eps": "Common height scale applied to H_eps with eps = 0.3529079159926097, the main eps of results/k2_gradient.json (commit 59c213e, SHA-256 84678dbf8b278e9c86c62281bb43e082c57f27e6620da98df85c57660a8cb463), read from that file and checked against this value."
+ },
+ "readouts": [
+  "Per text, sentence and variant: the text, the matched terms, Z, the unmatched flag, V, A, f, the fractional part of f, s, gamma.",
+  "Per text, sentence, variant and export, at N = 128: the span max z - min z in mm.",
+  "Per text, sentence, variant and export, at N = 128 and 1024: the largest physical slope (height scale) |grad H| / L with the gradient of S2.6 (numpy.gradient over the grid, edges included), as an angle in degrees; the height scale is D / (2 s_max) for the common exports and D / (max H - min H) for min-max. Whether the grid point of the largest slope lies in the first or last row or column is recorded. Under min-max the height scale is recomputed on each grid, so the change of the min-max angle between N combines the finer differences and the new scale.",
+  "Per text, sentence and variant: the largest change of shape between common_eps and common, max |z_eps - z| in mm, at N = 128.",
+  "Per variant and grid: the largest difference between the exported min-max images and the min-max of T_gamma(F) with s removed (P-T1); and, across both texts, Z and the common-scale span of each tile relative to the largest span over all tiles of the variant (descriptive).",
+  "The figure: (a) the paths of both texts in the (V, A) square, sentences numbered in order (A1-A3, B1-B3); (b) one tile per sentence (columns, text A then text B) under the three exports (rows), grey levels on the common scale (common, common_eps: z / D + 1/2) or per tile (min-max: z / D), N = 128. The supplement has the same figure for the variant without function words. Unmatched sentences (Z = 0) are ringed and marked '(no term)', so that they are not read as neutral texts, and labels of coincident points are merged."
+ ],
+ "predictions": [
+  "P-T1 (exact, K1 Proposition 4; an implementation control): for every sentence, variant and grid, the exported min-max image equals (T - min T) / (max T - min T), T = T_gamma(F), computed separately, to within 1e-12, so s (and through it the valence V, except where V acts through gamma) leaves no trace in the min-max export.",
+  "P-T2 (exact; an implementation control): every min-max tile spans D; every common-scale span equals D s (max T_gamma(F) - min T_gamma(F)) / (2 s_max) to within 1e-12 mm.",
+  "P-T3 (exact, K2 Proposition A.2.4 and the discrete mean value theorem; an implementation control): for every sentence with gamma > 1, at both N, the largest slope of common_eps is at most s sigma_eps G D / (2 s_max L) (1 + 1e-12), with G the largest gradient of F on that grid and sigma_eps = eps^(1/gamma - 1) (1 + eps^2)^((1 - 1/gamma)/2), and the change of shape is at most D s eps^(1/gamma) / (2 s_max) (1 + 1e-12).",
+  "P-T4 (an implementation control of the unmatched path, per text): in the variant without function words, every unmatched sentence has (V, A) = (0, 0) and the parameters of (0, 0) (f = 5, s = 0.18, gamma = 1.75), and with the same seed two unmatched sentences of a text have the same tile on every grid and under every export (difference exactly 0). Expected to apply to text A only (from the coverage check before the run); for text B it is reported as not applicable."
+ ],
+ "not_predicted": "The values of V and A, the spans, the angles, the size of the change made by eps, and how far the points of text B lie from those of text A are not predicted; they are reported as they come out. How the example is read in Section 6 is written after the run.",
+ "not_done": "Other texts, other seeds, other lexicons, negation or context, printed tiles. The example does not claim that the lexicon baseline measures the emotion of a text. With Z of 1 to 3 in text A, each point is the value of one to three words, most of them function words; text B raises Z but is one expanded text, not a sample, so the comparison illustrates the dependence on Z and does not estimate it. A control that keeps the content and changes only Z (an artificial lexicon) is not made.",
+ "deviations": [],
+ "deviations_before_running": [
+  "2026-10-26, before any computation and before this file was committed: revised after independent checks (Codex and a code review). Changes: the 1/Z statement corrected (variance of the mean, not spread) and the comparison of A and B stated as not separating Z from content; the expected coverage made machine-readable and checked before the run; the real run made to refuse uncommitted inputs, and failed predictions stated not to stop it; P-T1 per variant and grid against a separately computed min-max; P-T4 extended to (V, A), the parameters and both grids; the edge location of the largest slope and the non-integer f recorded; unmatched sentences marked in the figure. The texts, the seed, the grids, the exports, eps and the dimensions were not changed.",
+  "2026-10-26, before this file was committed: an accident in a mutation test of the script. With the guard against uncommitted inputs removed (the mutation), the test of that guard ran the full computation on texts A and B and wrote results/text_path_example.md and the two figures into results/ (the JSON went to a temporary directory). The analyst looked only at the first lines (header and the two texts), not at any value, and deleted the three files unopened. The test now replaces the computation by a stub, so a broken guard cannot start it. Nothing in this file was changed because of the accident."
+ ],
+ "texts": {
+  "A": {
+   "content": "Is this the place? Where am I? Who am I?",
+   "source": "Written by the first author for this example (2026-10-26). Used verbatim."
+  },
+  "B": {
+   "content": "Is this the old station in the cold rain? Where am I, lost among strangers on an empty platform? Who am I, when no one knows my face or my voice?",
+   "source": "An expansion of text A drafted during the analysis session and chosen by the first author (2026-10-26): the same three questions, each with concrete words added, so that the two texts keep the same questions while the number of matched terms rises; the added words also change the content."
+  },
+  "sentences": "Split by atact.lexicon.split_sentences (after '.', '!' or '?' followed by white space): three sentences per text.",
+  "review": "Both texts are reviewed by the second author."
+ },
+ "expected_coverage": {
+  "A": {
+   "main": [
+    3,
+    2,
+    1
+   ],
+   "function_words_removed": [
+    1,
+    0,
+    0
+   ]
+  },
+  "B": {
+   "main": [
+    5,
+    7,
+    5
+   ],
+   "function_words_removed": [
+    3,
+    2,
+    2
+   ]
+  },
+  "note": "Z per sentence as seen in the coverage check before the run. The script compares the counts of sentences and Z with these lists before computing any tile and stops on a difference."
+ },
+ "run_rules": "The real run refuses to start if the conditions, the script, the specification or the library differ from the last commit, or if the lexicon, the stop-word list or the eps differ from those named here. A failed prediction does not stop the run; the results are stored as they come out and the failure is reported."
+}
