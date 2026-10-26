@@ -37,6 +37,11 @@
    "path": "experiments/conditions/variants.json",
    "sha256": "24516ef8480230701fd7525eb826f99ef2de28b120032582e5bb650a6bfb8de3",
    "version": 1
+  },
+  "k2_gradient_and_figures.json": {
+   "path": "experiments/conditions/k2_gradient_and_figures.json",
+   "sha256": "1f1570a347deacf9dbd28579d6f323e9c3afe999df3b0969a7ed2790aab9503f",
+   "version": 1
   }
  },
  "earlier_conditions": {
@@ -103,6 +108,15 @@
    "old_sha256": null,
    "new_sha256": "790ad9d15d8bca8134c87c8452e0754ae275acba2860425e20dfa963f8189c0b",
    "reason": "Added under 'exploratory': a supplementary exploration of K4 (b) designed after its results had been seen (N up to 16384, extrapolations of the local slopes, an estimate of the leading terms). It is not among the registered computations and is not used as evidence for the main claims."
+  },
+  {
+   "date": "2026-10-26",
+   "file": "k2_gradient_and_figures.json",
+   "from_version": null,
+   "to_version": 1,
+   "old_sha256": null,
+   "new_sha256": "1f1570a347deacf9dbd28579d6f323e9c3afe999df3b0969a7ed2790aab9503f",
+   "reason": "Added: K2 and K6, the maximum gradient against N under T_gamma and T_{gamma,eps} at three points of the rule, the worked example tying eps to a printer, and the surfaces of Fig. 2. Written before any computation in this file; revised before this commit after independent checks (see 'deviations_before_running' in the file)."
   }
  ],
  "exploratory": {

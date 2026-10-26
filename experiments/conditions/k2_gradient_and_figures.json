@@ -1,0 +1,119 @@
+{
+ "purpose": "K2 and K6: growth of the maximum gradient with the grid size N for T_gamma, and its bound under the smoothed transform T_{gamma,eps}, at three points of the rule; a worked example that ties eps to the side of a tile, the depth of the relief and the smallest printable feature; and the surfaces of Fig. 2. Supplies the numbers of the eps example (Section 6), of Fig. 3 (b) and of Fig. 2.",
+ "fixed_before_running": "Written on 2026-10-26, before any computation in this file. Values seen before: (i) the trial ratios of the planning document (N 128 -> 2048: 1.29, 3.02 and 5.21 at gamma = 0.9, 1.75 and 2.6, and 4.7-5.7 over seeds at gamma = 2.6, f = 7; from an earlier preliminary computation whose settings are not those below); (ii) during the code review before the run, the reviewer computed G at N = 1024 for the point 'high' over seeds 1-20 with the maxabs normalisation (largest 127, smallest 65.6), which implies eps of about 0.5 under the eps rule below; this led to the decision of the researcher recorded under 'deviations_before_running'. A smoke run on seeds 900001-900003 tested the script only; its values were not used. The predictions below are informed by (i) and (ii). Any change after this commit increases the version, is listed under 'deviations' with its reason, and is added to the history of INDEX.json.",
+ "version": 1,
+ "spec": "experiments/spec/generator-and-descriptors.md (clauses are cited as S1.1 etc.)",
+ "points": [
+  {
+   "name": "low",
+   "V": 1.0,
+   "A": -1.0,
+   "f": 3.0,
+   "s": 0.06,
+   "gamma": 0.9
+  },
+  {
+   "name": "mid",
+   "V": 0.0,
+   "A": 0.0,
+   "f": 5.0,
+   "s": 0.18,
+   "gamma": 1.75
+  },
+  {
+   "name": "high",
+   "V": -1.0,
+   "A": 1.0,
+   "f": 7.0,
+   "s": 0.3,
+   "gamma": 2.6
+  }
+ ],
+ "points_note": "Points of the rule (S2.1) with the smallest, middle and largest gamma; (f, s, gamma) follow from (V, A) and are listed for checking. All three f are integers, so the field has no edge discontinuity (S1.6).",
+ "field": "F by S1.1-S1.3 (four octaves, product form, no warp), computed with atact.field.procedural_field_separable. Primary normalisation: 'ampsum' (S1.4: F = F_raw / 1.875, a constant), because this file compares grids of the same surface and the maximum gradient, unlike the centroid, depends on the amplitude. Secondary: the canonical 'maxabs' (F_raw divided by its maximum over the grid), for G_N and M_N only, reported beside the primary values.",
+ "seeds": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20
+ ],
+ "grids_N": [
+  128,
+  256,
+  512,
+  1024,
+  2048,
+  4096
+ ],
+ "quantities": {
+  "G_N": "Maximum gradient of F over the grid (S2.6 applied to F): max |numpy.gradient(F, 1/N)|, in units of F per domain length.",
+  "M_N": "Maximum gradient of H = s T_gamma(F) (S2.6).",
+  "Meps_N": "Maximum gradient of H_eps = s T_{gamma,eps}(F) (S2.2, S2.6) with the eps of the worked example below, for the same F.",
+  "sigma_eps": "Largest slope of T_{gamma,eps} on [-1, 1]: eps^(1/gamma - 1) (1 + eps^2)^((1 - 1/gamma)/2), attained at u = 0 for gamma > 1 (Proposition A.2.4). Defined here only for gamma > 1.",
+  "shape_error_N": "max over the grid of |H_eps - H| / s, compared with the bound eps^(1/gamma) of Proposition A.2.4.",
+  "G_bound": "Analytic upper bound on the continuous gradient of F under ampsum: |grad of 2^-o sin(a) sin(b)| <= 2 pi f, so |grad F| <= 2 pi f O / 1.875 with O = 4 (93.83 at f = 7). Independent of seed and N.",
+  "edge_argmax": "Whether the grid point of M_N (and of Meps_N) lies in the first or last row or column."
+ },
+ "readouts": [
+  "Per point and seed: the ratio M_2048 / M_128, with the seed mean, minimum and maximum, beside 16^(1 - 1/gamma) (3.2813 at gamma = 1.75, 5.5080 at 2.6; for gamma = 0.9 the continuous maximum gradient is finite).",
+  "Per point: the slope of ln M_N on ln N over N 512-4096 (S6.1: per seed, mean and 95% t interval over seeds), beside 1 - 1/gamma; and the local slopes between consecutive N (seed means).",
+  "The same for Meps_N and for G_N.",
+  "Per point with gamma > 1, seed and N: Meps_N / (s sigma_eps G_N).",
+  "Per point, seed and N: G_N, M_N and Meps_N (all eps values at 'high'), stored unsummarised.",
+  "The same ratio and slope for G_N and M_N under maxabs (secondary)."
+ ],
+ "eps_example": {
+  "L_mm": 50,
+  "D_mm": 1.2,
+  "e_min_mm": 0.4,
+  "s_max": 0.3,
+  "sensitivity_values": [
+   {
+    "L_mm": 50,
+    "e_min_mm": 0.05
+   },
+   {
+    "L_mm": 100,
+    "e_min_mm": 0.4
+   }
+  ],
+  "dimensions": "Decided by the researcher on 2026-10-26: side of the tile L = 50 mm, relief from the highest to the lowest point D = 1.2 mm (the illustrative maximum relief of Table 2 of the preprint), smallest printable feature e_min = 0.4 mm (a 0.4 mm nozzle of fused-filament printing).",
+  "export": "Common height scale for all works: z = D H / (2 s_max) in mm with s_max = 0.30 (the largest s of the rule), so that a work with s = s_max spans at most D (under ampsum |F| < 1, so the span is smaller; the actual span is reported). Physical slope = D |grad H| / (2 s_max L) (dimensionless; |grad H| per domain length), reported also as an angle atan(slope) in degrees.",
+  "rule_for_eps": "T_{gamma,eps} departs from T_gamma where |F| is below about eps. Across a zero line of F with gradient g (per domain length) this band has width about 2 eps / g in domain units, that is 2 eps L / g in mm; this is a linear approximation that holds only when eps is small. eps is chosen so that the band is e_min wide where F is steepest: eps = e_min G* / (2 L), with G* the largest G_4096 over the 20 seeds at the point 'high' (ampsum). The same main eps is used for all three points. Expected from (ii) above: eps of order 0.4-0.5 for the main dimensions, because the highest octave (56 cycles per 50 mm, half period about 0.45 mm) is at the scale of e_min; at such eps the band is not narrow and the linear reading of eps does not hold. This is reported as a result of the example, not corrected.",
+  "reported": "eps; sigma_eps at the point 'high'; the band width 2 eps L / G_4096 in mm per seed (at least e_min by construction); the grid spacing L / N in mm for every N; the physical slope and angle of M_N, Meps_N and of s G_N (the field without T_gamma) at the point 'high' for every N (seed mean, minimum and maximum); the bound D s sigma_eps G* / (2 s_max L) on the physical slope of the smoothed relief; the shape error in mm, (D / (2 s_max)) s max|T_{gamma,eps}(F) - T_gamma(F)| (seed maximum at N = 4096), beside the bound (D / (2 s_max)) s eps^(1/gamma). Also: the actual span D (max H - min H) / (2 s_max) per seed at N = 4096; the continuous bound D s sigma_eps G_bound / (2 s_max L) beside the grid bound with G*.",
+  "sensitivity": "The same eps rule and the same readouts at the point 'high' with (L, e_min) = (50 mm, 0.05 mm) and (100 mm, 0.4 mm), the other options offered to the researcher. Each uses its own L and e_min with the same G*. P-G5 and P-G6 are judged for all three eps (decision of the researcher, 2026-10-26)."
+ },
+ "figure2": {
+  "rule": "Heights H = s T_gamma(F) at the 25 points (V, A) in {-1, -0.5, 0, 0.5, 1}^2, seed 42 (the reference seed of Table 2 of the preprint), N = 128, canonical F (maxabs, S1.4: a single grid, no comparison between grids). Two rows of panels: the common scale (grey level (H + s_max) / (2 s_max), s_max = 0.30) and the min-max export of each panel ((H - min H) / (max H - min H)). Grey colour map, no shading.",
+  "reported": "(f, s, gamma) of each panel; the largest difference between the min-max images of two panels with the same (f, gamma) does not arise on this grid (f and gamma determine the panel), so no such difference is reported. Illustration only; no claim rests on the figure beyond what Propositions 1 and 4 state."
+ },
+ "predictions": [
+  "P-G1: at the points 'mid' and 'high', M_2048 / M_128 > 1 in every seed, and the seed mean of the ratio lies within 20% of 16^(1 - 1/gamma).",
+  "P-G2: at the points 'mid' and 'high', the seed mean of the slope of ln M_N over N 512-4096 lies within 0.05 of 1 - 1/gamma (0.4286 and 0.6154).",
+  "P-G3: at the point 'low' (gamma = 0.9), M_2048 / M_128 < 1.5 in every seed and the seed mean of the slope over N 512-4096 is below 0.05.",
+  "P-G4 (exact inequality, an implementation control): at the points 'mid' and 'high', Meps_N <= s sigma_eps G_N (1 + 1e-12) for every seed, N and computed eps (with the sigma_eps of that eps). The discrete mean value theorem applied to each central or one-sided difference gives |grad_h H_eps| <= s sigma_eps |grad_h F| at every grid point.",
+  "P-G5: at the point 'high', for each of the three eps (main and the two sensitivity values), the seed mean of Meps_N changes by less than 5% between N = 1024 and N = 4096, while the seed mean of M_N increases by a factor larger than 2 over the same range. For the main eps (about 0.5) this is expected to hold almost by construction (the smoothed slope is at most about 1.6 s G and G converges with N); the sensitivity eps of about 0.06 is the informative case.",
+  "P-G6: at the point 'mid' for the main eps, and at the point 'high' for each of the three eps, for every seed and N, the shape error max |H_eps - H| / s is at most eps^(1/gamma) (1 + 1e-12)."
+ ],
+ "not_done": "Other points of the rule, non-integer f, warped fields, measured or printed surfaces. The eps rule is one way of tying eps to the printer; it is not claimed to be the right one, and the choice of eps remains a decision of the artist.",
+ "deviations": [],
+ "deviations_before_running": [
+  "2026-10-26, before any computation and before this file was committed: revised after independent checks (Codex and a code review). Changes: the primary normalisation is ampsum (S1.4 requires it for comparisons between grids of the same surface; maxabs is kept as a secondary readout); the reference values 16^(1 - 1/gamma) were corrected (3.2813 and 5.5080); the analytic bound G_bound, the actual span of the relief, the location of the maximum and the unsummarised values were added; the linear approximation behind the eps rule and the expected size of eps were stated; P-G5 and P-G6 are judged for all three eps (decision of the researcher after the reviewer's computation of G, see 'fixed_before_running'). The dimensions and the eps rule were not changed."
+ ]
+}
