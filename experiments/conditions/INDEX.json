@@ -94,6 +94,15 @@
    "old_sha256": null,
    "new_sha256": "6cf0f96992bd4acab004d03f66b0566c355f84f14eb8bf869709d9a33db7693b",
    "reason": "Added: the predicted direction and order for every row of Table 1 of K5, written before any K5 computation. Not a change of k5_classification.json."
+  },
+  {
+   "date": "2026-10-26",
+   "file": "k4_supplement.json",
+   "from_version": null,
+   "to_version": 1,
+   "old_sha256": null,
+   "new_sha256": "790ad9d15d8bca8134c87c8452e0754ae275acba2860425e20dfa963f8189c0b",
+   "reason": "Added under 'exploratory': a supplementary exploration of K4 (b) designed after its results had been seen (N up to 16384, extrapolations of the local slopes, an estimate of the leading terms). It is not among the registered computations and is not used as evidence for the main claims."
   }
  ],
  "exploratory": {
@@ -102,6 +111,12 @@
    "sha256": "7f2f6108fae7862686a38f366212ac7478b8b8d39ca2045060be6f920d2d9b2a",
    "version": 1,
    "note": "Exploratory, designed after the results of validation 3; not blind; for the supplement only."
+  },
+  "k4_supplement.json": {
+   "path": "experiments/conditions/k4_supplement.json",
+   "sha256": "790ad9d15d8bca8134c87c8452e0754ae275acba2860425e20dfa963f8189c0b",
+   "version": 1,
+   "note": "Exploratory, designed after the results of K4 (commit cb369b4); not blind; for the supplement only. The slopes over the finite N ranges of Appendix B and the rejection of the estimate rest on K4 alone."
   }
  },
  "predictions": {
