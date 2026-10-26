@@ -131,3 +131,25 @@ eps = 0.1765, sigma_eps = 2.9357, G* = 88.227. Band width 2 eps L / G_4096 over 
 | 2048 | 0.0488 | 77.7 (75.4-79.6) | 52.7 (46.1-56.5) | 25.7 (21.0-27.9) |
 | 4096 | 0.0244 | 81.9 (80.3-83.3) | 53.0 (46.2-56.8) | 25.7 (21.1-27.9) |
 
+
+## Conclusions by prediction (written after the run)
+
+This section was written by hand after the run and after the generated results were committed unedited (59c213e). It does not change any criterion. The record of the run says "dirty: True": at the start of the run the file `src/atact/lexicon.py`, which this script does not import, was untracked; it was committed (94a5730) while the run was going. The script, condition file and library files read by the run have the SHA-256 of commits 4dba646 and c43c855.
+
+Summary: P-G1, P-G2, P-G3, P-G4 and P-G6 hold in every item; P-G5 holds for the main eps and not for the two sensitivity values.
+
+**P-G1 (holds).** From N = 128 to 2048 the maximum gradient of H grows by 3.31 (mean over seeds; 2.57-4.47) at gamma = 1.75 and by 5.47 (4.73-6.85) at gamma = 2.6, against 16^(1 - 1/gamma) = 3.28 and 5.51.
+
+**P-G2 (holds).** The slope of ln M on ln N over N 512-4096 is 0.425 [0.412, 0.437] at gamma = 1.75 and 0.606 [0.592, 0.619] at gamma = 2.6, against 1 - 1/gamma = 0.429 and 0.615. The local slopes stay between 0.42 and 0.44 and between 0.60 and 0.63 from N = 128 on. The maxabs normalisation gives the same slopes to the third decimal.
+
+**P-G3 (holds).** At gamma = 0.9 the ratio is at most 1.14 and the slope over N 512-4096 is 0.003; the field itself (G) changes by the same amount (ratio 1.08), so the change at small N comes from the central difference of the field, not from T_gamma.
+
+**P-G4 (holds).** The largest ratio of Meps to s sigma_eps G over all seeds, N and eps is 0.9994.
+
+**P-G5 (holds for the main eps only).** With the main eps (0.353) the mean maximum gradient of the smoothed height changes by 1.9% between N = 1024 and 4096, while that of H grows by 2.32. With eps = 0.044 (L = 50 mm, e_min = 0.05 mm) it still grows by 1.38, and with eps = 0.176 (L = 100 mm, e_min = 0.4 mm) by 1.054, just above the 5% of the criterion. The smoothed slope stops changing only once the grid resolves the band of width about 2 eps / G: at the smallest eps the band (0.05-0.07 mm) spans one grid spacing at N = 1024 and four to six at N = 4096. As written in the conditions, the main eps makes this prediction hold almost by construction.
+
+**P-G6 (holds).** The shape error is at most 0.35 times the bound eps^(1/gamma) in every item (for example 0.224 against 0.670 at the point 'high' with the main eps).
+
+**Worked example.** With L = 50 mm, D = 1.2 mm and e_min = 0.4 mm, the rule for eps gives eps = 0.353, not a small number: the highest octave of the field (56 cycles per 50 mm) has its half period at the scale of the nozzle, so the band that T_{gamma,eps} smooths is a large part of the surface and the linear reading of the band width is only indicative. On the common scale the steepest slope of the unsmoothed relief at the corner (V, A) = (-1, 1) rises with the grid from 59 degrees (N = 128, grid spacing 0.39 mm) to 86 degrees (N = 4096); the smoothed relief stays at 61 degrees from N = 1024 on, below the continuous bound of 66 degrees, and the field without T_gamma (s F) at 44 degrees. The smoothing changes the height by at most 0.13 mm on a relief that spans 1.02-1.11 mm (under the ampsum normalisation the span stays below D). On a tile of 100 mm the same nozzle gives eps = 0.176 and a smoothed slope of 53 degrees.
+
+**Observed beside the predictions (not tested).** The grid point of the largest gradient of H lies on the edge of the domain, where numpy.gradient uses a one-sided difference over one spacing instead of a central difference over two, in 18-20 of the 20 seeds at every N at the point 'high' and in 10-20 at the point 'mid'; for the smoothed height this becomes rare as N grows (at most 2 of 20 at N = 4096). The location of the maximum of F itself was not recorded. The growth exponent is unaffected (the local slopes agree with 1 - 1/gamma), but the level of M at a given N depends on the difference scheme at the edge.
