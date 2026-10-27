@@ -111,6 +111,10 @@ The supplement and the results files cite commits by their hashes in the working
 were run. This history was prepared from that repository by removing the LaTeX source of the manuscript and setting
 the author name, with the files and the dates unchanged; `commit-map.tsv` maps each original hash to the commit here.
 
+Some records of the earlier, exploratory checks are in Japanese: their scripts, conditions and reports, and the report
+`results/observable_dof.md` cited by the supplement. They are kept unchanged because their SHA-256 are recorded in the
+results. English translations are beside them: `experiments/conditions/*.en.json` and `results/observable_dof.en.md`.
+
 External data:
 
 - The text example of the paper needs the NRC VAD Lexicon v2.1 (`NRC-VAD-Lexicon-v2.1.txt`), which is available from
