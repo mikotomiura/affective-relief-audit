@@ -52,7 +52,7 @@ def block_grid(P: np.ndarray, n: int = 256) -> np.ndarray:
         changed = (np.abs(np.diff(P, axis=axis)).sum(-1) > 0).mean(1 - axis)
         e = np.r_[0, np.where(changed > 0.5)[0] + 1, P.shape[1 - axis]]
         if len(e) - 1 != n:
-            raise ValueError(f"ブロックが {len(e) - 1} 個（{n} 個のはず）")
+            raise ValueError(f"{len(e) - 1} blocks found ({n} expected)")
         return (e[:-1] + e[1:]) // 2
 
     return P[np.ix_(centers(0), centers(1))]

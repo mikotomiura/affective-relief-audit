@@ -26,7 +26,7 @@ ESM = Path(__file__).resolve().parents[1] / "external" / "esm1"
 
 def height(V: float, A: float, seed: int = 42) -> np.ndarray:
     """H = s T_gamma(F), eq. (4) of Harada (2026). Height with units, before min-max. A 128 x 128 grid is assumed."""
-    raise NotImplementedError("元のコードの高さの関数を呼ぶ")
+    raise NotImplementedError("call the height function of the original code here")
 
 
 def field(f: float, seed: int = 42, n: int = 128) -> np.ndarray | None:

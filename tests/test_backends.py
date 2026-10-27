@@ -120,7 +120,7 @@ def _conformance_backends():
     if p is not None:
         out.append(pytest.param(p, id="original"))
     else:
-        out.append(pytest.param(None, id="original", marks=pytest.mark.skip("アダプタが無い")))
+        out.append(pytest.param(None, id="original", marks=pytest.mark.skip("no adapter for the original code")))
     return out
 
 
@@ -142,14 +142,14 @@ def test_conf_shape_and_seed(be):
 def test_conf_params_table1(be, va, fsg):
     p = be.params(*va)
     if p is None:
-        pytest.skip("params が無い")
+        pytest.skip("the backend has no params")
     assert np.allclose(p, fsg)
 
 
 def _field_or_skip(be, f, seed=42, n=None):
     F = be.field(f, seed) if n is None else be.field(f, seed, n)
     if F is None:
-        pytest.skip("field が無い")
+        pytest.skip("the backend has no field")
     return F
 
 

@@ -87,7 +87,7 @@ def test_fingerprint_distance_zero_to_self():
 
 # ---------------------------------------------------------------- 2. Actual figure
 
-needs_fig = pytest.mark.skipif(not fig3.FIG3.exists(), reason="原稿の図 3 が無い（git の外）")
+needs_fig = pytest.mark.skipif(not fig3.FIG3.exists(), reason="Fig. 3 of the preprint is not redistributed with the repository")
 
 
 @pytest.fixture(scope="module")

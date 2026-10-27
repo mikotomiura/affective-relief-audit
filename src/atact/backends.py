@@ -66,7 +66,7 @@ class AdapterBackend:
 
     def __init__(self, mod: ModuleType):
         if not hasattr(mod, "height"):
-            raise AttributeError(f"{mod.__file__}: height(V, A, seed) がない")
+            raise AttributeError(f"{mod.__file__}: no height(V, A, seed)")
         self._m = mod
         self.NAME = getattr(mod, "NAME", Path(mod.__file__).stem)
 
