@@ -89,6 +89,8 @@ uv run pytest -q          # 343 件が通り、14 件は飛ばされる（元の
 
 数時間かかる計算がある（とくに表 1 の分類の実験）。
 
+補足資料と結果ファイルは、計算を実行した作業用の保管庫でのコミット番号で引いている。この履歴はその保管庫から、原稿の LaTeX ソースを外し著者名を整えて作ったもので、ファイルと日時は変えていない。元の番号とここでのコミットとの対応は `commit-map.tsv` にある。
+
 外部のデータ:
 
 - 論文の文の例には NRC VAD Lexicon v2.1（`NRC-VAD-Lexicon-v2.1.txt`）が要る。作成者から入手でき、この保管庫では再配布しない。
@@ -113,4 +115,4 @@ uv run pytest -q          # 343 件が通り、14 件は飛ばされる（元の
 ## 著者
 
 - Mikoto Miura、Independent Researcher（[ORCID 0009-0000-4196-0508](https://orcid.org/0009-0000-4196-0508)）
-- Yuusuke Harada、Graduate School of Humanities and Social Sciences, Hiroshima University, Japan
+- Yuusuke Harada、Graduate School of Humanities and Social Sciences, Hiroshima University, Japan（[ORCID 0009-0006-7252-5115](https://orcid.org/0009-0006-7252-5115)）
