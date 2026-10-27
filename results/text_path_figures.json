@@ -1,7 +1,7 @@
 {
  "meta": {
   "conditions_sha256": "c453a2b2824bfe893c1c5ba3fb0a8d4dab7dad71783d770974a6572f7db85c6c",
-  "script_sha256": "5b3ad022633f1a3d858c113f224b4704e64e33532b54c4a24da7707f42232494",
+  "script_sha256": "5a9304c0bb461b8a980686c37fef114ebaf7b0491b15140feb5190253c251bb4",
   "run_script_sha256": "56fa1d81d8b190f309920cb91ed93e5e9f08121e67088a78b37d543d291ef795",
   "library_sha256": {
    "src/atact/field.py": "4162e8faa60ca78257fd0777a3a7dceaaa7bbab6bfe6691de46f49a339b641c5",
@@ -13,11 +13,11 @@
   "numpy": "2.5.4",
   "scipy": "1.18.1",
   "python": "3.13.12",
-  "git_commit": "be180809842be1a8d33207503a7d224ab8b5f40d",
+  "git_commit": "cff071b872ef08295a18b9add4ee3456cd4b7ec3",
   "git_dirty": false,
   "source": "results/text_path_example.json",
   "source_sha256": "300ed0c8c77b43f949ee82edcd70a4b3e0949b0ba1e6ccc2ecc752871cc56730",
-  "finished": "2026-10-26T05:41:11+00:00"
+  "finished": "2026-10-27T04:49:51+00:00"
  },
  "interpretation": [
   "The stored results are read only after their SHA-256 has been compared with 'figures_v2.source_sha256' of the conditions. The run script, the library files and the versions of numpy and scipy must equal those recorded in the stored results. The tiles use the grid 'figures_v2.grid_N' (checked against the first grid of the results), and every readout stored for that grid is compared with the regenerated one to within 1e-12 (booleans exactly) before any figure is drawn. These readouts do not fix the image pixel by pixel; the identity of the images rests on the identity of the code and the inputs.",

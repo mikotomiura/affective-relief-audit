@@ -229,6 +229,7 @@ def figure(res: dict, images: dict, variant: str, texts: list[str], w: float, pa
         "text.usetex": True, "font.family": "serif", "font.size": 8, "axes.titlesize": 8, "axes.labelsize": 8,
         "legend.fontsize": 7, "xtick.labelsize": 7, "ytick.labelsize": 7, "axes.linewidth": 0.6,
         "lines.linewidth": 1.0, "savefig.bbox": "tight", "savefig.pad_inches": 0.02, "pdf.fonttype": 42,
+        "savefig.dpi": 600,  # images (tiles) at 600 dpi in the PDF, not resampled to 100 dpi
     })
     a = res["analysis"]
     D = a["dimensions"]["D"]

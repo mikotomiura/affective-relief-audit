@@ -24,8 +24,8 @@
    ]
   ],
   "sources": {},
-  "script_sha256": "3b8a3996f8bf15274da6d53e1d8c08c7d72f68af23a92aa3bb4981503d9d2563",
-  "pdf_sha256": "cd92f880e360d4de0c4d01c8ef7f2d138f92437e40472f7386220fcd7aac7ea9"
+  "script_sha256": "f7be5b9b8f57f951e12584a76c9c68aa0aabfc0793baa5be97073e8045da4754",
+  "pdf_sha256": "89ca1f9490906ecfd9f2ab74f1a5ef0cb7104a17a43554d66191146bd207d78b"
  },
  "fig2": {
   "file": "results/figs/fig2_heights.pdf",
@@ -311,8 +311,8 @@
   "sources": {
    "experiments/conditions/k2_gradient_and_figures.json": "1f1570a347deacf9dbd28579d6f323e9c3afe999df3b0969a7ed2790aab9503f"
   },
-  "script_sha256": "3b8a3996f8bf15274da6d53e1d8c08c7d72f68af23a92aa3bb4981503d9d2563",
-  "pdf_sha256": "b256ae3262212b6ebe2de12ead6809ff784517757349a472a98172f344902265"
+  "script_sha256": "f7be5b9b8f57f951e12584a76c9c68aa0aabfc0793baa5be97073e8045da4754",
+  "pdf_sha256": "bf9af82b88897c46b24c677197234345d403e14708e769b9deecc1f29cbae245"
  },
  "fig3": {
   "file": "results/figs/fig3_transform_gradient.pdf",
@@ -369,8 +369,8 @@
    "experiments/conditions/k2_gradient_and_figures.json": "1f1570a347deacf9dbd28579d6f323e9c3afe999df3b0969a7ed2790aab9503f",
    "results/k2_gradient.json": "84678dbf8b278e9c86c62281bb43e082c57f27e6620da98df85c57660a8cb463"
   },
-  "script_sha256": "3b8a3996f8bf15274da6d53e1d8c08c7d72f68af23a92aa3bb4981503d9d2563",
-  "pdf_sha256": "af665773413518b51742a221c2046319663b02a83bf48cf53702c7597b274970"
+  "script_sha256": "f7be5b9b8f57f951e12584a76c9c68aa0aabfc0793baa5be97073e8045da4754",
+  "pdf_sha256": "c7c4aa6518f271214be1a8ca20556f92581c937145e70e14c7376ae42e80f7f6"
  },
  "fig4": {
   "file": "results/figs/fig4_centroid_growth.pdf",
@@ -584,7 +584,7 @@
    "results/k4_centroid_2d.json": "257173c1b375595146a4f23a746fb8e2d8537a6df6426eeb1c82b40d37f6872a",
    "results/k4_supplement.json": "a515d550e8f47974b3d6f27454e9754bfb150cc490a97ce62060b535775044a0"
   },
-  "script_sha256": "3b8a3996f8bf15274da6d53e1d8c08c7d72f68af23a92aa3bb4981503d9d2563",
-  "pdf_sha256": "18470124dfe600a35e43c204b0303446d2b3cfc24d1d900b829c227edf703d78"
+  "script_sha256": "f7be5b9b8f57f951e12584a76c9c68aa0aabfc0793baa5be97073e8045da4754",
+  "pdf_sha256": "94e4b8304b18c3d17b7209de8f8968f51d7cd0e453533325134b21ddba8274a6"
  }
 }
