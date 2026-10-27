@@ -341,3 +341,20 @@ def test_a6_even_f_limit_depends_on_gcd():
     for n, d in ((1048576, 2), (1048572, 6)):
         assert np.gcd(6, n) == d and (n // d) % 2 == 0
         assert np.isclose(centroid_1d(_sine(6, n, g)) / n ** (1 - a), d**a * _k_limit(g, 6 // d), rtol=0.01)
+
+
+def test_remark_product_bounds_need_zero_mean_of_the_transforms():
+    # Remark on the product field: max(Cx, Cy) <= C needs T(u) and T(v) of zero mean; a zero mean of u is not enough
+    g, n = 2.5, 16
+    v = np.sin(2 * np.pi * np.arange(n) / n)
+    u = np.full(n, -1 / 15)
+    u[0] = 1.0
+    assert np.isclose(u.mean(), 0, atol=1e-15) and not np.isclose(t_gamma(u, g).mean(), 0, atol=1e-3)
+    cx, cy, c = centroid_1d(t_gamma(u, g)), centroid_1d(t_gamma(v, g)), centroid(t_gamma(np.outer(u, v), g))
+    assert c < max(cx, cy) and min(cx, cy) <= c <= cx + cy
+    rng = np.random.default_rng(0)
+    for _ in range(200):
+        a = t_gamma(rng.standard_normal(n), g)
+        b = t_gamma(rng.standard_normal(n), g)
+        a, b = a - a.mean(), b - b.mean()
+        assert max(centroid_1d(a), centroid_1d(b)) <= centroid(np.outer(a, b)) + 1e-12 <= centroid_1d(a) + centroid_1d(b) + 2e-12

@@ -3,7 +3,7 @@
 Written by hand from Propositions 1-8 (`advice/planA-math.md`, revision 2) and the registered results cited in the
 last column. Basis: "type" = a proposition that holds for every rule of the type (an affine map to the parameters of a
 procedural field, a signed power, an export and descriptors), under the condition stated; "field" = a result for the field of Section 2, proved for
-its one-dimensional profile and computed on the field itself. The column "In this rule" is for the rule read in the paper; the checks have not been
+its one-dimensional profile and computed on the field itself; "experiment" = a prediction that the propositions motivate but do not guarantee, tested by experiment. The column "In this rule" is for the rule read in the paper; the checks have not been
 tried on other rules. (Revised 2026-10-26 after the pre-review of the manuscript: basis column added, row 4 restated. Revised again after the
 second round: rows 2 and 5 have basis "type", row 4 names the type proposition for the band and limits the edge
 statement to gamma <= 1.25, where the raw slopes for non-integer f exceed those for integer f in results cb369b4,
@@ -11,7 +11,8 @@ P-K4-6 table; at gamma = 1.75 and 2.6 they do not. Third revision: the steepest 
 N = 4096; the grid independence of the band-fixed centroid is exact here only at gamma = 1 and integer f. Fourth revision:
 row 4 states the edge effect by field (on one octave of the product field the raw slopes for non-integer f exceed those for
 integer f at every gamma, on the sum field only at gamma <= 1.25 over N <= 4096) and names the slope to compute; row 7 is
-added; the band row limits the edge to non-integer f.)
+added; the band row limits the edge to non-integer f. Fifth revision (2026-10-27): the basis of row 7 is "experiment", since the
+propositions motivate the predictions of direction and order but do not guarantee them.)
 
 ## Checks
 
@@ -23,7 +24,7 @@ added; the band row limits the edge to non-integer f.)
 | 4 | Dependence of a descriptor on the grid and on the edge of the domain | the descriptor at several N; integer and non-integer f; with and without a window; the slope of ln D on ln N, which is 0 if D does not depend on the grid | field (the centroid theorem in one dimension, Conjecture 1 in two); type for the band (the proposition on descriptors that do not depend on the grid) | the amplitude-weighted centroid grows with N on the sum field at the four values gamma != 1 computed, also at gamma = 0.9 (slopes 0.29-0.91 over N 512-4096, f = 3, 5, 7), and for non-integer f the edge jump raises the growth on one octave of the product field at every gamma and on the sum field over N <= 4096 only at gamma <= 1.25; a power weight with a fixed band reduces both, and is independent of the grid for a band-limited periodic surface (here only at gamma = 1 and integer f) | Propositions 5 and 7; Fig. 4; results cb369b4 and 32e2ffe |
 | 5 | Largest slope | the maximum gradient at several N | type, at a transversal zero | grows like N^(1 - 1/gamma) for gamma > 1 (slopes 0.425 and 0.606 over N 512-4096, against 0.429 and 0.615); under T_{gamma,eps} it stops changing once the grid resolves the smoothed band (1.9% between N = 1024 and 4096 for eps = 0.353; still growing for eps = 0.044) | Proposition 6; Fig. 3; results 59c213e |
 | 6 | Degrees of freedom that can be observed | the minimum over the stages of the rank: inputs, the map, the export, the descriptors | type | at most 2 after the min-max export; with a hypothetical third input, rank 3 on H and 2 after the export | Proposition 4 (corollary); results 0f320bc |
-| 7 | Classification accuracy | the direction and order of the accuracy predicted from rows 1-5 before the experiment, and its level computed by simulation for each classifier | type for the direction and order (the proposition on what the accuracy is fixed by) | direction and order held up to small failures (five of ten predictions not in every part, each in a few cells); the level held for the classifier it was computed for (two-descriptor SVM 0.512 against 0.514), not across classifiers (SVM on the centroid alone 0.51 against the threshold level 0.76); the accuracy says nothing about emotion | Proposition 5 of Section 5; Table 1; results 3f58861 |
+| 7 | Classification accuracy | the direction and order of the accuracy predicted from rows 1-5 before the experiment, and its level computed by simulation for each classifier | experiment (the direction and order predicted from rows 1-5, which motivate the predictions but do not guarantee them; the proposition on what the accuracy is fixed by, for the controls) | direction and order held up to small failures (five of ten predictions not in every part, each in a few cells); the level held for the classifier it was computed for (two-descriptor SVM 0.512 against 0.514), not across classifiers (SVM on the centroid alone 0.51 against the threshold level 0.76); the accuracy says nothing about emotion | Proposition 5 of Section 5; Table 1; results 3f58861 |
 
 ## Left to the artist
 
