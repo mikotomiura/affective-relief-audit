@@ -1,118 +1,138 @@
-# Affective Tactility —— 改訂稿の修正と検証の作業場所
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/media/logo-dark.png">
+    <img alt="affective-relief-audit" src="docs/media/logo-light.png" width="720">
+  </picture>
+</p>
 
-Yuusuke Harada さんの論文 Affective Tactility（JMUI 向けの原稿を JMA 向けに組み直した改訂稿）に、Mikoto Miura が助言の立場で関わるための作業場所。
+<p align="center"><b>English</b> | <a href="README.ja.md">日本語</a></p>
 
-- 他人の未公開の原稿を含むので、**リモートには push しない**。原稿そのもの（`source/`）は `.gitignore` で履歴から外している。助言・プレ査読・引き継ぎ（`advice/`・`review/`・`handoff/`）も事務の記録なので、同じく履歴に入れない。
-- 公開されているのはプレプリントだけ（Harada 2026, Research Square, doi:10.21203/rs.3.rs-8696852/v1）。
+This repository accompanies the paper *A generative rule from affect to tactile relief: what it decides, what its
+spectral descriptors measure, and what classification accuracy checks* (Mikoto Miura and Yuusuke Harada). It holds the
+generator, the tests, the specification, the conditions fixed before each computation, the scripts, the results and
+the supplement.
 
-## 中身
+## The rule in one picture
 
-| 場所 | 中身 |
+A rule of this type maps a point of an input space, here valence *V* and arousal *A* in [−1, 1]², affinely to the
+parameters of a procedural field, reshapes the field with a signed power and exports it as a height map. The rule read
+in the paper ([Harada 2026](https://doi.org/10.21203/rs.3.rs-8696852/v1)) sets, with *p* = (*A* + 1)/2 and
+*q* = (1 − *V*)/2,
+
+- frequency *f* = 3 + 4*p*, amplitude *s* = 0.06 + 0.24*q*, exponent γ = 0.9 + 1.7 (0.65*p* + 0.35*q*),
+- height *H* = *s* · sign(*F*) |*F*|^(1/γ), where *F* is a four-octave field of products of sines scaled to [−1, 1].
+
+<p align="center">
+  <img alt="The input point moves over the square of valence and arousal and the relief follows the rule"
+       src="docs/media/rule.gif" width="640">
+</p>
+
+The three parameters move together: the rule has three parameters but only two degrees of freedom. The second
+animation shows one consequence. On one height scale shared by all works, the relief flattens as valence grows,
+because valence alone sets the amplitude *s*. Exported image by image with min–max scaling, every relief spans the full
+depth, and the difference disappears.
+
+<p align="center">
+  <img alt="The same reliefs on one common height scale and under a per-image min-max export"
+       src="docs/media/export.gif" width="640">
+</p>
+
+The animations are illustrations made by `tools/readme_media.py` with one fixed seed; no number in the paper comes from
+them.
+
+## What the paper shows
+
+- The rule has three parameters but two degrees of freedom, and a per-image min–max export removes the parameter set
+  by valence alone.
+- Its signed power makes the steepest slope depend on the grid unless the power is smoothed at a chosen length.
+- The amplitude-weighted frequency centroid measures the grid, and for non-integer frequency the edge of the domain,
+  as well as the frequency.
+- For the field without warp, the direction and order of classification accuracy were predicted before the experiment,
+  with small failures; the level, computed beforehand by simulation, agreed for the classifiers it was computed for,
+  and two qualitative predictions of level failed. Accuracy checks whether an intended difference reaches a
+  descriptor, not whether a surface conveys an emotion.
+- The paper proposes that the height scale, the smoothing and the band of a spectral descriptor be stated with a work
+  made by such a rule.
+
+## Relation to the original rule
+
+The rule was published as a preprint by the second author ([Harada 2026](https://doi.org/10.21203/rs.3.rs-8696852/v1)).
+Its code has been lost. The generator in `src/atact/` is a reconstruction from the description in the preprint, and
+every number in the paper comes from this reconstruction. The assumptions that fill the gaps in the description are in
+`experiments/spec/generator-and-descriptors.md`, with a test of each clause against the code. Because the original
+code is not available, a difference between our values and the values reported in the preprint cannot be traced to its
+source (Supplement S7).
+
+## Contents
+
+| Path | Contents |
 |---|---|
-| `source/`（git の外） | 元の docx（照合コメント 20 件つき）、抜き出した md（コメントつき・なし）、図 3 枚 |
-| `advice/`（git の外） | 著者に送った助言の docx と元の md、issue の一覧、案 A の数学（命題 1〜7）、検証のアイディア |
-| `review/attack-me-round-1/`（git の外） | プレ査読の記録（依頼文・査読 3 本・監査・Codex・判定）。接地に使った論文の本文は移していない |
-| `src/atact/` | 写像・生成器・記述子・分類の組み直し（元のコードではない） |
-| `tests/` | 命題 1〜4・6 と原稿の表 1 の確かめ（`test_math.py`）、生成器の差し替え口と変種（`test_backends.py`）、図 3 の指紋（`test_fig3.py`） |
-| `src/atact/backends.py`・`adapters/` | 生成器の差し替え口と、元のコードを包むアダプタのひな形 |
-| `src/atact/fig3.py` | 図 3 から 3 枚の高さを取り戻し、形の指紋を測る |
-| `experiments/run_all.py` | 命題 3・5・6・7 の数値と図を出し直す |
-| `experiments/a1_variants.py` | A1 の変種（単位・形・雑音・ワープ）ごとの図 3 との近さと命題 7 |
-| `experiments/centroid_variants.py` | 重心の定義の変種ごとの命題 7 |
-| `experiments/compare_reported.py` | 報告値（表 3・75/25）との比較 |
-| `experiments/decompose.py` | 生成器 × 記述子 × 手順の切り分け |
-| `experiments/arrival_check.py` | 元のコードが届いたときに流す 1 本 |
-| `experiments/legacy/` | 最初に検算に使ったスクリプト（そのまま保存） |
-| `results/` | `run_all.py` の出力（`results.json`・`p7_table.md`・`figs/`） |
-| `handoff/`（git の外） | セッションの引き継ぎ。最新は `20261024-original-code-prep.md`（元のコードが届く前の準備） |
+| `src/atact/` | The reconstructed generator: the map from (*V*, *A*) to (*f*, *s*, γ), the field, the transform, the exports, the descriptors, the classifiers and the statistics |
+| `tests/` | Tests of the propositions of the paper and of the code against the specification |
+| `experiments/spec/` | The specification of the generator and the descriptors (English; a Japanese version beside it) |
+| `experiments/conditions/` | The conditions of each computation, fixed and committed before it was run; `INDEX.json` lists them |
+| `experiments/` | One script per computation (see the table below) |
+| `results/` | The results; every file records the SHA-256 of its conditions file, its script and the specification, the package versions and the commit at which it was run |
+| `results/figs/` | The figures of the paper |
+| `supplement/supplement.pdf` | The supplement of the paper |
+| `tools/readme_media.py` | The logo and the animations of this page |
+| `adapters/original_template.py`, `experiments/arrival_check.py` | An interface for running the original code, should it become available |
+| `experiments/legacy/` and the scripts not listed below | Earlier checks of the reconstruction, kept for the record; the paper does not use them |
 
-関連: GSE 側のアイディアのメモ `~/GSE-prototype/.idea/20261023-affective-tactility-and-keystroke-relief.md`。
+## Reproducing the results
 
-## 動かし方
+Requirements: Python 3.12 or later and [uv](https://docs.astral.sh/uv/). Package versions are fixed by `uv.lock`.
 
 ```bash
 uv sync
-uv run pytest -q                        # 101 件（元のコードのアダプタが無い間は 14 件が skip）
-uv run python experiments/run_all.py    # 30 秒ほど
-uv run python experiments/a1_variants.py         # 1 分ほど（並列）
-uv run python experiments/centroid_variants.py   # 1 分ほど（並列）
-uv run python experiments/compare_reported.py --backend recon
-uv run python experiments/decompose.py
+uv run pytest -q          # 343 tests pass; 14 are skipped (they need the original code)
 ```
 
-版は `uv.lock` で固定している。`results/results.json` の `env` に、実行したときの版を書き出す。
+Each results file is regenerated by one command from the repository root (Supplement S9):
 
-## 組み直しの仮定
+| Results | Command (`uv run python experiments/...`) |
+|---|---|
+| `k2_gradient` | `k2_gradient.py` |
+| `k4_centroid_2d` | `k4_centroid_2d.py` |
+| `edge_grid_paired` | `edge_grid_paired.py` |
+| `validation3_public` | `validation3_public.py` |
+| `k5_power`, `k5_large_sample`, `k5_classification` | `k5_classification.py --power`, `--large-sample`, `--frame`, then without options |
+| `table1_main` | `table1_main.py` |
+| `variants_reported` | `variants_reported.py` |
+| `text_path_example` | `text_path_example.py`, then `text_path_figures.py` |
+| `observable_dof` | `observable_dof.py` |
+| `k4_supplement`, `v3_reduction_supplement` | `k4_supplement.py`, `v3_reduction_supplement.py` |
+| `cband_cutoff_sensitivity` | `cband_cutoff_sensitivity.py` |
+| Figures 1–4 | `figures_main.py` |
 
-元のコード（JMUI の Online Resource 1 = ESM_1.zip）は手元に無い。原稿 3.2〜3.4 節と表 2 が決めていないところを、次の仮定で埋めた。
+Some computations take hours (the classification experiment of Table 1 in particular).
 
-| 記号 | 仮定 | 原稿の記述 |
-|---|---|---|
-| A1 | 各オクターブは sin(2π f_o x + φ) sin(2π f_o y + ψ)、位相は一様乱数、f は領域あたりの周期数 | "four octaves of sinusoidal, fractional-Brownian-motion-like components"、周波数は倍・振幅は半分 |
-| A2 | F を max\|F\| で割って [−1, 1] に入れてから T_γ をかける | 書かれていない（命題 2 の 5 より、入れるかどうかで γ の意味が逆になる） |
-| A3 | ドメインワープは、基本周波数の 1 段の場で座標を warp / f だけずらす | 本文は "optional"、表 2 は 0.25 |
-| A4 | ジッタは座標ごとに U(−w, w)、[−1, 1] で切る | "jitter around the two controlled regimes"、大きさは書かれていない |
-| A5 | 各表面の種は 42 + 番号 | 種 42（表 2）と "seed schedule" |
-| A6 | 特徴を標準化してから線形 SVM（C = 1） | "linear support vector machine" |
+External data:
 
-**A1 は外れている見込みが高い。** 原稿の図 3 と見比べると、次の点が違う。
-- 元の (a) Calm は、画面を横切る周期が約 1.5 で、細かいオクターブの模様が見えない。組み直しでは、f = 3 で 3 周期あり、細かい模様も見える。
-- 元の (b) Anger は、ます目の中に細かい斑点がある（乱数の雑音のように見える）。
+- The text example of the paper needs the NRC VAD Lexicon v2.1 (`NRC-VAD-Lexicon-v2.1.txt`), which is available from
+  its authors and is not redistributed here.
+- The measured surfaces are read from their public records: the Surface-Topography Challenge
+  ([doi:10.5281/zenodo.15341939](https://doi.org/10.5281/zenodo.15341939)) and TactileDreamFusion on Hugging Face
+  (revision `87c8b764bcb2ec1139de0c6435f45ac1d9f283d1`).
 
-図 3 の座標は本文に書かれていない。
+## Citation
 
-## 今わかっていること（組み直しの生成器での値）
+Please cite the paper:
 
-- 命題 1〜4・6 は、式だけから導けるので、生成器の仮定に依らない。テストで確かめている。
-- 命題 5: 重心の比は、N = 128 で 3.05、N = 1024 で 10.5 になり、f の比 7/3 から離れる（`results.json` の `p5`）。
-- 命題 6: γ = 2.6 では、N = 128 → 2048 で最大勾配が 5.2 倍になる。理論の 16^(1−1/γ) = 5.5 に近い。
-- 命題 7（`results/p7_table.md`）:
-  - w ≤ 0.75 では、どの特徴でも 100% 分かれる。
-  - 報告された値は、Rq だけ 91.6%、重心だけ 74.2%、両方 92.1% だった。Rq だけが報告に近くなる w = 1.25 では、重心だけが 89.6% になり、報告の 74.2% より 15 ポイント高い。報告と同じ「Rq は高く、重心は低い」という差は、どの w とワープの組でも出なかった。
-  - ラベルを並べ替えた対照は 40〜48%（報告は 50.0%）。
+> Miura, M. and Harada, Y. A generative rule from affect to tactile relief: what it decides, what its spectral
+> descriptors measure, and what classification accuracy checks. Manuscript.
 
-命題 7 の食い違いが、組み直しの仮定（特に A1・A4）によるのか、元の計算によるのかは、ESM_1.zip が無いと決められない。
+and, for the rule itself, the preprint:
 
-## 図 3 から分かったこと（2026-10-24）
+> Harada, Y. (2026). Affective Tactility: Cross-Modal Translation from Natural Language to Procedural Height Maps.
+> Preprint, Research Square. https://doi.org/10.21203/rs.3.rs-8696852/v1
 
-`src/atact/fig3.py` で図 3 の画像を読み、3 枚の高さを取り戻した。ここの値は図から測った値で、組み直しの仮定を含まない。
+## License
 
-- 3 枚とも、1 辺 256 個のブロックを最近傍で拡大したもの。**図 3 は 256 × 256 の格子で描かれている**（表 2 は 128 × 128）。
-- 色は gist_earth に soft-light の陰影をかけたもの（matplotlib の `LightSource.shade(..., blend_mode="soft")` と同じ式）。各点で色地図の番号と明るさを当てると、色の誤差は 3 枚とも 2/255 未満に収まる。番号が min-max した高さ（256 段）になる。既知の模様を同じ描き方で描いて戻す検算をしている（`tests/test_fig3.py`）。
-- 指紋（`results/a1_variants.md` の冒頭）:
+The code is released under the MIT License (`LICENSE`). The documents, the results and the figures are released under
+the Creative Commons Attribution 4.0 International License (`LICENSE-docs`).
 
-  | 枚 | 周期数 x | 周期数 y | 3 次 / 1 次 | 斑点 |
-  |---|---|---|---|---|
-  | Calm | 1.60 | 1.60 | 0.011 | 0.0039 |
-  | Anger | 6.40 | 6.40 | 0.200 | 0.129 |
-  | Complex | 4.85 | 1.70 | 0.39 | 0.0039 |
+## Authors
 
-  - Calm はほぼ 1 つの積の正弦で、オクターブの細かい模様が無い（斑点の値は 256 段の量子化の大きさ）。
-  - Anger は矩形に近い波（矩形波は 0.333）に、面の中の細かい雑音が乗っている。
-  - **Anger と Calm の周期数の比は 4.0 で、表 1 の隅の f の比 7/3 ≈ 2.33 と合わない。** 周波数の単位を変えても比は変わらないので、図 3 は隅 (1, −1)・(−1, 1) で描かれていないか、描いた生成器が式 (1) の f と違う f を使っている。
-
-## A1 と重心の定義を振った結果（組み直しの生成器での値）
-
-- A1 の変種 36 通り（`results/a1_variants.md`）: **雑音を足さない組では、「Rq だけ − 重心だけ」は最大 +4.7 ポイント**で、報告の +17.4 に届かない。正規化の前に白色雑音を足すと、重心だけの精度が下がり（55〜90%）、Rq だけはほとんど動かない。雑音ありの組には、Rq だけ・重心だけ・両方の 3 つが報告の標準偏差 1 つ分以内に入るものが複数ある（例: 半周期・向きの乱数・雑音 0.1・w = 1.25 で 91.9 / 74.3 / 93.8）。報告の値だけでは組を 1 つに決められない。
-- 図 3 の Anger の斑点は雑音の仮説と矛盾しない。ただし Calm には斑点が無いので、雑音が入るとしても全部の表面に同じ強さではない。
-- 重心の定義の変種 32 通り（`results/centroid_variants.md`、雑音なし）: パワーで重みを付け、中心化しない読み（ワープ 0.25・w = 1.5）で重心だけが 74.2% まで下がるが、そのとき Rq だけも 87.0% に下がる。「Rq だけ − 重心だけ」は最大 +13.7 ポイント。
-- まとめ: 報告の「Rq は高く、重心は低い」は、組み直しでは雑音を足したときにいちばん無理なく出る。元のコードに雑音の項があるか、図 3 を描いた手順と実験の手順が同じかを、元のコードで確かめる。
-
-## 元のコードが届いたら
-
-1. ESM_1.zip を `external/esm1/` に展開する。`external/` は `.gitignore` で履歴から外してある。
-2. 動かす前に中身を読む。依存のパッケージと版、乱数の種の決め方、周波数の単位、F の正規化（A2）、ワープ（A3）、ジッタ（A4）、種の並び（A5）、分類の設定（A6）、雑音の項の有無、図 3 を描いた手順と格子の大きさを、上の仮定の表と 1 つずつ照らし、表に「元のコードでは」の列を足す。
-3. `adapters/original_template.py` を `adapters/original.py` に写して埋める。元のコードは書き換えず、必要な関数だけを呼ぶ。
-4. 次の 1 本を流す。結果は `results/original/` に出る。
-
-   ```bash
-   uv run python experiments/arrival_check.py --zip <ESM_1.zip のパス>
-   ```
-
-   manifest（zip と各ファイルの SHA-256）→ 適合テスト（式 (1)〜(4)・命題 3・4・6）→ 報告値との比較 → 図 3 の再生成と指紋 → 切り分け、の順に流れる。適合テストが落ちたら終了コードは 1 で、落ちた検査がそのまま「式と実装の食い違い」の所見になる。偽のアダプタでの空運転と、図 3 の比較の陽性対照・適合テストの陰性対照は 2026-10-24 に確かめた。
-
-## 次にやること
-
-1. 著者に ESM_1.zip（スクリプト・設定）を頼む（`advice/requests-to-author.md`）。
-2. 届いたら上の手順で流す。
-3. 届くまでの間にできることは、ほぼ済んだ。残っているのは、図 3 の周期数の比 4.0 を説明できる (V, A) と f の組の当たりを付けることくらい（図 3 の座標が本文に無いので、決め手にはならない）。
+- Mikoto Miura, Independent Researcher ([ORCID 0009-0000-4196-0508](https://orcid.org/0009-0000-4196-0508))
+- Yuusuke Harada, Graduate School of Humanities and Social Sciences, Hiroshima University, Japan

@@ -2,18 +2,17 @@
 __pycache__/
 *.pyc
 .pytest_cache/
-# 他人の未公開の原稿（著者 Yuusuke Harada）。手元だけに置き、履歴にも入れない
+# Local material that is not part of the archive
 source/
 .DS_Store
-# 元のコード（ESM_1.zip。著者の未公開のコード）。手元だけに置き、履歴にも入れない
+# External sources (downloaded texts, data and code) are kept outside the archive
 external/
-# 元のコードを包むアダプタ（元のコードの関数名などを含む）。ひな形 adapters/original_template.py は履歴に入れる
+# The adapter for the original code (the template adapters/original_template.py is archived)
 adapters/original.py
-# 事務の記録（著者への助言・プレ査読・セッションの引き継ぎ）。手元だけに置き、履歴にも入れない
+# Working notes
 advice/
 handoff/
 review/
-# 作業記録（タスクごとの要件・設計・タスクリスト・判断）。手元だけに置き、履歴にも入れない
 .steering/
 # Partial results of long computations (resumable; removed after the run)
 results/partial/

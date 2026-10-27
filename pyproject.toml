@@ -1,7 +1,10 @@
 [project]
 name = "atact"
 version = "0.1.0"
-description = "Affective Tactility: reconstructed generator and checks (not the original code)"
+description = "A generative rule from affect to tactile relief: reconstructed generator, descriptors and checks"
+authors = [{ name = "Mikoto Miura" }, { name = "Yuusuke Harada" }]
+license = "MIT"
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.2",
