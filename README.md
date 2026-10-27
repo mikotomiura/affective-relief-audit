@@ -76,6 +76,7 @@ source (Supplement S7).
 | `results/figs/` | The figures of the paper |
 | `supplement/supplement.pdf` | The supplement of the paper |
 | `tools/readme_media.py` | The logo and the animations of this page |
+| `tools/graphical_abstract.py` | The graphical abstract for the journal (`docs/media/graphical-abstract.png`) |
 | `adapters/original_template.py`, `experiments/arrival_check.py` | An interface for running the original code, should it become available |
 | `experiments/legacy/` and the scripts not listed below | Earlier checks of the reconstruction, kept for the record; the paper does not use them |
 

@@ -58,6 +58,7 @@ measure, and what classification accuracy checks*（Mikoto Miura・Yuusuke Harad
 | `results/figs/` | 論文の図 |
 | `supplement/supplement.pdf` | 論文の補足資料 |
 | `tools/readme_media.py` | このページのロゴとアニメーション |
+| `tools/graphical_abstract.py` | 雑誌に出す graphical abstract（`docs/media/graphical-abstract.png`） |
 | `adapters/original_template.py`、`experiments/arrival_check.py` | 元のコードが手に入った場合に走らせるための差し替え口 |
 | `experiments/legacy/` と下の表に無いスクリプト | 組み直しの初期の確かめ。記録として残すもので、論文では使っていない |
 
