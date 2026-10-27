@@ -103,10 +103,17 @@ uv run pytest -q          # 343 件が通り、14 件は飛ばされる（元の
 > Miura, M. and Harada, Y. A generative rule from affect to tactile relief: what it decides, what its spectral
 > descriptors measure, and what classification accuracy checks. Manuscript.
 
+あわせて、この保管庫のアーカイブを引用してください（`CITATION.cff` にもある）。
+
+> Miura, M. and Harada, Y. (2026). affective-relief-audit: generator, tests, results and supplement for 'A generative
+> rule from affect to tactile relief'. Zenodo. https://doi.org/10.5281/zenodo.23681773
+
 規則そのものについては、プレプリントを引用してください。
 
 > Harada, Y. (2026). Affective Tactility: Cross-Modal Translation from Natural Language to Procedural Height Maps.
 > Preprint, Research Square. https://doi.org/10.21203/rs.3.rs-8696852/v1
+
+ソースは https://github.com/mikotomiura/affective-relief-audit にある。
 
 ## ライセンス
 

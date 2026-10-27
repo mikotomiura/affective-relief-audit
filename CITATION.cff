@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "If you use this archive, please cite it and the paper it accompanies."
+type: software
+title: "affective-relief-audit: generator, tests, results and supplement for 'A generative rule from affect to tactile relief'"
+abstract: >-
+  A generator reconstructed from the description in the preprint of a rule that maps valence and arousal to a
+  procedural height map, with the tests, the specification, the conditions fixed before each computation, the
+  scripts, the results and the supplement of the paper.
+authors:
+  - family-names: Miura
+    given-names: Mikoto
+    affiliation: Independent Researcher
+    orcid: "https://orcid.org/0009-0000-4196-0508"
+  - family-names: Harada
+    given-names: Yuusuke
+    affiliation: "Graduate School of Humanities and Social Sciences, Hiroshima University, Japan"
+    orcid: "https://orcid.org/0009-0006-7252-5115"
+doi: 10.5281/zenodo.23681773
+repository-code: "https://github.com/mikotomiura/affective-relief-audit"
+license:
+  - MIT
+  - CC-BY-4.0
+version: 0.1.0
+keywords:
+  - generative art
+  - procedural texture
+  - tactile relief
+  - spectral centroid
+  - spectral leakage
+  - classification accuracy
+references:
+  - type: article
+    title: "A generative rule from affect to tactile relief: what it decides, what its spectral descriptors measure, and what classification accuracy checks"
+    authors:
+      - family-names: Miura
+        given-names: Mikoto
+      - family-names: Harada
+        given-names: Yuusuke
+    notes: Manuscript.
+  - type: article
+    title: "Affective Tactility: Cross-Modal Translation from Natural Language to Procedural Height Maps"
+    authors:
+      - family-names: Harada
+        given-names: Yuusuke
+    year: 2026
+    publisher:
+      name: Research Square
+    doi: 10.21203/rs.3.rs-8696852/v1
+    notes: Preprint.

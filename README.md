@@ -126,10 +126,17 @@ Please cite the paper:
 > Miura, M. and Harada, Y. A generative rule from affect to tactile relief: what it decides, what its spectral
 > descriptors measure, and what classification accuracy checks. Manuscript.
 
+and this archive (also in `CITATION.cff`):
+
+> Miura, M. and Harada, Y. (2026). affective-relief-audit: generator, tests, results and supplement for 'A generative
+> rule from affect to tactile relief'. Zenodo. https://doi.org/10.5281/zenodo.23681773
+
 and, for the rule itself, the preprint:
 
 > Harada, Y. (2026). Affective Tactility: Cross-Modal Translation from Natural Language to Procedural Height Maps.
 > Preprint, Research Square. https://doi.org/10.21203/rs.3.rs-8696852/v1
+
+The source is at https://github.com/mikotomiura/affective-relief-audit.
 
 ## License
 
